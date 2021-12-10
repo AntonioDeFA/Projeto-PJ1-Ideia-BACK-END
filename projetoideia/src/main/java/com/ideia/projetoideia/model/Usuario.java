@@ -23,4 +23,5 @@ public class Usuario {
 	private String email;
 	@Column(nullable = false)
 	private String senha;
+	
 }

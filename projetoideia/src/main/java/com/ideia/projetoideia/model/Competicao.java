@@ -31,4 +31,5 @@ public class Competicao {
 	private File arquivoRegulamentoCompeticao;
 	@Column(nullable = false, name = "dominio_competicao")
 	private String dominioCompeticao;
+	
 }
