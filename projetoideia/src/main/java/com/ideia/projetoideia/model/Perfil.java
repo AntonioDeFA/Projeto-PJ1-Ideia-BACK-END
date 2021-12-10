@@ -16,7 +16,7 @@ import lombok.Data;
 @Table(name="tb_perfil")
 public class Perfil implements GrantedAuthority {
 	
-	public static final String PERFIL_USUARIO= "usuario";
+	public static final Integer PERFIL_USUARIO= 1;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
