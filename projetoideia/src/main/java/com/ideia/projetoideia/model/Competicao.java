@@ -19,8 +19,8 @@ public class Competicao {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Integer id;
 	
-	@Column(nullable = false)
-	private String nome;
+	@Column(nullable = false, name = "nome_competicao")
+	private String nomeCompeticao;
 	
 	@Column(nullable = false, name = "qntd_maxima_membros_por_equipe")
 	private Integer qntdMaximaMembrosPorEquipe;

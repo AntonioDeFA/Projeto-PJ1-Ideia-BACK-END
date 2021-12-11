@@ -1,7 +1,6 @@
 package com.ideia.projetoideia.model;
 
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -31,8 +30,8 @@ public class Usuario implements UserDetails {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Integer id;
 	
-	@Column(nullable = false)
-	private String nome;
+	@Column(nullable = false, name = "nome_usuario")
+	private String nomeUsuario;
 	
 	@Column(nullable = false)
 	private String email;

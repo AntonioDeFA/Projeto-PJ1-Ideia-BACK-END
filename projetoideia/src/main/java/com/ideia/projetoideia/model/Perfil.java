@@ -22,7 +22,7 @@ public class Perfil implements GrantedAuthority {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Integer id;
 	
-	@Column(nullable = false)
+	@Column(nullable = false, name = "nome_perfil")
 	private String nomePerfil;
 
 	@Override
