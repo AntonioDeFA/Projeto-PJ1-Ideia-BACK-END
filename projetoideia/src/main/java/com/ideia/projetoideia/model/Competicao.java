@@ -2,11 +2,15 @@ package com.ideia.projetoideia.model;
 
 import java.io.File;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.Data;
@@ -34,7 +38,11 @@ public class Competicao {
 	@Column(nullable = false, name = "arquivo_regulamento_competicao")
 	private File arquivoRegulamentoCompeticao;
 	
-	@Column(nullable = false, name = "dominio_competicao")
-	private String dominioCompeticao;
+	@Column(name = "dominio_competicao")
+	private String dominioCompeticao="";
+	
+	@ManyToOne
+	@JoinColumn(name = "etapa_fk")
+	private Etapa etapa;
 	
 }

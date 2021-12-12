@@ -1,10 +1,18 @@
 package com.ideia.projetoideia;
 
+import java.io.File;
+import java.time.LocalDate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.ideia.projetoideia.model.Competicao;
+import com.ideia.projetoideia.model.Etapa;
+import com.ideia.projetoideia.model.TipoEtapa;
+import com.ideia.projetoideia.repository.EtapaRepositorio;
+import com.ideia.projetoideia.services.CompeticaoService;
 import com.ideia.projetoideia.services.UsuarioService;
 
 @SpringBootApplication
@@ -17,6 +25,11 @@ public class ProjetoideiaApplication implements CommandLineRunner {
 	@Autowired
 	private UsuarioService usuarioService;
 	
+	@Autowired
+	private CompeticaoService competicaoService;
+	
+	@Autowired
+	private EtapaRepositorio etapaRepositorio;
 	public void run(String... args) {
 	
 		
@@ -32,6 +45,31 @@ public class ProjetoideiaApplication implements CommandLineRunner {
 //		e.printStackTrace();
 //	}
 //	System.out.println("TERMINEI");
+		
+		
+		Etapa etapa = new Etapa();
+		etapa.setDataInicio(LocalDate.now());
+		etapa.setDataTermino(LocalDate.now());
+		etapa.setTipoEtapa(TipoEtapa.INSCRICAO);
+		
+		Competicao comp = new Competicao();
+		comp.setNomeCompeticao("Comp");
+		comp.setArquivoRegulamentoCompeticao(new File("AAAAAAAA"));
+		comp.setQntdMaximaMembrosPorEquipe(1);
+		comp.setQntdMinimaMembrosPorEquipe(1);
+		comp.setTempoMaximoVideo(12f);
+		comp.setEtapa(etapa);
+		
+		etapa.getCompeticoes().add(comp);
+		etapaRepositorio.save(etapa);
+		try {
+			competicaoService.criarCompeticao(comp);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 
 }
