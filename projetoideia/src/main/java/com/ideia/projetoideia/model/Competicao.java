@@ -43,6 +43,9 @@ public class Competicao {
 	@Column(name = "dominio_competicao")
 	private String dominioCompeticao="";
 	
+	@OneToMany(cascade = CascadeType.MERGE)
+	private Usuario organiador;
+	
 	@OneToOne
 	private Etapa etapa;
 	

@@ -2,10 +2,22 @@ package com.ideia.projetoideia.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
+import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.services.UsuarioService;
 
@@ -14,6 +26,7 @@ public class ControllerUsuario {
 	@Autowired
 	UsuarioService usuarioService;
 
+	@GetMapping("/consultarUsuarios")
 	public List<Usuario> consultarUsuarios() {
 		return usuarioService.consultarUsuarios();
 	}
@@ -30,12 +43,33 @@ public class ControllerUsuario {
 		return usuarioService.consultarUsuarioPorId(id);
 	}
 
-	public void criarUsuario(Usuario user) throws Exception {
-		usuarioService.criarUsuario(user);
+	@PostMapping("/criarUsuario")
+	@ResponseStatus(code = HttpStatus.CREATED, reason = "Usuário criado com sucesso")
+	public void criarUsuario(@Valid @RequestBody Usuario user, BindingResult result) throws Exception {
+
+		if (!result.hasErrors()) {
+
+			usuarioService.criarUsuario(user);
+
+		} else {
+
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, result.toString());
+		}
 	}
 
-	public void deletarUsuarioPorId(Integer id) throws Exception {
-		usuarioService.deletarUsuarioPorId(id);
+	@DeleteMapping("/deletarUsuario/{id}")
+	public void deletarUsuarioPorId(@PathVariable("id") Integer id) throws Exception {
+
+		try {
+
+			usuarioService.deletarUsuarioPorId(id);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		}
+
 	}
 
 }

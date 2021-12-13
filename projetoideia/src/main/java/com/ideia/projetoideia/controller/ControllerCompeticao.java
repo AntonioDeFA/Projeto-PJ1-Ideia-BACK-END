@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,10 +30,23 @@ public class ControllerCompeticao {
 	
 	@GetMapping("/competicoesFaseInscricoes")
 	public Page<Competicao> consultarCompeticoes(@RequestParam("page") Integer pagina) {
-		return competicaoService.consultarCompeticoes(pagina);
+		return competicaoService.consultarCompeticoesFaseInscricao(pagina);
 	}
 	
-	@PutMapping("/atualizarCompeticao/{id}")
+	@PostMapping("/criarCompeticao")
+	@ResponseStatus(code = HttpStatus.CREATED, reason = "Competição criada com sucesso")
+	public void criarCompeticao(@Valid @RequestBody Competicao competicao, BindingResult result) throws Exception {
+		if (!result.hasErrors()) {
+
+			competicaoService.criarCompeticao(competicao);
+
+		} else {
+
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, result.toString());
+		}
+	}
+	
+	@PutMapping("/editarCompeticao/{id}")
 	@ResponseStatus(code = HttpStatus.OK, reason = "Competição encontrada com sucesso")
 	public void atualizarCompeticao(@Valid @RequestBody Competicao competicao,BindingResult result,@PathVariable("id") Integer id) {
 	
