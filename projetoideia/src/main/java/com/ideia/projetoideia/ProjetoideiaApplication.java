@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Etapa;
 import com.ideia.projetoideia.model.TipoEtapa;
+import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
 import com.ideia.projetoideia.services.CompeticaoService;
 import com.ideia.projetoideia.services.UsuarioService;
@@ -35,7 +36,7 @@ public class ProjetoideiaApplication implements CommandLineRunner {
 		
 //	Usuario user = new Usuario();
 //	user.setEmail("Gabryel@gmail.com");
-//	user.setNome("Gabryel");
+//	user.setNomeUsuario("Gabryel");
 //	user.setSenha("1");
 //	
 //	try {
@@ -45,29 +46,29 @@ public class ProjetoideiaApplication implements CommandLineRunner {
 //		e.printStackTrace();
 //	}
 //	System.out.println("TERMINEI");
+//		
 		
-		
-		Etapa etapa = new Etapa();
-		etapa.setDataInicio(LocalDate.now());
-		etapa.setDataTermino(LocalDate.now());
-		etapa.setTipoEtapa(TipoEtapa.INSCRICAO);
-		
-		Competicao comp = new Competicao();
-		comp.setNomeCompeticao("Comp");
-		comp.setArquivoRegulamentoCompeticao(new File("AAAAAAAA"));
-		comp.setQntdMaximaMembrosPorEquipe(1);
-		comp.setQntdMinimaMembrosPorEquipe(1);
-		comp.setTempoMaximoVideo(12f);
-		comp.setEtapa(etapa);
-		
-		etapa.getCompeticoes().add(comp);
-		etapaRepositorio.save(etapa);
-		try {
-			competicaoService.criarCompeticao(comp);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		Etapa etapa = new Etapa();
+//		etapa.setDataInicio(LocalDate.now());
+//		etapa.setDataTermino(LocalDate.now());
+//		etapa.setTipoEtapa(TipoEtapa.INSCRICAO);
+//		
+//		Competicao comp = new Competicao();
+//		comp.setNomeCompeticao("Comp");
+//		comp.setArquivoRegulamentoCompeticao(new File("AAAAAAAA"));
+//		comp.setQntdMaximaMembrosPorEquipe(1);
+//		comp.setQntdMinimaMembrosPorEquipe(1);
+//		comp.setTempoMaximoVideo(12f);
+//		comp.setEtapa(etapa);
+//		
+//		etapa.getCompeticoes().add(comp);
+//		etapaRepositorio.save(etapa);
+//		try {
+//			competicaoService.criarCompeticao(comp);
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 		
 	}

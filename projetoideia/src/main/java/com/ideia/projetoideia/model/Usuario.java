@@ -1,8 +1,10 @@
 package com.ideia.projetoideia.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -41,6 +44,9 @@ public class Usuario implements UserDetails {
 	
 	@ManyToMany(fetch = FetchType.EAGER)
 	private List<Perfil> perfis;
+	
+	@OneToMany(cascade = CascadeType.MERGE,mappedBy = "usuario")
+	private List<Competicao> competicoesComoOrganizador = new ArrayList<>();
 	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

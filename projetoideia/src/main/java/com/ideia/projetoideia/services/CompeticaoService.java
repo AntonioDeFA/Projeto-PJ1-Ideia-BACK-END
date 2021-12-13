@@ -20,6 +20,7 @@ public class CompeticaoService {
 	public List<Competicao> consultarCompeticoes() {
 		return competicaoRepositorio.findAll();
 	}
+	
 
 	public Page<Competicao> consultarCompeticoes(Integer numeroPagina) {
 		Direction sortDirection = Sort.Direction.ASC;
