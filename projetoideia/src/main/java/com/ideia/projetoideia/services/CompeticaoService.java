@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
+import com.ideia.projetoideia.repository.UsuarioRepositorio;
 
 import javassist.NotFoundException;
 
@@ -19,6 +20,9 @@ import javassist.NotFoundException;
 public class CompeticaoService {
 	@Autowired
 	CompeticaoRepositorio competicaoRepositorio;
+	
+	@Autowired
+	UsuarioRepositorio usuarioRepositorio;
 
 	public List<Competicao> consultarCompeticoes() {
 		return competicaoRepositorio.findAll();
@@ -32,7 +36,14 @@ public class CompeticaoService {
 
 		throw new NotFoundException("Competição não encontrada");
 	}
+	public List<Competicao> recuperarCompeticaoPorOrganizador(Integer id) throws NotFoundException {
+		List<Competicao> comp = competicaoRepositorio.findByOrganiador(usuarioRepositorio.findById(id).get());
 
+		if (comp.size()>0)
+			return comp;
+
+		throw new NotFoundException("Competição não encontrada");
+	}
 	public Page<Competicao> consultarCompeticoes(Integer numeroPagina) {
 		Direction sortDirection = Sort.Direction.ASC;
 		Sort sort = Sort.by(sortDirection, "nomeCompeticao");

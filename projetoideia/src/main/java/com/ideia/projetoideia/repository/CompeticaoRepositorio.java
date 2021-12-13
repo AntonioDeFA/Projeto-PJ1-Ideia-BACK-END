@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.ideia.projetoideia.model.Competicao;
+import com.ideia.projetoideia.model.Usuario;
 
 public interface CompeticaoRepositorio extends JpaRepository<Competicao, Integer> {
 	
@@ -16,4 +17,7 @@ public interface CompeticaoRepositorio extends JpaRepository<Competicao, Integer
 			+ " where etapa.tipo_etapa = INSCRICAO "
 			,nativeQuery = true)
 	public Page<Competicao>findByInscricao(PageRequest pageRequest);
+	
+	public List<Competicao> findByOrganiador(Usuario organiador);
+	
 }
