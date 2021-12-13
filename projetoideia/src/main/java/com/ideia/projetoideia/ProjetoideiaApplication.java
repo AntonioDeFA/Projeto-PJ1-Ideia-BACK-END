@@ -12,6 +12,7 @@ import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Etapa;
 import com.ideia.projetoideia.model.TipoEtapa;
 import com.ideia.projetoideia.model.Usuario;
+import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
 import com.ideia.projetoideia.services.CompeticaoService;
 import com.ideia.projetoideia.services.UsuarioService;
@@ -31,6 +32,9 @@ public class ProjetoideiaApplication implements CommandLineRunner {
 	
 	@Autowired
 	private EtapaRepositorio etapaRepositorio;
+	
+	@Autowired
+	private CompeticaoRepositorio competicaoRepositorio;
 	public void run(String... args) {
 	
 		
@@ -59,18 +63,21 @@ public class ProjetoideiaApplication implements CommandLineRunner {
 //		comp.setQntdMaximaMembrosPorEquipe(1);
 //		comp.setQntdMinimaMembrosPorEquipe(1);
 //		comp.setTempoMaximoVideo(12f);
-//		comp.setEtapa(etapa);
+//		comp.setEtapa(null);
+//		etapa.setCompeticao(comp);
 //		
-//		etapa.getCompeticoes().add(comp);
-//		etapaRepositorio.save(etapa);
 //		try {
 //			competicaoService.criarCompeticao(comp);
+//			etapaRepositorio.save(etapa);
+//			
+//			comp.setEtapa(etapa);
+//			competicaoRepositorio.save(comp);
 //			
 //		} catch (Exception e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-		
+//		
 		
 		
 		

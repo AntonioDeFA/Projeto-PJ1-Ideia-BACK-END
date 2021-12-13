@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,11 +27,8 @@ public class ControllerCompeticao {
 	CompeticaoService competicaoService;
 	
 	
-	@GetMapping("/competicoesFaseInscricoes/{pagina}")
-	public Page<Competicao> consultarCompeticoes(@PathVariable("pagina") Integer pagina) {
-		if(pagina ==null)
-			return competicaoService.consultarCompeticoesFaseInscricao(1);
-		
+	@GetMapping("/competicoesFaseInscricoes")
+	public Page<Competicao> consultarCompeticoes(@RequestParam("page") Integer pagina) {
 		return competicaoService.consultarCompeticoes(pagina);
 	}
 	

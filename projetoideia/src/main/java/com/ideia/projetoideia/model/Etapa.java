@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.Data;
@@ -36,8 +37,8 @@ public class Etapa {
 	@Enumerated(EnumType.STRING)
 	private TipoEtapa tipoEtapa;
 	
-	@OneToMany(cascade = CascadeType.MERGE , mappedBy = "etapa")
-	private List<Competicao> competicoes = new ArrayList<>();
+	@OneToOne
+	private Competicao competicao;
 
 	public boolean isVigente(){
 		LocalDate dataAtual = LocalDate.now();
