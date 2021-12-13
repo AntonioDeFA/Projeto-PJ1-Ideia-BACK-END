@@ -45,8 +45,5 @@ public class Competicao {
 	@JoinColumn(name = "etapa_fk")
 	private Etapa etapa;
 	
-	@ManyToOne
-	@JoinColumn(name = "organizador_fk")
-	private Usuario organizador;
 	
 }

@@ -36,7 +36,7 @@ public class Etapa {
 	@Enumerated(EnumType.STRING)
 	private TipoEtapa tipoEtapa;
 	
-	@OneToMany(cascade = CascadeType.MERGE)
+	@OneToMany(cascade = CascadeType.MERGE , mappedBy = "etapa")
 	private List<Competicao> competicoes = new ArrayList<>();
 
 	public boolean isVigente(){

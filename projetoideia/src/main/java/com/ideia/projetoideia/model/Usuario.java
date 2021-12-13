@@ -45,9 +45,6 @@ public class Usuario implements UserDetails {
 	@ManyToMany(fetch = FetchType.EAGER)
 	private List<Perfil> perfis;
 	
-	@OneToMany(cascade = CascadeType.MERGE,mappedBy = "usuario")
-	private List<Competicao> competicoesComoOrganizador = new ArrayList<>();
-	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		// TODO Auto-generated method stub

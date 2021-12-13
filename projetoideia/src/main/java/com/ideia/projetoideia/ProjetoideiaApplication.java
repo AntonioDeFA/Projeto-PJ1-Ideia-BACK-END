@@ -65,10 +65,13 @@ public class ProjetoideiaApplication implements CommandLineRunner {
 //		etapaRepositorio.save(etapa);
 //		try {
 //			competicaoService.criarCompeticao(comp);
+//			
 //		} catch (Exception e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
+		
+		
 		
 		
 	}
