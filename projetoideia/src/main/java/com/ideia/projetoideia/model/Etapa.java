@@ -38,7 +38,6 @@ public class Etapa {
 	private TipoEtapa tipoEtapa;
 	
 	@OneToOne
-	@JoinColumn(name ="competicao_fk")
 	private Competicao competicao;
 
 	public boolean isVigente(){
