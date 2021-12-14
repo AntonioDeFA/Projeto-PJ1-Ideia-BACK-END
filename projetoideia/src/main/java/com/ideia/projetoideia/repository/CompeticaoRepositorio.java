@@ -13,8 +13,8 @@ import com.ideia.projetoideia.model.Usuario;
 public interface CompeticaoRepositorio extends JpaRepository<Competicao, Integer> {
 	
 	@Query(value=
-			"Select * from db_ideia.tb_competicao as comp join db_ideia.tb_etapa as etapa on etapa.id = comp.etapa_fk"
-			+ " where etapa.tipo_etapa = INSCRICAO "
+			"Select * from db_ideia.tb_competicao as comp join db_ideia.tb_etapa as etapa on etapa.competicao_fk=comp.id where"
+			+ " etapa.tipo_etapa = 'INSCRICAO' "
 			,nativeQuery = true)
 	public Page<Competicao>findByInscricao(PageRequest pageRequest);
 	
