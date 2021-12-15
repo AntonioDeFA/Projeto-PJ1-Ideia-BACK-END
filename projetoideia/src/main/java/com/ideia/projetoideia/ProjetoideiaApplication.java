@@ -1,8 +1,20 @@
 package com.ideia.projetoideia;
 
+import java.io.File;
+import java.time.LocalDate;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import com.ideia.projetoideia.model.Competicao;
+import com.ideia.projetoideia.model.Etapa;
+import com.ideia.projetoideia.model.TipoEtapa;
+import com.ideia.projetoideia.repository.CompeticaoRepositorio;
+import com.ideia.projetoideia.repository.EtapaRepositorio;
+import com.ideia.projetoideia.services.CompeticaoService;
+import com.ideia.projetoideia.services.UsuarioService;
 
 @SpringBootApplication
 public class ProjetoideiaApplication implements CommandLineRunner {
@@ -11,17 +23,17 @@ public class ProjetoideiaApplication implements CommandLineRunner {
 		SpringApplication.run(ProjetoideiaApplication.class, args);
 	}
 
-//	@Autowired
-//	private UsuarioService usuarioService;
-//
-//	@Autowired
-//	private CompeticaoService competicaoService;
-//
-//	@Autowired
-//	private EtapaRepositorio etapaRepositorio;
-//
-//	@Autowired
-//	private CompeticaoRepositorio competicaoRepositorio;
+	@Autowired
+	private UsuarioService usuarioService;
+
+	@Autowired
+	private CompeticaoService competicaoService;
+
+	@Autowired
+	private EtapaRepositorio etapaRepositorio;
+
+	@Autowired
+	private CompeticaoRepositorio competicaoRepositorio;
 
 	public void run(String... args) {
 

@@ -1,4 +1,4 @@
-package com.ideia.projetoideia.security;
+package com.ideia.projetoideia.security.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,11 +23,12 @@ import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.services.UsuarioService;
 
 @RestController
+@RequestMapping("/ideia")
 public class ControllerUsuario {
 	@Autowired
 	UsuarioService usuarioService;
 
-	@PostMapping("/criarUsuario")
+	@PostMapping("/usuario/criar")
 	@ResponseStatus(code = HttpStatus.CREATED, reason = "Usuário criado com sucesso")
 	public void criarUsuario(@Valid @RequestBody Usuario user, BindingResult result) throws Exception {
 
