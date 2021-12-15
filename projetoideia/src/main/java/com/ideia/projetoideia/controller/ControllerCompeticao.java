@@ -27,7 +27,7 @@ public class ControllerCompeticao {
 	@Autowired
 	CompeticaoService competicaoService;
 
-	@PostMapping("/criarCompeticao")
+	@PostMapping("/competicao/criar")
 	@ResponseStatus(code = HttpStatus.CREATED, reason = "Competição criada com sucesso")
 	public void criarCompeticao(@Valid @RequestBody Competicao competicao, BindingResult result) throws Exception {
 		if (!result.hasErrors()) {
@@ -39,22 +39,28 @@ public class ControllerCompeticao {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, result.toString());
 		}
 	}
+	
+//	@GetMapping("/competicao/{competicaoId}")
+//	@ResponseStatus(code = HttpStatus.OK, reason = "Competição encontrada com sucesso")
+//	public Competicao encontrarCompeticao() {
+//		
+//	}
 
 	@GetMapping("/competicoesFaseInscricoes")
 	public Page<Competicao> consultarCompeticoes(@RequestParam("page") Integer pagina) {
 		return competicaoService.consultarCompeticoesFaseInscricao(pagina);
 	}
 
-	@PutMapping("/editarCompeticao/{id}")
+	@PutMapping("/competicao/update/{competicaoId}")
 	@ResponseStatus(code = HttpStatus.OK, reason = "Competição encontrada com sucesso")
 	public void atualizarCompeticao(@Valid @RequestBody Competicao competicao, BindingResult result,
-			@PathVariable("id") Integer id) {
+			@PathVariable("competicaoId") Integer competicaoId) {
 
 		if (!result.hasErrors()) {
 
 			try {
 
-				competicaoService.atualizarCompeticao(id, competicao);
+				competicaoService.atualizarCompeticao(competicaoId, competicao);
 			} catch (Exception e) {
 
 				e.printStackTrace();
@@ -67,12 +73,12 @@ public class ControllerCompeticao {
 		}
 	}
 
-	@DeleteMapping("/deletarCompeticao/{id}")
-	public void deletarCompeticao(@PathVariable("id") Integer id) {
+	@DeleteMapping("/competicao/delete/{competicaoId}")
+	public void deletarCompeticao(@PathVariable("competicaoId") Integer competicaoId) {
 
 		try {
 
-			competicaoService.deletarCompeticaoPorId(id);
+			competicaoService.deletarCompeticaoPorId(competicaoId);
 
 		} catch (Exception e) {
 			e.printStackTrace();
