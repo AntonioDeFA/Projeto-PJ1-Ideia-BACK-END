@@ -26,13 +26,7 @@ import com.ideia.projetoideia.services.CompeticaoService;
 public class ControllerCompeticao {
 	@Autowired
 	CompeticaoService competicaoService;
-	
-	
-	@GetMapping("/competicoesFaseInscricoes")
-	public Page<Competicao> consultarCompeticoes(@RequestParam("page") Integer pagina) {
-		return competicaoService.consultarCompeticoesFaseInscricao(pagina);
-	}
-	
+
 	@PostMapping("/criarCompeticao")
 	@ResponseStatus(code = HttpStatus.CREATED, reason = "Competição criada com sucesso")
 	public void criarCompeticao(@Valid @RequestBody Competicao competicao, BindingResult result) throws Exception {
@@ -45,11 +39,17 @@ public class ControllerCompeticao {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, result.toString());
 		}
 	}
-	
+
+	@GetMapping("/competicoesFaseInscricoes")
+	public Page<Competicao> consultarCompeticoes(@RequestParam("page") Integer pagina) {
+		return competicaoService.consultarCompeticoesFaseInscricao(pagina);
+	}
+
 	@PutMapping("/editarCompeticao/{id}")
 	@ResponseStatus(code = HttpStatus.OK, reason = "Competição encontrada com sucesso")
-	public void atualizarCompeticao(@Valid @RequestBody Competicao competicao,BindingResult result,@PathVariable("id") Integer id) {
-	
+	public void atualizarCompeticao(@Valid @RequestBody Competicao competicao, BindingResult result,
+			@PathVariable("id") Integer id) {
+
 		if (!result.hasErrors()) {
 
 			try {
@@ -66,10 +66,10 @@ public class ControllerCompeticao {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, result.toString());
 		}
 	}
-	
+
 	@DeleteMapping("/deletarCompeticao/{id}")
-	public void deletarCompeticao(@PathVariable("id") Integer id) { 
-		
+	public void deletarCompeticao(@PathVariable("id") Integer id) {
+
 		try {
 
 			competicaoService.deletarCompeticaoPorId(id);
@@ -79,7 +79,7 @@ public class ControllerCompeticao {
 
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
-		
+
 	}
-	
+
 }

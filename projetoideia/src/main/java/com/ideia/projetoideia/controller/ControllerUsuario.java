@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.services.UsuarioService;
 
@@ -25,6 +25,20 @@ import com.ideia.projetoideia.services.UsuarioService;
 public class ControllerUsuario {
 	@Autowired
 	UsuarioService usuarioService;
+
+	@PostMapping("/criarUsuario")
+	@ResponseStatus(code = HttpStatus.CREATED, reason = "Usuário criado com sucesso")
+	public void criarUsuario(@Valid @RequestBody Usuario user, BindingResult result) throws Exception {
+
+		if (!result.hasErrors()) {
+
+			usuarioService.criarUsuario(user);
+
+		} else {
+
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, result.toString());
+		}
+	}
 
 	@GetMapping("/consultarUsuarios")
 	public List<Usuario> consultarUsuarios() {
@@ -43,13 +57,21 @@ public class ControllerUsuario {
 		return usuarioService.consultarUsuarioPorId(id);
 	}
 
-	@PostMapping("/criarUsuario")
-	@ResponseStatus(code = HttpStatus.CREATED, reason = "Usuário criado com sucesso")
-	public void criarUsuario(@Valid @RequestBody Usuario user, BindingResult result) throws Exception {
+	@PutMapping("/editarUsuario/{id}")
+	@ResponseStatus(code = HttpStatus.OK, reason = "Usuario encontrado com sucesso")
+	public void atualizarCompeticao(@Valid @RequestBody Usuario user, BindingResult result,
+			@PathVariable("id") Integer id) {
 
 		if (!result.hasErrors()) {
 
-			usuarioService.criarUsuario(user);
+			try {
+
+				usuarioService.atualizarUsuario(user, id);
+			} catch (Exception e) {
+
+				e.printStackTrace();
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+			}
 
 		} else {
 

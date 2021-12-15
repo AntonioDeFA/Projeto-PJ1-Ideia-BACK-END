@@ -11,7 +11,6 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Perfil;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.repository.PerfilRepositorio;
@@ -25,6 +24,24 @@ public class UsuarioService {
 
 	@Autowired
 	PerfilRepositorio perfilRepositorio;
+
+	public void criarUsuario(Usuario user) throws Exception {
+		if (usuarioRepositorio.findByEmail(user.getEmail()) != null) {
+			throw new Exception("Usuário já existe");
+		}
+		user.setSenha(new BCryptPasswordEncoder().encode(user.getSenha()));
+
+		this.inicializarPerfil();
+
+		List<Perfil> perfis = new ArrayList<>();
+		Perfil perfil = new Perfil();
+		perfil.setId(Perfil.PERFIL_USUARIO);
+		perfis.add(perfil);
+
+		user.setPerfis(perfis);
+
+		usuarioRepositorio.save(user);
+	}
 
 	public List<Usuario> consultarUsuarios() {
 		return usuarioRepositorio.findAll();
@@ -53,22 +70,13 @@ public class UsuarioService {
 		return usuario;
 	}
 
-	public void criarUsuario(Usuario user) throws Exception {
-		if (usuarioRepositorio.findByEmail(user.getEmail()) != null) {
-			throw new Exception("Usuário já existe");
-		}
-		user.setSenha(new BCryptPasswordEncoder().encode(user.getSenha()));
-
-		this.inicializarPerfil();
-
-		List<Perfil> perfis = new ArrayList<>();
-		Perfil perfil = new Perfil();
-		perfil.setId(Perfil.PERFIL_USUARIO);
-		perfis.add(perfil);
-
-		user.setPerfis(perfis);
-
-		usuarioRepositorio.save(user);
+	public void atualizarUsuario(Usuario user, Integer id) throws Exception {
+		Usuario userRecuperado = usuarioRepositorio.findById(id).get();
+		userRecuperado.setNomeUsuario(user.getNomeUsuario());
+		userRecuperado.setEmail(user.getEmail());
+		userRecuperado.setSenha(user.getPassword());
+		userRecuperado.setPerfis(user.getPerfis());
+		usuarioRepositorio.save(userRecuperado);
 	}
 
 	public void deletarUsuarioPorId(Integer id) throws Exception {
