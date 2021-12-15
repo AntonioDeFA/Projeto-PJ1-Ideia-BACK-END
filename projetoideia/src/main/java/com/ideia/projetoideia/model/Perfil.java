@@ -11,17 +11,18 @@ import org.springframework.security.core.GrantedAuthority;
 
 import lombok.Data;
 
+@SuppressWarnings("serial")
 @Entity
 @Data
-@Table(name="tb_perfil")
+@Table(name = "tb_perfil")
 public class Perfil implements GrantedAuthority {
-	
-	public static final Integer PERFIL_USUARIO= 1;
-	
+
+	public static final Integer PERFIL_USUARIO = 1;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Integer id;
-	
+
 	@Column(nullable = false, name = "nome_perfil")
 	private String nomePerfil;
 

@@ -19,7 +19,7 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name="tb_usuario")
+@Table(name = "tb_usuario")
 public class Usuario implements UserDetails {
 	/**
 	 * 
@@ -29,19 +29,19 @@ public class Usuario implements UserDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Integer id;
-	
+
 	@Column(nullable = false, name = "nome_usuario")
 	private String nomeUsuario;
-	
+
 	@Column(nullable = false)
 	private String email;
-	
+
 	@Column(nullable = false)
 	private String senha;
-	
+
 	@ManyToMany(fetch = FetchType.EAGER)
 	private List<Perfil> perfis;
-	
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		// TODO Auto-generated method stub
@@ -83,5 +83,5 @@ public class Usuario implements UserDetails {
 		// TODO Auto-generated method stub
 		return true;
 	}
-	
+
 }

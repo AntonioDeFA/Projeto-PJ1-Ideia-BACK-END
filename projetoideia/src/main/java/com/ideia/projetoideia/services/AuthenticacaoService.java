@@ -11,18 +11,18 @@ import com.ideia.projetoideia.repository.UsuarioRepositorio;
 
 @Service
 public class AuthenticacaoService implements UserDetailsService {
-	
+
 	@Autowired
 	private UsuarioRepositorio usuarioRepositorio;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Usuario  user = usuarioRepositorio.findByEmail(username);
-		
-		if(user!= null) { 
-			return user;	
+		Usuario user = usuarioRepositorio.findByEmail(username);
+
+		if (user != null) {
+			return user;
 		}
-		
+
 		throw new UsernameNotFoundException("Usuario não Encontrado");
 	}
 
