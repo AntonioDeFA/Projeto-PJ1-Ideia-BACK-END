@@ -40,14 +40,27 @@ public class ControllerCompeticao {
 		}
 	}
 	
-//	@GetMapping("/competicao/{competicaoId}")
-//	@ResponseStatus(code = HttpStatus.OK, reason = "Competição encontrada com sucesso")
-//	public Competicao encontrarCompeticao() {
-//		
-//	}
-
-	@GetMapping("/competicoesFaseInscricoes")
+	@GetMapping("/competicao/{competicaoId}")
+	@ResponseStatus(code = HttpStatus.OK, reason = "Competição encontrada com sucesso")
+	public Competicao encontrarCompeticao(@PathVariable("competicaoId") Integer competicaoId) {
+		try {
+			 return  competicaoService.recuperarCompeticaoId(competicaoId);
+			 
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		}
+	}
+	
+	@GetMapping("/competicoes")
 	public Page<Competicao> consultarCompeticoes(@RequestParam("page") Integer pagina) {
+		return competicaoService.consultarCompeticoes(pagina);
+	}
+
+
+	@GetMapping("/competicoes/inscricoes")
+	public Page<Competicao> consultarCompeticoesInscricao(@RequestParam("page") Integer pagina) {
 		return competicaoService.consultarCompeticoesFaseInscricao(pagina);
 	}
 
