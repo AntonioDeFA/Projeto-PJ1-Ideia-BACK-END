@@ -47,7 +47,7 @@ public class UsuarioService {
 		return usuarioRepositorio.findAll();
 	}
 
-	public Page<Usuario> consultarCompeticoes(Integer numeroPagina) {
+	public Page<Usuario> consultarUsuarios(Integer numeroPagina) {
 		Direction sortDirection = Sort.Direction.ASC;
 		Sort sort = Sort.by(sortDirection, "nomeUsuario");
 		Page<Usuario> page = usuarioRepositorio.findAll(PageRequest.of(--numeroPagina, 4, sort));

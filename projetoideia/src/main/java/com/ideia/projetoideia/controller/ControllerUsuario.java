@@ -42,13 +42,13 @@ public class ControllerUsuario {
 		}
 	}
 
-	@GetMapping("/consultarUsuarios")
+	@GetMapping("/usuario/all")
 	public List<Usuario> consultarUsuarios() {
 		return usuarioService.consultarUsuarios();
 	}
 
 	public Page<Usuario> consultarCompeticoes(Integer numeroPagina) {
-		return usuarioService.consultarCompeticoes(numeroPagina);
+		return usuarioService.consultarUsuarios(numeroPagina);
 	}
 
 	public Usuario consultarUsuarioPorEmail(String email) throws Exception {
@@ -59,16 +59,16 @@ public class ControllerUsuario {
 		return usuarioService.consultarUsuarioPorId(id);
 	}
 
-	@PutMapping("/editarUsuario/{id}")
+	@PutMapping("/usuario/update/{usuarioId}")
 	@ResponseStatus(code = HttpStatus.OK, reason = "Usuario encontrado com sucesso")
 	public void atualizarCompeticao(@Valid @RequestBody Usuario user, BindingResult result,
-			@PathVariable("id") Integer id) {
+			@PathVariable("usuarioId") Integer usuarioId) {
 
 		if (!result.hasErrors()) {
 
 			try {
 
-				usuarioService.atualizarUsuario(user, id);
+				usuarioService.atualizarUsuario(user, usuarioId);
 			} catch (Exception e) {
 
 				e.printStackTrace();
@@ -81,12 +81,13 @@ public class ControllerUsuario {
 		}
 	}
 
-	@DeleteMapping("/deletarUsuario/{id}")
-	public void deletarUsuarioPorId(@PathVariable("id") Integer id) throws Exception {
+	@DeleteMapping("/usuario/delete/{usuarioId}")
+	@ResponseStatus(code = HttpStatus.OK, reason = "Usuario deletado com sucesso")
+	public void deletarUsuarioPorId(@PathVariable("usuarioId") Integer usuarioId) throws Exception {
 
 		try {
 
-			usuarioService.deletarUsuarioPorId(id);
+			usuarioService.deletarUsuarioPorId(usuarioId);
 
 		} catch (Exception e) {
 			e.printStackTrace();
