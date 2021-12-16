@@ -11,7 +11,9 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.ideia.projetoideia.model.Competicao;
+import com.ideia.projetoideia.model.Etapa;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
+import com.ideia.projetoideia.repository.EtapaRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
 
 import javassist.NotFoundException;
@@ -23,9 +25,19 @@ public class CompeticaoService {
 
 	@Autowired
 	UsuarioRepositorio usuarioRepositorio;
+	
+	@Autowired
+	EtapaRepositorio etapaRepositorio;
 
 	public void criarCompeticao(Competicao competicao) throws Exception {
+		
+		Etapa etapa = competicao.getEtapa();
+		etapa.setCompeticao(null);
+		etapaRepositorio.save(etapa);
 		competicaoRepositorio.save(competicao);
+		
+		etapa.setCompeticao(competicao);
+		etapaRepositorio.save(etapa);
 	}
 
 	public List<Competicao> consultarCompeticoes() {

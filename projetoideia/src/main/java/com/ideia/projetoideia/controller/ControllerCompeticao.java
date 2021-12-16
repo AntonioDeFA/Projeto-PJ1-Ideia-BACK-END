@@ -1,5 +1,7 @@
 package com.ideia.projetoideia.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,8 +56,8 @@ public class ControllerCompeticao {
 	}
 	
 	@GetMapping("/competicoes")
-	public Page<Competicao> consultarCompeticoes(@RequestParam("page") Integer pagina) {
-		return competicaoService.consultarCompeticoes(pagina);
+	public List<Competicao> consultarCompeticoes() {
+		return competicaoService.consultarCompeticoes();
 	}
 
 
