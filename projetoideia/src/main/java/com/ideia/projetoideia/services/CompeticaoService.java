@@ -52,7 +52,7 @@ public class CompeticaoService {
 
 	public Page<Competicao> consultarCompeticoes(Integer numeroPagina) {
 		Direction sortDirection = Sort.Direction.ASC;
-		Sort sort = Sort.by(sortDirection, "nomeCompeticao");
+		Sort sort = Sort.by(sortDirection, "nome_competicao");
 		Page<Competicao> page = competicaoRepositorio.findAll(PageRequest.of(--numeroPagina, 6, sort));
 		return page;
 	}
