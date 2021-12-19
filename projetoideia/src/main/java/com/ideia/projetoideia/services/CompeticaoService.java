@@ -61,6 +61,13 @@ public class CompeticaoService {
 
 		throw new NotFoundException("Competição não encontrada");
 	}
+	
+	public Page<Competicao> consultarCompeticoesDoUsuario(Integer idUsuario,Integer numeroPagina){
+		Direction sortDirection = Sort.Direction.ASC;
+		Sort sort = Sort.by(sortDirection, "nome_competicao");
+		Page<Competicao> page = competicaoRepositorio.findByUsuario(idUsuario,PageRequest.of(--numeroPagina, 6, sort));
+		return page;
+	}
 
 	public Page<Competicao> consultarCompeticoes(Integer numeroPagina) {
 		Direction sortDirection = Sort.Direction.ASC;

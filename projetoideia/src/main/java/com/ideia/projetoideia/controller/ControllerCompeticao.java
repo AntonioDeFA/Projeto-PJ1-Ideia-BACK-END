@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -43,8 +44,7 @@ public class ControllerCompeticao {
 	}
 	
 	@GetMapping("/competicao/{competicaoId}")
-	@ResponseStatus(code = HttpStatus.OK, reason = "Competição encontrada com sucesso")
-	public Competicao encontrarCompeticao(@PathVariable("competicaoId") Integer competicaoId) {
+	public  Competicao encontrarCompeticao(@PathVariable("competicaoId") Integer competicaoId)throws Exception {
 		try {
 			 return  competicaoService.recuperarCompeticaoId(competicaoId);
 			 
@@ -58,6 +58,13 @@ public class ControllerCompeticao {
 	@GetMapping("/competicoes")
 	public List<Competicao> consultarCompeticoes() {
 		return competicaoService.consultarCompeticoes();
+	}
+	
+	@GetMapping("/competicoes/usuario/{usuarioId}")
+	public Page<Competicao> consultarCompeticoesDoUsuario(@RequestParam("page") Integer pagina,
+			@PathVariable("usuarioId") Integer usuarioId){
+		
+		return competicaoService.consultarCompeticoesDoUsuario(usuarioId, pagina);
 	}
 
 
