@@ -7,12 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Etapa;
 import com.ideia.projetoideia.model.TipoEtapa;
+import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
+import com.ideia.projetoideia.repository.UsuarioRepositorio;
 import com.ideia.projetoideia.services.CompeticaoService;
 import com.ideia.projetoideia.services.UsuarioService;
 
@@ -22,6 +27,8 @@ public class ProjetoideiaApplication implements CommandLineRunner {
 	public static void main(String[] args) {
 		SpringApplication.run(ProjetoideiaApplication.class, args);
 	}
+	@Autowired
+	private UsuarioRepositorio usuarioRepositorio;
 
 	@Autowired
 	private UsuarioService usuarioService;
@@ -49,7 +56,7 @@ public class ProjetoideiaApplication implements CommandLineRunner {
 //		e.printStackTrace();
 //	}
 //	System.out.println("TERMINEI");
-//		
+		
 
 //		Etapa etapa = new Etapa();
 //		etapa.setDataInicio(LocalDate.now());
@@ -62,21 +69,32 @@ public class ProjetoideiaApplication implements CommandLineRunner {
 //		comp.setQntdMaximaMembrosPorEquipe(1);
 //		comp.setQntdMinimaMembrosPorEquipe(1);
 //		comp.setTempoMaximoVideo(12f);
-//		comp.setEtapa(null);
-//		etapa.setCompeticao(comp);
+//		comp.setEtapa(etapa);
 //		
 //		try {
 //			competicaoService.criarCompeticao(comp);
-//			etapaRepositorio.save(etapa);
-//			
-//			comp.setEtapa(etapa);
-//			competicaoRepositorio.save(comp);
+//
 //			
 //		} catch (Exception e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
+		
+//		Competicao compp= competicaoRepositorio.findById(4).get();
+//		compp.setOrganiador(usuarioRepositorio.findById(2).get());
+//		competicaoRepositorio.save(compp);
+		
+//		System.out.println(competicaoRepositorio.findByOrganiador(usuarioRepositorio.findById(2).get()).get(0).getId());
 
+//		System.out.println(competicaoRepositorio.findById(4).get().getOrganiador().getId());
+		
+//		competicaoService.consultarCompeticoesDoUsuario(2, 1);
+		
+//		int num=1;
+//		Direction sortDirection = Sort.Direction.ASC;
+//		Sort sort = Sort.by(sortDirection, "nome_competicao");
+//		competicaoRepositorio.findByUsuario(3, PageRequest.of(--num, 6, sort));
+		
 	}
 
 }

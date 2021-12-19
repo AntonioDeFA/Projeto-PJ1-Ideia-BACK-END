@@ -1,12 +1,12 @@
 package com.ideia.projetoideia.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Usuario;
@@ -21,6 +21,9 @@ public interface CompeticaoRepositorio extends JpaRepository<Competicao, Integer
 			+ " where (comp.organizador_fk = 1?) or (lider_equipe.lider_fk = 1?);", nativeQuery = true)
 	public Page<Competicao> findByUsuario(Integer idUsuario, PageRequest pageRequest);
 
+	public Page<Competicao> findByOrganiador(Usuario organiador, PageRequest pageRequest);
+	
 	public List<Competicao> findByOrganiador(Usuario organiador);
-
+	
+	public Optional<Competicao> findById(Integer id);
 }

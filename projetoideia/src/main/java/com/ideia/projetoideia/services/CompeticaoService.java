@@ -25,17 +25,17 @@ public class CompeticaoService {
 
 	@Autowired
 	UsuarioRepositorio usuarioRepositorio;
-	
+
 	@Autowired
 	EtapaRepositorio etapaRepositorio;
 
 	public void criarCompeticao(Competicao competicao) throws Exception {
-		
+
 		Etapa etapa = competicao.getEtapa();
 		etapa.setCompeticao(null);
 		etapaRepositorio.save(etapa);
 		competicaoRepositorio.save(competicao);
-		
+
 		etapa.setCompeticao(competicao);
 		etapaRepositorio.save(etapa);
 	}
@@ -61,11 +61,12 @@ public class CompeticaoService {
 
 		throw new NotFoundException("Competição não encontrada");
 	}
-	
-	public Page<Competicao> consultarCompeticoesDoUsuario(Integer idUsuario,Integer numeroPagina){
+
+	public Page<Competicao> consultarCompeticoesDoUsuario(Integer idUsuario, Integer numeroPagina) {
 		Direction sortDirection = Sort.Direction.ASC;
 		Sort sort = Sort.by(sortDirection, "nome_competicao");
-		Page<Competicao> page = competicaoRepositorio.findByUsuario(idUsuario,PageRequest.of(--numeroPagina, 6, sort));
+		Page<Competicao> page = competicaoRepositorio.findByOrganiador(usuarioRepositorio.findById(idUsuario).get(),
+				PageRequest.of(--numeroPagina, 6, sort));
 		return page;
 	}
 
