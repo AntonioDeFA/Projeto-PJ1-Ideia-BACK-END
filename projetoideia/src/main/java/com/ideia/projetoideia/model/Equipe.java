@@ -29,5 +29,8 @@ public class Equipe {
 	@OneToOne
 	@JoinColumn(name = "lider_fk")
 	private Usuario lider;
+	@OneToOne
+	@JoinColumn(name = "competicao_fk")
+	private Competicao competicaoCadastrada;
 
 }
