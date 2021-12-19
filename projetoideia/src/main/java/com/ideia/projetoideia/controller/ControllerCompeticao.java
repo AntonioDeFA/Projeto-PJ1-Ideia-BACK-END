@@ -29,7 +29,7 @@ public class ControllerCompeticao {
 	@Autowired
 	CompeticaoService competicaoService;
 
-	@PostMapping("/competicao/criar")
+	@PostMapping("/competicao")
 	@ResponseStatus(code = HttpStatus.CREATED, reason = "Competição criada com sucesso")
 	public void criarCompeticao(@Valid @RequestBody Competicao competicao, BindingResult result) throws Exception {
 		if (!result.hasErrors()) {
