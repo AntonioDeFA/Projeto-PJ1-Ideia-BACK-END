@@ -5,7 +5,6 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,7 +27,7 @@ public class ControllerUsuario {
 	@Autowired
 	UsuarioService usuarioService;
 
-	@PostMapping("/usuario/criar")
+	@PostMapping("/usuario")
 	@ResponseStatus(code = HttpStatus.CREATED, reason = "Usuário criado com sucesso")
 	public void criarUsuario(@Valid @RequestBody Usuario user, BindingResult result) throws Exception {
 
@@ -42,22 +41,11 @@ public class ControllerUsuario {
 		}
 	}
 
-	@GetMapping("/usuario/all")
+	@GetMapping("/usuarios")
 	public List<Usuario> consultarUsuarios() {
 		return usuarioService.consultarUsuarios();
 	}
 
-	public Page<Usuario> consultarCompeticoes(Integer numeroPagina) {
-		return usuarioService.consultarUsuarios(numeroPagina);
-	}
-
-	public Usuario consultarUsuarioPorEmail(String email) throws Exception {
-		return usuarioService.consultarUsuarioPorEmail(email);
-	}
-
-	public Usuario consultarUsuarioPorId(Integer id) throws Exception {
-		return usuarioService.consultarUsuarioPorId(id);
-	}
 
 	@PutMapping("/usuario/update/{usuarioId}")
 	@ResponseStatus(code = HttpStatus.OK, reason = "Usuario encontrado com sucesso")

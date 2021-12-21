@@ -28,9 +28,16 @@ public class EquipeService {
 		return equipeRepositorio.findAll();
 	}
 
+	public Page<Equipe> consultarEquipesDeUmaCompeticao(Integer numeroPagina, Integer competicaoId) {
+		Direction sortDirection = Sort.Direction.ASC;
+		Sort sort = Sort.by(sortDirection, "nome_equipe");
+		Page<Equipe> page = equipeRepositorio.findByCompeticao(competicaoId, PageRequest.of(--numeroPagina, 6, sort));
+		return page;
+	}
+
 	public Page<Equipe> consultarEquipes(Integer numeroPagina) {
 		Direction sortDirection = Sort.Direction.ASC;
-		Sort sort = Sort.by(sortDirection, "nomeEquipe");
+		Sort sort = Sort.by(sortDirection, "nome_equipe");
 		Page<Equipe> page = equipeRepositorio.findAll(PageRequest.of(--numeroPagina, 6, sort));
 		return page;
 	}

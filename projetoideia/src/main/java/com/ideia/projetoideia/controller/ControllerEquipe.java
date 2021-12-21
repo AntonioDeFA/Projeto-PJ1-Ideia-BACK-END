@@ -27,7 +27,7 @@ public class ControllerEquipe {
 	@Autowired
 	EquipeService equipeService;
 
-	@PostMapping("/criarEquipe")
+	@PostMapping("/equipe")
 	@ResponseStatus(code = HttpStatus.CREATED, reason = "Equipe criada com sucesso")
 	public void criarEquipe(@Valid @RequestBody Equipe equipe, BindingResult result) throws Exception {
 		if (!result.hasErrors()) {
@@ -40,23 +40,24 @@ public class ControllerEquipe {
 		}
 	}
 
-	@GetMapping("/consultarEquipes")
-	public Page<Equipe> consultarEquipes(@RequestParam("page") Integer numeroPagina) {
-		return equipeService.consultarEquipes(numeroPagina);
+	@GetMapping("/equipes/{competicaoId}")
+	public Page<Equipe> consultarEquipes(@RequestParam("page") Integer numeroPagina,
+			@PathVariable("competicaoId") Integer competicaoId) {
+		return equipeService.consultarEquipesDeUmaCompeticao(numeroPagina, competicaoId);
 	}
 
-	@PutMapping("/editarEquipe/{id}")
+	@PutMapping("/equipe/update/{equipeId}")
 	@ResponseStatus(code = HttpStatus.OK, reason = "Equipe encontrada com sucesso")
-	public void atualizarEquipe(@Valid @RequestBody Equipe equipe, BindingResult result, @PathVariable("id") Integer id)
+	public void atualizarEquipe(@Valid @RequestBody Equipe equipe, BindingResult result, @PathVariable("equipeId") Integer equipeId)
 			throws Exception {
-		equipeService.atualizarEquipe(equipe, id);
+		equipeService.atualizarEquipe(equipe, equipeId);
 	}
 
-	@DeleteMapping("/deletarEquipe/{id}")
-	public void deletarEquipe(@PathVariable("id") Integer id) throws NotFoundException {
+	@DeleteMapping("/equipe/delete/{equipeId}")
+	public void deletarEquipe(@PathVariable("equipeId") Integer equipeId) throws NotFoundException {
 		try {
 
-			equipeService.deletarEquipe(id);
+			equipeService.deletarEquipe(equipeId);
 
 		} catch (Exception e) {
 			e.printStackTrace();
