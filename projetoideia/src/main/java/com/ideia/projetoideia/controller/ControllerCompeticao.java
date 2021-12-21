@@ -60,10 +60,9 @@ public class ControllerCompeticao {
 	}
 	
 	@GetMapping("/competicoes/usuario/{usuarioId}")
-	public Page<Competicao> consultarCompeticoesDoUsuario(@RequestParam("page") Integer pagina,
-			@PathVariable("usuarioId") Integer usuarioId){
+	public List<Competicao> consultarCompeticoesDoUsuario(@PathVariable("usuarioId") Integer usuarioId){
 		
-		return competicaoService.consultarCompeticoesDoUsuario(usuarioId, pagina);
+		return competicaoService.consultarCompeticoesDoUsuario(usuarioId);
 	}
 
 

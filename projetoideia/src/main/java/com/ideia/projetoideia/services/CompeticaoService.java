@@ -1,5 +1,6 @@
 package com.ideia.projetoideia.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,21 +54,27 @@ public class CompeticaoService {
 		throw new NotFoundException("Competição não encontrada");
 	}
 
-	public List<Competicao> recuperarCompeticaoPorOrganizador(Integer id) throws NotFoundException {
-		List<Competicao> comp = competicaoRepositorio.findByOrganiador(usuarioRepositorio.findById(id).get());
+//	public List<Competicao> recuperarCompeticaoPorOrganizador(Integer id) throws NotFoundException {
+//		List<Competicao> comp = competicaoRepositorio.findByOrganiador(usuarioRepositorio.findById(id).get());
+//
+//		if (comp.size() > 0)
+//			return comp;
+//
+//		throw new NotFoundException("Competição não encontrada");
+//	}
 
-		if (comp.size() > 0)
-			return comp;
+	public List<Competicao> consultarCompeticoesDoUsuario(Integer idUsuario) {
 
-		throw new NotFoundException("Competição não encontrada");
-	}
+		List<Competicao> competicoesDoUsuario = new ArrayList<>();
 
-	public Page<Competicao> consultarCompeticoesDoUsuario(Integer idUsuario, Integer numeroPagina) {
-		Direction sortDirection = Sort.Direction.ASC;
-		Sort sort = Sort.by(sortDirection, "nome_competicao");
-		Page<Competicao> page = competicaoRepositorio.findByOrganiador(usuarioRepositorio.findById(idUsuario).get(),
-				PageRequest.of(--numeroPagina, 6, sort));
-		return page;
+		List<Competicao> competicoesComoLiderEquipe = competicaoRepositorio.findByEquipe(idUsuario);
+		List<Competicao> competicoesComoOrganizador = competicaoRepositorio.findByOrganiador(idUsuario);
+
+		competicoesDoUsuario.addAll(competicoesComoLiderEquipe);
+
+		competicoesDoUsuario.addAll(competicoesComoOrganizador);
+
+		return competicoesDoUsuario;
 	}
 
 	public Page<Competicao> consultarCompeticoes(Integer numeroPagina) {
