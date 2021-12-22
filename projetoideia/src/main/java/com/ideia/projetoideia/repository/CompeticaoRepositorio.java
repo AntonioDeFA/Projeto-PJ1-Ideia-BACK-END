@@ -22,10 +22,10 @@ public interface CompeticaoRepositorio extends JpaRepository<Competicao, Integer
 			+ "where equipe.lider_fk = ?1", nativeQuery = true)
 	public List<Competicao> findByEquipe(Integer usuarioId);
 
-	public Page<Competicao> findByOrganiador(Usuario organiador, PageRequest pageRequest);
+	public Page<Competicao> findByOrganizador(Usuario organiador, PageRequest pageRequest);
 	
 	@Query(value = "SELECT * from db_ideia.tb_competicao as comp where comp.organizador_fk = ?1" , nativeQuery = true)
-	public List<Competicao> findByOrganiador(Integer organiador);
+	public List<Competicao> findByOrganizador(Integer organiador);
 	
 	public Optional<Competicao> findById(Integer id);
 }

@@ -41,7 +41,7 @@ public class Competicao {
 
 	@OneToOne
 	@JoinColumn(name = "organizador_fk")
-	private Usuario organiador;
+	private Usuario organizador;
 
 	@OneToOne
 	@JoinColumn(name = "etapa_fk")

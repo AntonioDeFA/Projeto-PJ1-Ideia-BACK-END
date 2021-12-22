@@ -68,7 +68,7 @@ public class CompeticaoService {
 		List<Competicao> competicoesDoUsuario = new ArrayList<>();
 
 		List<Competicao> competicoesComoLiderEquipe = competicaoRepositorio.findByEquipe(idUsuario);
-		List<Competicao> competicoesComoOrganizador = competicaoRepositorio.findByOrganiador(idUsuario);
+		List<Competicao> competicoesComoOrganizador = competicaoRepositorio.findByOrganizador(idUsuario);
 
 		competicoesDoUsuario.addAll(competicoesComoLiderEquipe);
 
