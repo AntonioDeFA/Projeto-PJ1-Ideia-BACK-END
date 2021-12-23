@@ -2,6 +2,7 @@ package com.ideia.projetoideia;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -12,14 +13,21 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 import com.ideia.projetoideia.model.Competicao;
+import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.Etapa;
+import com.ideia.projetoideia.model.LeanCanvas;
 import com.ideia.projetoideia.model.TipoEtapa;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
+import com.ideia.projetoideia.repository.EquipeRepositorio;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
+import com.ideia.projetoideia.repository.LeanCanvasRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
 import com.ideia.projetoideia.services.CompeticaoService;
+import com.ideia.projetoideia.services.EquipeService;
 import com.ideia.projetoideia.services.UsuarioService;
+
+import javassist.NotFoundException;
 
 @SpringBootApplication
 public class ProjetoideiaApplication implements CommandLineRunner {
@@ -41,8 +49,49 @@ public class ProjetoideiaApplication implements CommandLineRunner {
 
 	@Autowired
 	private CompeticaoRepositorio competicaoRepositorio;
+	
+	@Autowired
+	private LeanCanvasRepositorio leanCanvasRepositorio;
+	
+	@Autowired
+	private EquipeService equipeService;
+	
+	@Autowired 
+	private EquipeRepositorio equipeRepositorio;
 
 	public void run(String... args) {
+		
+		
+//	try {
+//		equipeService.deletarEquipe(5);
+//	} catch (NotFoundException e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	}
+		
+//	LeanCanvas canvas  = new LeanCanvas();
+//	
+//	Equipe equipe = new Equipe();
+//	
+//	equipe.setNomeEquipe("Nome");
+//	equipe.setDataInscricao(LocalDate.now());
+//	equipe.setToken("aajiqasjidqijjisd");
+//	
+//	canvas.setEquipe(equipe);
+//	
+//	equipe.getCanvasDaEquipe().add(canvas);
+//	
+//	
+//	
+//	
+//	try {
+//		equipeService.criarEquipe(equipe);
+//	} catch (Exception e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	}
+	
+		
 
 //	Usuario user = new Usuario();
 //	user.setEmail("Gabryel@gmail.com");
