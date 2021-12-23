@@ -1,6 +1,7 @@
 package com.ideia.projetoideia.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,18 @@ public class EquipeService {
 		equipeRepositorio.save(equipe);
 	}
 
+	public Equipe recuperarEquipe(Integer equipeId) throws NotFoundException{
+		Optional<Equipe> equipe = equipeRepositorio.findById(equipeId);
+		
+		if(equipe.isPresent()) {
+			return equipe.get();
+		}
+		
+		throw new NotFoundException("Equipe não encontrada");
+		
+		
+	}
+
 	public List<Equipe> consultarEquipes() {
 		return equipeRepositorio.findAll();
 	}
@@ -43,7 +56,7 @@ public class EquipeService {
 	}
 
 	public void atualizarEquipe(Equipe equipe, Integer id) throws Exception {
-		Equipe equipeRecuperada = equipeRepositorio.findById(id).get();
+		Equipe equipeRecuperada = this.recuperarEquipe(id);
 		equipeRecuperada.setNomeEquipe(equipe.getNomeEquipe());
 		equipeRecuperada.setDataInscricao(equipe.getDataInscricao());
 		equipeRecuperada.setLider(equipe.getLider());
@@ -52,7 +65,7 @@ public class EquipeService {
 	}
 
 	public void deletarEquipe(Integer id) throws NotFoundException {
-		Equipe equipe = equipeRepositorio.findById(id).get();
+		Equipe equipe = this.recuperarEquipe(id);
 		equipeRepositorio.delete(equipe);
 	}
 }
