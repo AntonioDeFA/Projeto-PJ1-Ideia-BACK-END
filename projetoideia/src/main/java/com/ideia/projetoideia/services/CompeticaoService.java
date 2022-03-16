@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Etapa;
+import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
@@ -89,6 +91,43 @@ public class CompeticaoService {
 		Sort sort = Sort.by(sortDirection, "nome_competicao");
 		Page<Competicao> page = competicaoRepositorio.findByInscricao(PageRequest.of(--numeroPagina, 6, sort));
 		return page;
+	}
+
+	public Page<Competicao> consultarCompeticoesPorNomeMesAno(String nomeCompeticao, Integer mes, Integer ano,
+			Integer numeroPagina) {
+		List<Competicao> listaCompeticao = competicaoRepositorio.findByNomeCompeticao(nomeCompeticao);
+		return consultarCompeticoesPorMesAno(nomeCompeticao, mes, ano, numeroPagina, listaCompeticao);
+
+	}
+
+	public Page<Competicao> consultarMinhasCompeticoes(String nomeCompeticao, Integer mes, Integer ano,
+			Integer numeroPagina, Integer idUsuario) {
+		List<Competicao> listaCompeticao = competicaoRepositorio.findByOrganizador(idUsuario);
+		return consultarCompeticoesPorMesAno(nomeCompeticao, mes, ano, numeroPagina, listaCompeticao);
+	}
+
+	private Page<Competicao> consultarCompeticoesPorMesAno(String nomeCompeticao, Integer mes, Integer ano, Integer numeroPagina, List<Competicao> listaCompeticao) {
+		List<Competicao> listaAux = new ArrayList<Competicao>();
+		List<Competicao> listaFinal = new ArrayList<Competicao>();
+		if (ano != null) {
+			for (Competicao competicao : listaCompeticao) {
+				if (competicao.getEtapa().getDataInicio().getYear() >= ano) {
+					listaAux.add(competicao);
+					listaFinal.add(competicao);
+				}
+			}
+		}
+		if (mes != null) {
+			listaFinal.clear();
+			for (Competicao competicao : listaAux) {
+				if (competicao.getEtapa().getDataInicio().getMonthValue() >= mes) {
+					listaFinal.add(competicao);
+				}
+			}
+		}
+		Direction sortDirection = Sort.Direction.ASC;
+		Sort sort = Sort.by(sortDirection, "nome_competicao");
+		return new PageImpl<Competicao>(listaFinal, PageRequest.of(--numeroPagina, 6, sort), listaFinal.size());
 	}
 
 	public void atualizarCompeticao(Integer id, Competicao competicaoTemp) throws NotFoundException {

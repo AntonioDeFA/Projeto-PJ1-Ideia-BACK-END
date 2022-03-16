@@ -28,4 +28,6 @@ public interface CompeticaoRepositorio extends JpaRepository<Competicao, Integer
 	public List<Competicao> findByOrganizador(Integer organiador);
 	
 	public Optional<Competicao> findById(Integer id);
+	
+	public List<Competicao> findByNomeCompeticao(String nomeCompeticao);
 }
