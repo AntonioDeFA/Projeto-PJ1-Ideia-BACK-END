@@ -1,5 +1,7 @@
 package com.ideia.projetoideia.services;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,10 +19,10 @@ public class AuthenticacaoService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Usuario user = usuarioRepositorio.findByEmail(username);
+		Optional<Usuario> user = usuarioRepositorio.findByEmail(username);
 
-		if (user != null) {
-			return user;
+		if (user.isPresent()) {
+			return user.get();
 		}
 
 		throw new UsernameNotFoundException("Usuario não Encontrado");

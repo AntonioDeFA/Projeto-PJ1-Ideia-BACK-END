@@ -2,6 +2,7 @@ package com.ideia.projetoideia.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,8 @@ import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.repository.PerfilRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
 
+import javassist.NotFoundException;
+
 @Service
 public class UsuarioService {
 
@@ -26,7 +29,7 @@ public class UsuarioService {
 	PerfilRepositorio perfilRepositorio;
 
 	public void criarUsuario(Usuario user) throws Exception {
-		if (usuarioRepositorio.findByEmail(user.getEmail()) != null) {
+		if (usuarioRepositorio.findByEmail(user.getEmail()).isPresent()) {
 			throw new Exception("Usuário já existe");
 		}
 		user.setSenha(new BCryptPasswordEncoder().encode(user.getSenha()));
@@ -55,23 +58,25 @@ public class UsuarioService {
 	}
 
 	public Usuario consultarUsuarioPorEmail(String email) throws Exception {
-		Usuario usuario = usuarioRepositorio.findByEmail(email);
-		if (usuario == null) {
-			throw new Exception("Usuário não existe");
+		Optional<Usuario> usuario = usuarioRepositorio.findByEmail(email);
+		
+		if (usuario.isPresent()) {
+			return usuario.get();
 		}
-		return usuario;
+		throw new NotFoundException("Usuario não encontrado");
+		
 	}
 
 	public Usuario consultarUsuarioPorId(Integer id) throws Exception {
-		Usuario usuario = usuarioRepositorio.findById(id).get();
-		if (usuario == null) {
-			throw new Exception("Usuário não existe");
+		Optional<Usuario> user = usuarioRepositorio.findById(id);
+		if (user.isPresent()){
+			return user.get();
 		}
-		return usuario;
+		throw new NotFoundException("Usuario não encontrado");
 	}
 
 	public void atualizarUsuario(Usuario user, Integer id) throws Exception {
-		Usuario userRecuperado = usuarioRepositorio.findById(id).get();
+		Usuario userRecuperado = this.consultarUsuarioPorId(id);
 		userRecuperado.setNomeUsuario(user.getNomeUsuario());
 		userRecuperado.setEmail(user.getEmail());
 		userRecuperado.setSenha(user.getPassword());
