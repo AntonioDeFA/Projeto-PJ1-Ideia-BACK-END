@@ -54,6 +54,18 @@ public class ControllerCompeticao {
 		}
 	}
 	
+	@GetMapping("/competicoes/usuario")
+	public Page<Competicao> consultarCompeticoesPorNomeMesAno(@RequestParam String nomeCompeticao,@RequestParam Integer mes,@RequestParam Integer ano,
+			@RequestParam Integer numeroPagina) {
+		return competicaoService.consultarCompeticoesPorNomeMesAno(nomeCompeticao, mes, ano, numeroPagina);
+	}
+	
+	@GetMapping("/competicoes/usuario")
+	public Page<Competicao> consultarMinhasCompeticoes(@RequestParam String nomeCompeticao, @RequestParam Integer mes, @RequestParam Integer ano,
+			@RequestParam Integer numeroPagina, @RequestParam Integer idUsuario) {
+		return competicaoService.consultarMinhasCompeticoes(nomeCompeticao, mes, ano, numeroPagina, idUsuario);
+	}
+	
 	@GetMapping("/competicoes")
 	public List<Competicao> consultarCompeticoes() {
 		return competicaoService.consultarCompeticoes();
