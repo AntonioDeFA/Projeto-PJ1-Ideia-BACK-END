@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Usuario;
+import com.ideia.projetoideia.response.ResponseFile;
 import com.ideia.projetoideia.services.UsuarioService;
 
+import lombok.extern.slf4j.Slf4j;
+@Slf4j
 @RestController
 @RequestMapping("/ideia")
 public class ControllerUsuario {
@@ -28,17 +32,22 @@ public class ControllerUsuario {
 	UsuarioService usuarioService;
 
 	@PostMapping("/usuario")
-	@ResponseStatus(code = HttpStatus.CREATED, reason = "Usuário criado com sucesso")
-	public void criarUsuario(@Valid @RequestBody Usuario user, BindingResult result) throws Exception {
+	public ResponseEntity<?> criarUsuario(@Valid @RequestBody Usuario user, BindingResult result)throws Exception {
 
 		if (!result.hasErrors()) {
+			try {
+				usuarioService.criarUsuario(user);
+				return ResponseEntity.status(HttpStatus.CREATED).body("Criado com Sucesso");
+			} catch (Exception e) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+						.body("Não foi possível Cadastrar o Usuário \n Motivo: "+e.getMessage());
+			}
 
-			usuarioService.criarUsuario(user);
-
-		} else {
-
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, result.toString());
 		}
+	
+		return ResponseEntity.badRequest().body(result.toString());
+		
+
 	}
 
 	@GetMapping("/usuarios")
@@ -46,41 +55,37 @@ public class ControllerUsuario {
 		return usuarioService.consultarUsuarios();
 	}
 
-
 	@PutMapping("/usuario/update/{usuarioId}")
-	@ResponseStatus(code = HttpStatus.OK, reason = "Usuario encontrado com sucesso")
-	public void atualizarCompeticao(@Valid @RequestBody Usuario user, BindingResult result,
+	public ResponseEntity<?> atualizarUsuario(@Valid @RequestBody Usuario user, BindingResult result,
 			@PathVariable("usuarioId") Integer usuarioId) {
 
 		if (!result.hasErrors()) {
 
 			try {
-
 				usuarioService.atualizarUsuario(user, usuarioId);
+				return ResponseEntity.status(HttpStatus.OK).body(new ResponseFile("Atualizado com Sucesso"));
 			} catch (Exception e) {
 
 				e.printStackTrace();
-				throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseFile("Erro ao atualizar usuário"));
 			}
 
-		} else {
-
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, result.toString());
 		}
+
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseFile(result.toString()));
+
 	}
 
 	@DeleteMapping("/usuario/delete/{usuarioId}")
-	@ResponseStatus(code = HttpStatus.OK, reason = "Usuario deletado com sucesso")
-	public void deletarUsuarioPorId(@PathVariable("usuarioId") Integer usuarioId) throws Exception {
+	public ResponseEntity<?> deletarUsuarioPorId(@PathVariable("usuarioId") Integer usuarioId) throws Exception {
 
 		try {
 
 			usuarioService.deletarUsuarioPorId(usuarioId);
+			return ResponseEntity.status(HttpStatus.OK).body(new ResponseFile("Usuario deletado com sucesso"));
 
 		} catch (Exception e) {
-			e.printStackTrace();
-
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseFile("Usuário Não Encontrado "));
 		}
 
 	}

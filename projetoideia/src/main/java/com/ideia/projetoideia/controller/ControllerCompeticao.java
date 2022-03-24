@@ -54,7 +54,7 @@ public class ControllerCompeticao {
 		}
 	}
 	
-	@GetMapping("/competicoes/usuario")
+	@GetMapping("/competicoes/filtro")
 	public Page<Competicao> consultarCompeticoesPorNomeMesAno(@RequestParam String nomeCompeticao,@RequestParam Integer mes,@RequestParam Integer ano,
 			@RequestParam Integer numeroPagina) {
 		return competicaoService.consultarCompeticoesPorNomeMesAno(nomeCompeticao, mes, ano, numeroPagina);

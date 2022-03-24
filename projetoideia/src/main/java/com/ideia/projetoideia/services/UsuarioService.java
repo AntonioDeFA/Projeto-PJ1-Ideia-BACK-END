@@ -18,7 +18,9 @@ import com.ideia.projetoideia.repository.PerfilRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
 
 import javassist.NotFoundException;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class UsuarioService {
 
@@ -27,10 +29,11 @@ public class UsuarioService {
 
 	@Autowired
 	PerfilRepositorio perfilRepositorio;
+	
 
 	public void criarUsuario(Usuario user) throws Exception {
 		if (usuarioRepositorio.findByEmail(user.getEmail()).isPresent()) {
-			throw new Exception("Usuário já existe");
+			throw new Exception( "Não foi possível criar esta conta, pois já existe um usuário com este email cadastrado");
 		}
 		user.setSenha(new BCryptPasswordEncoder().encode(user.getSenha()));
 

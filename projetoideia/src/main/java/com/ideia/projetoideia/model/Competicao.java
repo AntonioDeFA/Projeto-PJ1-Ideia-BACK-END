@@ -2,6 +2,7 @@ package com.ideia.projetoideia.model;
 
 import java.io.File;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+
 
 import lombok.Data;
 
@@ -39,11 +42,11 @@ public class Competicao {
 	@Column(name = "dominio_competicao")
 	private String dominioCompeticao = "";
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "organizador_fk")
 	private Usuario organizador;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "etapa_fk")
 	private Etapa etapa;
 	
