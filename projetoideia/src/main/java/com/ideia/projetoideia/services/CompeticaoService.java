@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Etapa;
@@ -88,11 +89,13 @@ public class CompeticaoService {
 		return page;
 	}
 
-	public Page<Competicao> consultarCompeticoesFaseInscricao(Integer numeroPagina) {
-		Direction sortDirection = Sort.Direction.ASC;
-		Sort sort = Sort.by(sortDirection, "nome_competicao");
-		Page<Competicao> page = competicaoRepositorio.findByInscricao(PageRequest.of(--numeroPagina, 6, sort));
-		return page;
+	public Page<Competicao> consultarCompeticoesFaseInscricao(Integer numeroPagina, String nomeCompeticao, Integer mes, Integer ano) {
+//		Direction sortDirection = Sort.Direction.ASC;
+//		Sort sort = Sort.by(sortDirection, "nome_competicao");
+		
+//		Page<Competicao> page = competicaoRepositorio.findByInscricao(PageRequest.of(--numeroPagina, 6, sort));
+		
+		return consultarCompeticoesPorNomeMesAno(nomeCompeticao, mes, ano, numeroPagina);
 	}
 
 	public Page<Competicao> consultarCompeticoesPorNomeMesAno(String nomeCompeticao, Integer mes, Integer ano,

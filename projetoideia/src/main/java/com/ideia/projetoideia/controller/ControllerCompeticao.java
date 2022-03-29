@@ -54,15 +54,25 @@ public class ControllerCompeticao {
 		}
 	}
 	
+	// Retorna todas as competições na fase de INSCRIÇÕES
 	@GetMapping("/competicoes/inscricoes")
-	public Page<Competicao> consultarCompeticoesPorNomeMesAno(@RequestParam String nomeCompeticao,@RequestParam Integer mes,@RequestParam Integer ano,
-			@RequestParam Integer numeroPagina) {
-		return competicaoService.consultarCompeticoesPorNomeMesAno(nomeCompeticao, mes, ano, numeroPagina);
+	public Page<Competicao> consultarCompeticoesPorNomeMesAno(
+			@RequestParam("page") Integer pagina,
+			@RequestParam(value = "nomeCompeticao", required = false) String nomeCompeticao,
+			@RequestParam(value = "mes", required = false) Integer mes,
+			@RequestParam(value = "ano", required = false) Integer ano,
+			@RequestParam(value = "numeroPagina", required = false) Integer numeroPagina) {
+//		return competicaoService.consultarCompeticoesPorNomeMesAno(nomeCompeticao, mes, ano, numeroPagina);
+		return competicaoService.consultarCompeticoesFaseInscricao(pagina, nomeCompeticao, mes, ano, numeroPagina);
 	}
 	
+	// Retorna todas as competições relacionadas a um USUÁRIO
 	@GetMapping("/competicoes/usuario-logado")
-	public Page<Competicao> consultarMinhasCompeticoes(@RequestParam String nomeCompeticao, @RequestParam Integer mes, @RequestParam Integer ano,
-			@RequestParam Integer numeroPagina) {
+	public Page<Competicao> consultarMinhasCompeticoes(
+			@RequestParam(value = "nomeCompeticao", required = false) String nomeCompeticao,
+			@RequestParam(value = "mes", required = false) Integer mes,
+			@RequestParam(value = "ano", required = false) Integer ano,
+			@RequestParam(value = "numeroPagina", required = false) Integer numeroPagina) {
 		return competicaoService.consultarMinhasCompeticoes(nomeCompeticao, mes, ano, numeroPagina);
 	}
 	
@@ -73,7 +83,6 @@ public class ControllerCompeticao {
 	
 	@GetMapping("/competicoes/usuario/{usuarioId}")
 	public List<Competicao> consultarCompeticoesDoUsuario(@PathVariable("usuarioId") Integer usuarioId){
-		
 		return competicaoService.consultarCompeticoesDoUsuario(usuarioId);
 	}
 
