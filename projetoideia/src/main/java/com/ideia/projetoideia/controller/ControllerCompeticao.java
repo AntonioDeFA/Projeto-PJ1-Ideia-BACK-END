@@ -54,16 +54,16 @@ public class ControllerCompeticao {
 		}
 	}
 	
-	@GetMapping("/competicoes/filtro")
+	@GetMapping("/competicoes/inscricoes")
 	public Page<Competicao> consultarCompeticoesPorNomeMesAno(@RequestParam String nomeCompeticao,@RequestParam Integer mes,@RequestParam Integer ano,
 			@RequestParam Integer numeroPagina) {
 		return competicaoService.consultarCompeticoesPorNomeMesAno(nomeCompeticao, mes, ano, numeroPagina);
 	}
 	
-	@GetMapping("/competicoes/usuario")
+	@GetMapping("/competicoes/usuario-logado")
 	public Page<Competicao> consultarMinhasCompeticoes(@RequestParam String nomeCompeticao, @RequestParam Integer mes, @RequestParam Integer ano,
-			@RequestParam Integer numeroPagina, @RequestParam Integer idUsuario) {
-		return competicaoService.consultarMinhasCompeticoes(nomeCompeticao, mes, ano, numeroPagina, idUsuario);
+			@RequestParam Integer numeroPagina) {
+		return competicaoService.consultarMinhasCompeticoes(nomeCompeticao, mes, ano, numeroPagina);
 	}
 	
 	@GetMapping("/competicoes")
@@ -78,10 +78,10 @@ public class ControllerCompeticao {
 	}
 
 
-	@GetMapping("/competicoes/inscricoes")
-	public Page<Competicao> consultarCompeticoesInscricao(@RequestParam("page") Integer pagina) {
-		return competicaoService.consultarCompeticoesFaseInscricao(pagina);
-	}
+//	@GetMapping("/competicoes/inscricoes")
+//	public Page<Competicao> consultarCompeticoesInscricao(@RequestParam("page") Integer pagina) {
+//		return competicaoService.consultarCompeticoesFaseInscricao(pagina);
+//	}
 
 	@PutMapping("/competicao/update/{competicaoId}")
 	@ResponseStatus(code = HttpStatus.OK, reason = "Competição encontrada com sucesso")

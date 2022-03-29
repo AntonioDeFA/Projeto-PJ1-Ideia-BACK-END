@@ -10,10 +10,13 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Etapa;
+import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
@@ -100,8 +103,10 @@ public class CompeticaoService {
 	}
 
 	public Page<Competicao> consultarMinhasCompeticoes(String nomeCompeticao, Integer mes, Integer ano,
-			Integer numeroPagina, Integer idUsuario) {
-		List<Competicao> listaCompeticao = competicaoRepositorio.findByOrganizador(idUsuario);
+			Integer numeroPagina) {
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+		Usuario usuario= usuarioRepositorio.findByEmail(autenticado.getName()).get();
+		List<Competicao> listaCompeticao = competicaoRepositorio.findByOrganizador(usuario.getId());
 		return consultarCompeticoesPorMesAno(nomeCompeticao, mes, ano, numeroPagina, listaCompeticao);
 	}
 
