@@ -56,24 +56,20 @@ public class ControllerCompeticao {
 	
 	// Retorna todas as competições na fase de INSCRIÇÕES
 	@GetMapping("/competicoes/inscricoes")
-	public Page<Competicao> consultarCompeticoesPorNomeMesAno(
-			@RequestParam("page") Integer pagina,
+	public List<Competicao> consultarCompeticoesPorNomeMesAno(
 			@RequestParam(value = "nomeCompeticao", required = false) String nomeCompeticao,
 			@RequestParam(value = "mes", required = false) Integer mes,
-			@RequestParam(value = "ano", required = false) Integer ano,
-			@RequestParam(value = "numeroPagina", required = false) Integer numeroPagina) {
-//		return competicaoService.consultarCompeticoesPorNomeMesAno(nomeCompeticao, mes, ano, numeroPagina);
-		return competicaoService.consultarCompeticoesFaseInscricao(pagina, nomeCompeticao, mes, ano, numeroPagina);
+			@RequestParam(value = "ano", required = false) Integer ano) {
+		return competicaoService.consultarCompeticoesFaseInscricao(nomeCompeticao, mes, ano);
 	}
 	
 	// Retorna todas as competições relacionadas a um USUÁRIO
 	@GetMapping("/competicoes/usuario-logado")
-	public Page<Competicao> consultarMinhasCompeticoes(
+	public List<Competicao> consultarMinhasCompeticoes(
 			@RequestParam(value = "nomeCompeticao", required = false) String nomeCompeticao,
 			@RequestParam(value = "mes", required = false) Integer mes,
-			@RequestParam(value = "ano", required = false) Integer ano,
-			@RequestParam(value = "numeroPagina", required = false) Integer numeroPagina) {
-		return competicaoService.consultarMinhasCompeticoes(nomeCompeticao, mes, ano, numeroPagina);
+			@RequestParam(value = "ano", required = false) Integer ano){
+		return competicaoService.consultarMinhasCompeticoes(nomeCompeticao, mes, ano);
 	}
 	
 	@GetMapping("/competicoes")
