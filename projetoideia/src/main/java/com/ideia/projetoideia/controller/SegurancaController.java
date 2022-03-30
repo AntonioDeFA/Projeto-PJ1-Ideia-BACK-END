@@ -39,6 +39,7 @@ public class SegurancaController {
 		String jwt = jwtUtils.generateJwtToken(authentication);
 		
 		Usuario userDetails = (Usuario) authentication.getPrincipal();		
+		
 		List<String> roles = userDetails.getAuthorities().stream()
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
