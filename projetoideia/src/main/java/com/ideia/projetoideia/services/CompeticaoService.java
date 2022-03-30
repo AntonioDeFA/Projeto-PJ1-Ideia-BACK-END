@@ -114,11 +114,11 @@ public class CompeticaoService {
 
 	public List<Competicao> consultarMinhasCompeticoes(String nomeCompeticao, Integer mes, Integer ano) {
 		
-		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+		//Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 		
-		Usuario usuario = usuarioRepositorio.findByEmail(autenticado.getName()).get();
+		//Usuario usuario = usuarioRepositorio.findByEmail(autenticado.getName()).get();
 		
-		return competicaoRepositorioCustom.fyndCompeticoesDoUsuario(nomeCompeticao, mes, ano, usuario.getId());
+		return competicaoRepositorioCustom.findByCompeticoesDoUsuario(nomeCompeticao, mes, ano, 10);
 
 	}
 
