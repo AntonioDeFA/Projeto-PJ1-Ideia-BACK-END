@@ -94,9 +94,8 @@ public class CompeticaoService {
 		// Usuario usuario =
 		// usuarioRepositorio.findByEmail(autenticado.getName()).get();
 
-		// return competicaoRepositorioCustom.findByCompeticoesDoUsuario(nomeCompeticao,
-		// mes, ano, usuario.getId() );
-		return null;
+		return competicaoRepositorioCustom.findByCompeticoesDoUsuario(nomeCompeticao,mes, ano, 2 );
+//		return null;
 	}
 
 	public void atualizarCompeticao(Integer id, Competicao competicaoTemp) throws NotFoundException {
