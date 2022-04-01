@@ -7,6 +7,6 @@ Funcionalidade: Test Cucumber
 		Dado que eu acesse a pagina inicial do ideia 
 		E preencha o campo pesquisa com "IFPB"
 		E clique no botao filtar
-		Entao valide a busca 
+		Entao valide a busca "IFPB" 
 		
 		

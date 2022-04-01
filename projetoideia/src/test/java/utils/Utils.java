@@ -24,6 +24,8 @@ public class Utils {
 
 	}
 	
+	
+	
 	public static <T> T Na(Class<T>classe){
 		return PageFactory.initElements(driver, classe);
 	}
