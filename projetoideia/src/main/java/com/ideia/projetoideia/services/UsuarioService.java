@@ -18,9 +18,7 @@ import com.ideia.projetoideia.repository.PerfilRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
 
 import javassist.NotFoundException;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 public class UsuarioService {
 

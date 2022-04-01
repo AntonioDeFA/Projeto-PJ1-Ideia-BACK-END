@@ -11,8 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
-
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 import lombok.Data;
 
@@ -28,13 +28,19 @@ public class Competicao {
 	private String nomeCompeticao;
 
 	@Column(nullable = false, name = "qntd_maxima_membros_por_equipe")
+	@Max(value = 30)
+	@Min(value = 1)
 	private Integer qntdMaximaMembrosPorEquipe;
-
+	
 	@Column(nullable = false, name = "qntd_minima_membros_por_equipe")
+	@Max(value = 29)
+	@Min(value = 1)
 	private Integer qntdMinimaMembrosPorEquipe;
 
 	@Column(nullable = false, name = "tempo_maximo_video")
-	private Float tempoMaximoVideo;
+	@Min(value = 30)
+	@Max(value = 1200)
+	private Float tempoMaximoVideoEmSeg;
 
 	@Column(nullable = false, name = "arquivo_regulamento_competicao")
 	private File arquivoRegulamentoCompeticao;
@@ -49,7 +55,7 @@ public class Competicao {
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "etapa_fk")
 	private Etapa etapa;
-	
+
 //	@OneToMany(mappedBy = "id")
 //	private List<Equipe> equipesCadatradas;
 

@@ -42,6 +42,9 @@ public class CompeticaoService {
 
 		Etapa etapa = competicao.getEtapa();
 		etapa.setCompeticao(null);
+		if (competicao.getQntdMaximaMembrosPorEquipe() < competicao.getQntdMinimaMembrosPorEquipe()) {
+			throw new Exception("Quantidade mínima de membros não pode ser maior que a quantidade máxima!");
+		}
 		etapaRepositorio.save(etapa);
 		competicaoRepositorio.save(competicao);
 
@@ -94,20 +97,21 @@ public class CompeticaoService {
 		// Usuario usuario =
 		// usuarioRepositorio.findByEmail(autenticado.getName()).get();
 
-		return competicaoRepositorioCustom.findByCompeticoesDoUsuario(nomeCompeticao,mes, ano, 2 );
-//		return null;
+		return competicaoRepositorioCustom.findByCompeticoesDoUsuario(nomeCompeticao, mes, ano, 2);
 	}
 
-	public void atualizarCompeticao(Integer id, Competicao competicaoTemp) throws NotFoundException {
+	public void atualizarCompeticao(Integer id, Competicao competicaoTemp) throws Exception, NotFoundException {
 		Competicao comp = recuperarCompeticaoId(id);
-
+		if (comp.getQntdMaximaMembrosPorEquipe() < comp.getQntdMinimaMembrosPorEquipe()) {
+			throw new Exception("Quantidade mínima de membros não pode ser maior que a quantidade máxima!");
+		}
 		comp.setNomeCompeticao(competicaoTemp.getNomeCompeticao());
 		comp.setArquivoRegulamentoCompeticao(competicaoTemp.getArquivoRegulamentoCompeticao());
 		comp.setEtapa(competicaoTemp.getEtapa());
 		comp.setDominioCompeticao(competicaoTemp.getDominioCompeticao());
 		comp.setQntdMaximaMembrosPorEquipe(competicaoTemp.getQntdMaximaMembrosPorEquipe());
 		comp.setQntdMinimaMembrosPorEquipe(competicaoTemp.getQntdMinimaMembrosPorEquipe());
-		comp.setTempoMaximoVideo(competicaoTemp.getTempoMaximoVideo());
+		comp.setTempoMaximoVideoEmSeg(competicaoTemp.getTempoMaximoVideoEmSeg());
 
 		competicaoRepositorio.save(comp);
 
