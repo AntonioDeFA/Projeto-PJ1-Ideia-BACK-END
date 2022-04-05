@@ -11,6 +11,7 @@ import lombok.Setter;
 @Setter
 public class ResponseFile {
 
-	private String menssagem;
+	private String mensagem;
+	private String motivo;
 
 }

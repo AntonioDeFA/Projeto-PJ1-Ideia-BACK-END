@@ -40,7 +40,7 @@ public class ControllerUsuario {
 				return ResponseEntity.status(HttpStatus.CREATED).body("Criado com Sucesso");
 			} catch (Exception e) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-						.body("Não foi possível Cadastrar o Usuário \n Motivo: "+e.getMessage());
+						.body(new ResponseFile("Não foi possível cadastrar o usuário.", e.getMessage()));
 			}
 
 		}
@@ -63,16 +63,16 @@ public class ControllerUsuario {
 
 			try {
 				usuarioService.atualizarUsuario(user, usuarioId);
-				return ResponseEntity.status(HttpStatus.OK).body(new ResponseFile("Atualizado com Sucesso"));
+				return ResponseEntity.status(HttpStatus.OK).body(new ResponseFile("Atualizado com Sucesso", "OK"));
 			} catch (Exception e) {
 
 				e.printStackTrace();
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseFile("Erro ao atualizar usuário"));
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseFile("Erro ao atualizar usuário", "ERROR"));
 			}
 
 		}
 
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseFile(result.toString()));
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseFile(result.toString(), "ERROR"));
 
 	}
 
@@ -82,10 +82,10 @@ public class ControllerUsuario {
 		try {
 
 			usuarioService.deletarUsuarioPorId(usuarioId);
-			return ResponseEntity.status(HttpStatus.OK).body(new ResponseFile("Usuario deletado com sucesso"));
+			return ResponseEntity.status(HttpStatus.OK).body(new ResponseFile("Usuario deletado com sucesso", "OK"));
 
 		} catch (Exception e) {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseFile("Usuário Não Encontrado "));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseFile("Usuário Não Encontrado ", "ERROR"));
 		}
 
 	}
