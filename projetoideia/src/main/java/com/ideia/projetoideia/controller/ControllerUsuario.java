@@ -23,6 +23,7 @@ import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.UsuarioService;
 
+import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
@@ -37,16 +38,21 @@ public class ControllerUsuario {
 		if (!result.hasErrors()) {
 			try {
 				usuarioService.criarUsuario(user);
-				return ResponseEntity.status(HttpStatus.CREATED).body(new IdeiaResponseFile("Criado com Sucesso",HttpStatus.CREATED));
+				return ResponseEntity.status(HttpStatus.CREATED).body(new IdeiaResponseFile("Criado com sucesso",
+						HttpStatus.CREATED));
 			} catch (Exception e) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-						.body(new IdeiaResponseFile("Não foi possível cadastrar o usuário.", e.getMessage(),HttpStatus.BAD_REQUEST));
+						.body(new IdeiaResponseFile("Não foi possível cadastrar o usuário.", 
+								e.getMessage(),
+								HttpStatus.BAD_REQUEST));
 			}
 
 		}
 	
 		return  ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body(new IdeiaResponseFile("Não foi possível cadastrar o usuário.",result.toString(),HttpStatus.BAD_REQUEST));
+				.body(new IdeiaResponseFile("Não foi possível cadastrar o usuário.",
+						result.toString(),
+						HttpStatus.BAD_REQUEST));
 		
 
 	}
@@ -56,39 +62,50 @@ public class ControllerUsuario {
 		return usuarioService.consultarUsuarios();
 	}
 
-//	@PutMapping("/usuario/update/{usuarioId}")
-//	public ResponseEntity<?> atualizarUsuario(@Valid @RequestBody Usuario user, BindingResult result,
-//			@PathVariable("usuarioId") Integer usuarioId) {
-//
-//		if (!result.hasErrors()) {
-//
-//			try {
-//				usuarioService.atualizarUsuario(user, usuarioId);
-//				return ResponseEntity.status(HttpStatus.OK).body(new IdeiaResponseFile("Atualizado com Sucesso",));
-//			} catch (Exception e) {
-//
-//				e.printStackTrace();
-//				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseFile("Erro ao atualizar usuário", "ERROR"));
-//			}
-//
-//		}
-//
-//		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseFile(result.toString(), "ERROR"));
-//
-//	}
-//
-//	@DeleteMapping("/usuario/delete/{usuarioId}")
-//	public ResponseEntity<?> deletarUsuarioPorId(@PathVariable("usuarioId") Integer usuarioId) throws Exception {
-//
-//		try {
-//
-//			usuarioService.deletarUsuarioPorId(usuarioId);
-//			return ResponseEntity.status(HttpStatus.OK).body(new ResponseFile("Usuario deletado com sucesso", "OK"));
-//
-//		} catch (Exception e) {
-//			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseFile("Usuário Não Encontrado ", "ERROR"));
-//		}
-//
-//	}
+	@PutMapping("/usuario/update/{usuarioId}")
+	public ResponseEntity<?> atualizarUsuario(@Valid @RequestBody Usuario user, BindingResult result,
+			@PathVariable("usuarioId") Integer usuarioId) {
+
+		if (!result.hasErrors()) {
+
+			try {
+				usuarioService.atualizarUsuario(user, usuarioId);
+				return ResponseEntity.status(HttpStatus.OK).body(new IdeiaResponseFile("Atualizado com sucesso"
+						,HttpStatus.OK));
+			} catch (Exception e) {
+
+				e.printStackTrace();
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new IdeiaResponseFile("Erro ao atualizar usuário",
+						e.getMessage(),
+						HttpStatus.BAD_REQUEST));
+			}
+
+		}
+
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new IdeiaResponseFile("Erro ao atualizar usuário", 
+				result.toString(),
+				HttpStatus.BAD_REQUEST));
+
+	}
+
+	@DeleteMapping("/usuario/delete/{usuarioId}")
+	public ResponseEntity<?> deletarUsuarioPorId(@PathVariable("usuarioId") Integer usuarioId) throws Exception {
+
+		try {
+
+			usuarioService.deletarUsuarioPorId(usuarioId);
+			return ResponseEntity.status(HttpStatus.OK).body(new IdeiaResponseFile("Usuario deletado com sucesso", HttpStatus.OK));
+
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new IdeiaResponseFile("Usuário não encontrado ",
+					e.getMessage(),
+					HttpStatus.NOT_FOUND));
+		}catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new IdeiaResponseFile("ERRO",
+					e.getMessage(),
+					HttpStatus.BAD_REQUEST));
+		}
+
+	}
 
 }

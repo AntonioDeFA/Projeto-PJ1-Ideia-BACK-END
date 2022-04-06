@@ -12,19 +12,19 @@ import lombok.Setter;
 public class IdeiaResponseFile {
 
 	private String mensagem;
-	private String motivo;
-	private HttpStatus status;
+	private String motivoErro;
+	private Integer status;
 	
 	public IdeiaResponseFile(String mensagem,HttpStatus status) {
 		this.mensagem = mensagem;
-		this.status = status;
+		this.status = status.value();
 		
 	}
 	
 	public IdeiaResponseFile(String mensagem,String motivo,HttpStatus status) {
 		this.mensagem = mensagem;
-		this.motivo = motivo;
-		this.status = status;
+		this.motivoErro = motivo;
+		this.status = status.value();
 	}
 
 }
