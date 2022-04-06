@@ -5,6 +5,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,11 +15,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Equipe;
+import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.EquipeService;
 
 import javassist.NotFoundException;
@@ -30,16 +30,22 @@ public class ControllerEquipe {
 	EquipeService equipeService;
 
 	@PostMapping("/equipe")
-	@ResponseStatus(code = HttpStatus.CREATED, reason = "Equipe criada com sucesso")
-	public void criarEquipe(@Valid @RequestBody Equipe equipe, BindingResult result) throws Exception {
+	public ResponseEntity<?> criarEquipe(@Valid @RequestBody Equipe equipe, BindingResult result) {
 		if (!result.hasErrors()) {
+			try {
+				equipeService.criarEquipe(equipe);
+				return ResponseEntity.status(HttpStatus.CREATED)
+						.body(new IdeiaResponseFile("Criada com sucesso", HttpStatus.CREATED));
+			} catch (Exception e) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new IdeiaResponseFile(
+						"Não foi possível criar a equipe", e.getMessage(), HttpStatus.BAD_REQUEST));
+			}
 
-			equipeService.criarEquipe(equipe);
-
-		} else {
-
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, result.toString());
 		}
+
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new IdeiaResponseFile(
+				"Não foi possível criar a equipe", result.getFieldErrors(), HttpStatus.BAD_REQUEST));
+
 	}
 
 	@GetMapping("/equipes/{competicaoId}")
@@ -49,22 +55,38 @@ public class ControllerEquipe {
 	}
 
 	@PutMapping("/equipe/update/{equipeId}")
-	@ResponseStatus(code = HttpStatus.OK, reason = "Equipe encontrada com sucesso")
-	public void atualizarEquipe(@Valid @RequestBody Equipe equipe, BindingResult result, @PathVariable("equipeId") Integer equipeId)
-			throws Exception {
-		equipeService.atualizarEquipe(equipe, equipeId);
+	public ResponseEntity<?> atualizarEquipe(@Valid @RequestBody Equipe equipe, BindingResult result,
+			@PathVariable("equipeId") Integer equipeId) {
+		if (!result.hasErrors()) {
+		try {
+			equipeService.atualizarEquipe(equipe, equipeId);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("Atualizado com sucesso", HttpStatus.OK));
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new IdeiaResponseFile("Não foi possível atualizar", e.getMessage(), HttpStatus.NOT_FOUND));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new IdeiaResponseFile("Não foi possível atualizar", e.getMessage(), HttpStatus.BAD_REQUEST));
+		}
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new IdeiaResponseFile(
+				"Não foi possível atualizar a equipe", result.getFieldErrors(), HttpStatus.BAD_REQUEST));
 	}
 
 	@DeleteMapping("/equipe/delete/{equipeId}")
-	public void deletarEquipe(@PathVariable("equipeId") Integer equipeId) throws NotFoundException {
+	public ResponseEntity<?> deletarEquipe(@PathVariable("equipeId") Integer equipeId) {
 		try {
-
 			equipeService.deletarEquipe(equipeId);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("Deletado com sucesso", HttpStatus.OK));
 
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new IdeiaResponseFile("Não foi possível deletar", e.getMessage(), HttpStatus.NOT_FOUND));
 		} catch (Exception e) {
-			e.printStackTrace();
-
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new IdeiaResponseFile("Não foi possível deletar", e.getMessage(), HttpStatus.BAD_REQUEST));
 		}
 	}
 
