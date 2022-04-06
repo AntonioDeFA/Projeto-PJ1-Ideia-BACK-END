@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -33,7 +34,7 @@ public class Etapa {
 	@Enumerated(EnumType.STRING)
 	private TipoEtapa tipoEtapa;
 
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "competicao_fk")
 	@JsonIgnore
 	private Competicao competicao;

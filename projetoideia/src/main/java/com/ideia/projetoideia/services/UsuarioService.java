@@ -35,8 +35,6 @@ public class UsuarioService {
 		}
 		user.setSenha(new BCryptPasswordEncoder().encode(user.getSenha()));
 
-		this.inicializarPerfil();
-
 		List<Perfil> perfis = new ArrayList<>();
 		Perfil perfil = new Perfil();
 		perfil.setId(Perfil.PERFIL_USUARIO);
@@ -90,7 +88,7 @@ public class UsuarioService {
 		usuarioRepositorio.delete(usuario);
 	}
 
-	private void inicializarPerfil() {
+	public void inicializarPerfil() {
 		List<Perfil> perfis = perfilRepositorio.findAll();
 
 		if (perfis.size() == 0) {
