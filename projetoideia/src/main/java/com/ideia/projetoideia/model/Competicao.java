@@ -1,14 +1,18 @@
 package com.ideia.projetoideia.model;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
@@ -41,8 +45,8 @@ public class Competicao {
 	private Integer qntdMinimaMembrosPorEquipe;
 
 	@Column(nullable = false, name = "tempo_maximo_video")
-	@Min(value = 30 , message = "Tempo minimo de vídeo não pode ser menor que 30 segundos ")
-	@Max(value = 1800 , message = "Tempo máximo de vídeo não pode ser maior que 30 minutos ")
+	@Min(value = 30, message = "Tempo minimo de vídeo não pode ser menor que 30 segundos ")
+	@Max(value = 1800, message = "Tempo máximo de vídeo não pode ser maior que 30 minutos ")
 	private Float tempoMaximoVideoEmSeg;
 
 	@Column(nullable = false, name = "arquivo_regulamento_competicao")
@@ -56,11 +60,10 @@ public class Competicao {
 	@JoinColumn(name = "organizador_fk")
 	private Usuario organizador;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "etapa_fk")
-	private Etapa etapa;
+	@OneToMany(mappedBy = "competicao", cascade = CascadeType.ALL)
+	private List<Etapa> etapas = new ArrayList<>();
 
-//	@OneToMany(mappedBy = "id")
-//	private List<Equipe> equipesCadatradas;
+	@OneToMany(mappedBy = "competicaoCadastrada", cascade = CascadeType.ALL)
+	private List<Equipe> equipesCadatradas = new ArrayList<>();
 
 }
