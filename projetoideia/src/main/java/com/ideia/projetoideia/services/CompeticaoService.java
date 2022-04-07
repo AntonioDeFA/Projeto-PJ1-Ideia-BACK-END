@@ -111,7 +111,7 @@ public class CompeticaoService {
 		}
 		comp.setNomeCompeticao(competicaoTemp.getNomeCompeticao());
 		comp.setArquivoRegulamentoCompeticao(competicaoTemp.getArquivoRegulamentoCompeticao());
-		comp.setEtapa(competicaoTemp.getEtapas());
+		comp.setEtapas(competicaoTemp.getEtapas());
 		comp.setDominioCompeticao(competicaoTemp.getDominioCompeticao());
 		comp.setQntdMaximaMembrosPorEquipe(competicaoTemp.getQntdMaximaMembrosPorEquipe());
 		comp.setQntdMinimaMembrosPorEquipe(competicaoTemp.getQntdMinimaMembrosPorEquipe());
