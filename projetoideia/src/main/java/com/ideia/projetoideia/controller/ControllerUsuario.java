@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ideia.projetoideia.model.Usuario;
+import com.ideia.projetoideia.model.dto.EmailDto;
 import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.UsuarioService;
 
@@ -76,8 +78,8 @@ public class ControllerUsuario {
 
 		}
 
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body(new IdeiaResponseFile("Erro ao atualizar usuário", result.getFieldErrors(), HttpStatus.BAD_REQUEST));
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+				new IdeiaResponseFile("Erro ao atualizar usuário", result.getFieldErrors(), HttpStatus.BAD_REQUEST));
 
 	}
 
@@ -94,6 +96,27 @@ public class ControllerUsuario {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(new IdeiaResponseFile("Usuário não encontrado ", e.getMessage(), HttpStatus.NOT_FOUND));
 		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
+		}
+
+	}
+
+	@PutMapping("/usuario/resetar-senha")
+	public @ResponseBody ResponseEntity<?> resetarSenha(@RequestBody EmailDto emailDto) {
+		System.out.println(emailDto.getEmail());
+		try {
+			usuarioService.resetarSenhaDoUsuario(emailDto.getEmail());
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("Senha resetada com sucesso", HttpStatus.OK));
+		} 	
+		catch (NotFoundException e) {
+
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.NOT_FOUND));
+		}
+		catch (Exception e) {
+
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
 		}

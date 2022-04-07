@@ -65,7 +65,7 @@ public class ProjetoideiaApplication implements CommandLineRunner {
 
 	public void run(String... args) {
 
-		//		usuarioService.inicializarPerfil();
+				usuarioService.inicializarPerfil();
 
 		//		Etapa etapa = new Etapa();
 
@@ -82,7 +82,7 @@ public class ProjetoideiaApplication implements CommandLineRunner {
 		//		etapaRepositorio.save(etapa);
 
 
-		Competicao competicao = competicaoRepositorio.getById(5);
+		//Competicao competicao = competicaoRepositorio.getById(5);
 		//		competicao.setNomeCompeticao("teste");
 		//competicao.setQntdMaximaMembrosPorEquipe(2);
 		//competicao.setQntdMinimaMembrosPorEquipe(2);
