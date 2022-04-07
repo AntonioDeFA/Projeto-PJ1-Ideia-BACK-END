@@ -81,23 +81,55 @@ public class ProjetoideiaApplication implements CommandLineRunner {
 		
 		//		etapaRepositorio.save(etapa);
 
-		Competicao competicao = new Competicao();
-		competicao.setNomeCompeticao("teste");
-		competicao.setQntdMaximaMembrosPorEquipe(2);
-		competicao.setQntdMinimaMembrosPorEquipe(2);
-		competicao.setTempoMaximoVideoEmSeg(222f);
-		competicao.setArquivoRegulamentoCompeticao(new File("local/"));
-		
-		competicaoRepositorio.save(competicao);
-		
-		List<Etapa> etapas = competicao.getEtapas();
-		etapas.add(etapaRepositorio.findById(2).get());
-		etapas.add(etapaRepositorio.findById(3).get());
 
-		competicao.setEtapas(etapas);
+		Competicao competicao = competicaoRepositorio.getById(5);
+		//		competicao.setNomeCompeticao("teste");
+		//competicao.setQntdMaximaMembrosPorEquipe(2);
+		//competicao.setQntdMinimaMembrosPorEquipe(2);
+		//competicao.setTempoMaximoVideoEmSeg(222f);
+		//competicao.setArquivoRegulamentoCompeticao(new File("local/"));
+				
 		
-		System.out.println(competicao);
-		competicaoRepositorio.save(competicao);
+//		List<Etapa> etapas = competicao.getEtapas();
+//		etapas.add(etapaRepositorio.findById(2).get());
+//		etapas.add(etapaRepositorio.findById(3).get());
+
+//		competicao.setEtapas(etapas);
+//		Equipe equipe = new Equipe();
+//		equipe.setNomeEquipe("Teste2");
+//		equipe.setToken("Teste2");
+//		equipe.setDataInscricao(LocalDate.now());
+		
+//		equipeRepositorio.save(equipe);
+		
+//		List<Equipe> equipes= new ArrayList<Equipe>();
+
+//		Equipe equipe = equipeRepositorio.findById(6).get();
+//		equipe.setCompeticaoCadastrada(competicao);
+//		equipeRepositorio.save(equipe);
+//		equipes.add(equipe);
+		
+//		equipe = equipeRepositorio.findById(7).get();
+//		equipe.setCompeticaoCadastrada(competicao);
+//		equipeRepositorio.save(equipe);
+//		equipes.add(equipe);
+
+//		competicao.setEquipesCadatradas(equipes);
+//		competicaoRepositorio.save(competicao);
+		
+//		System.out.println(competicao);
+
+//		Etapa etapa = etapaRepositorio.findById(2).get();
+//		etapa.setCompeticao(competicao);
+//		etapaRepositorio.save(etapa);
+//		etapa = etapaRepositorio.findById(3).get();
+//		etapa.setCompeticao(competicao);
+//		etapaRepositorio.save(etapa);
+//		System.out.println(etapa);
+
+		
+		
+//		competicaoRepositorio.save(competicao);
 //	try {
 //		equipeService.deletarEquipe(5);
 //	} catch (NotFoundException e) {

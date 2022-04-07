@@ -40,16 +40,20 @@ public class CompeticaoService {
 
 	public void criarCompeticao(Competicao competicao) throws Exception {
 
-		Etapa etapa = competicao.getEtapa();
-		etapa.setCompeticao(null);
+		List<Etapa> etapas = competicao.getEtapas();
+		for (Etapa etapa : etapas) {
+			etapa.setCompeticao(null);
+			etapaRepositorio.save(etapa);
+		}
 		if (competicao.getQntdMaximaMembrosPorEquipe() < competicao.getQntdMinimaMembrosPorEquipe()) {
 			throw new Exception("Quantidade mínima de membros não pode ser maior que a quantidade máxima!");
 		}
-		etapaRepositorio.save(etapa);
+		
 		competicaoRepositorio.save(competicao);
-
-		etapa.setCompeticao(competicao);
-		etapaRepositorio.save(etapa);
+		for (Etapa etapa : etapas) {
+			etapa.setCompeticao(competicao);
+			etapaRepositorio.save(etapa);
+		}
 	}
 
 	public List<Competicao> consultarCompeticoes() {
@@ -107,7 +111,7 @@ public class CompeticaoService {
 		}
 		comp.setNomeCompeticao(competicaoTemp.getNomeCompeticao());
 		comp.setArquivoRegulamentoCompeticao(competicaoTemp.getArquivoRegulamentoCompeticao());
-		comp.setEtapa(competicaoTemp.getEtapa());
+		comp.setEtapa(competicaoTemp.getEtapas());
 		comp.setDominioCompeticao(competicaoTemp.getDominioCompeticao());
 		comp.setQntdMaximaMembrosPorEquipe(competicaoTemp.getQntdMaximaMembrosPorEquipe());
 		comp.setQntdMinimaMembrosPorEquipe(competicaoTemp.getQntdMinimaMembrosPorEquipe());
