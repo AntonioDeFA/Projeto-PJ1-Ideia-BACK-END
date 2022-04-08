@@ -9,14 +9,14 @@ import com.ideia.projetoideia.model.Usuario;
 
 @Component
 public class EnviarEmail {
-	
+
 	@Autowired
 	private JavaMailSender javaMailSender;
-	
+
 	public void enviarEmailDeResetDeSenha(Usuario user, String senha) {
-		
+
 		SimpleMailMessage email = new SimpleMailMessage();
-		
+
 		email.setTo(user.getEmail());
 		email.setSubject(MensagensEmail.ASSUNTO_RESETAR_SENHA);
 		email.setText(MensagensEmail.montarCorpoResetarSenha(user, senha));

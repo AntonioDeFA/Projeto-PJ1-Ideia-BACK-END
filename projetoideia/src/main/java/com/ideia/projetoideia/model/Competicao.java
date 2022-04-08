@@ -64,6 +64,6 @@ public class Competicao {
 	private List<Etapa> etapas = new ArrayList<>();
 
 	@OneToMany(mappedBy = "competicaoCadastrada", cascade = CascadeType.ALL)
-	private List<Equipe> equipesCadatradas = new ArrayList<>();
+	private List<Equipe> equipesCadastradas = new ArrayList<>();
 
 }

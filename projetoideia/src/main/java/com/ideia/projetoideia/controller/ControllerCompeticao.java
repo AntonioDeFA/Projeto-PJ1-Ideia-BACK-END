@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Competicao;
+import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.CompeticaoService;
 
@@ -65,7 +66,7 @@ public class ControllerCompeticao {
 
 	// Retorna todas as competições na fase de INSCRIÇÕES
 	@GetMapping("/competicoes/inscricoes")
-	public List<Competicao> consultarCompeticoesPorNomeMesAno(
+	public List<CompeticaoEtapaVigenteDto> consultarCompeticoesPorNomeMesAno(
 			@RequestParam(value = "nomeCompeticao", required = false) String nomeCompeticao,
 			@RequestParam(value = "mes", required = false) Integer mes,
 			@RequestParam(value = "ano", required = false) Integer ano) {

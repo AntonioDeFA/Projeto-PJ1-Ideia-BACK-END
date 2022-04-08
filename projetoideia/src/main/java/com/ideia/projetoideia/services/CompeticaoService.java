@@ -9,11 +9,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Etapa;
+import com.ideia.projetoideia.model.Usuario;
+import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorioCustom;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
@@ -90,18 +93,31 @@ public class CompeticaoService {
 		return page;
 	}
 
-	public List<Competicao> consultarCompeticoesFaseInscricao(String nomeCompeticao, Integer mes, Integer ano) {
-		return competicaoRepositorioCustom.findByTodasCompeticoesFaseInscricao(nomeCompeticao, mes, ano);
+	public List<CompeticaoEtapaVigenteDto> consultarCompeticoesFaseInscricao(String nomeCompeticao, Integer mes, Integer ano) {
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+		System.out.println(autenticado);
+		
+		Usuario usuario = usuarioRepositorio.findByEmail(autenticado.getName()).get();
+		
+		List<Competicao> competicoes =  competicaoRepositorioCustom.findByTodasCompeticoesFaseInscricao(nomeCompeticao, 
+				mes, ano, usuario.getId());
+		
+		List<CompeticaoEtapaVigenteDto> competicoesDto = new ArrayList<>();
+		
+		for (Competicao competicao : competicoes) {
+			CompeticaoEtapaVigenteDto competicaoEtapaVigenteDto = new CompeticaoEtapaVigenteDto(competicao);
+			competicoesDto.add(competicaoEtapaVigenteDto);
+		}
+		return competicoesDto;
 	}
 
 	public List<Competicao> consultarMinhasCompeticoes(String nomeCompeticao, Integer mes, Integer ano) {
 
-		System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 
-		// Usuario usuario =
-		// usuarioRepositorio.findByEmail(autenticado.getName()).get();
+		Usuario usuario = usuarioRepositorio.findByEmail(autenticado.getName()).get();
 
-		return competicaoRepositorioCustom.findByCompeticoesDoUsuario(nomeCompeticao, mes, ano, 2);
+		return competicaoRepositorioCustom.findByCompeticoesDoUsuario(nomeCompeticao, mes, ano, usuario.getId());
 	}
 
 	public void atualizarCompeticao(Integer id, Competicao competicaoTemp) throws Exception, NotFoundException {

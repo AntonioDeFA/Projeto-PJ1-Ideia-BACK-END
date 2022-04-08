@@ -65,7 +65,7 @@ public class ProjetoideiaApplication implements CommandLineRunner {
 
 	public void run(String... args) {
 
-//				usuarioService.inicializarPerfil();
+				usuarioService.inicializarPerfil();
 
 		//		Etapa etapa = new Etapa();
 
