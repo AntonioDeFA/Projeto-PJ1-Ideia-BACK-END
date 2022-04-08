@@ -56,14 +56,14 @@ public class Competicao {
 	@Column(name = "dominio_competicao")
 	private String dominioCompeticao = "";
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "organizador_fk")
 	private Usuario organizador;
 
-	@OneToMany(mappedBy = "competicao", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "competicao", cascade = CascadeType.MERGE)
 	private List<Etapa> etapas = new ArrayList<>();
 
-	@OneToMany(mappedBy = "competicaoCadastrada", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "competicaoCadastrada", cascade = CascadeType.MERGE)
 	private List<Equipe> equipesCadastradas = new ArrayList<>();
 
 }

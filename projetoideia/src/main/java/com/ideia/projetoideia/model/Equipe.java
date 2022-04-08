@@ -44,7 +44,7 @@ public class Equipe {
 	@JoinColumn(name = "competicao_fk")
 	private Competicao competicaoCadastrada;
 	
-	@OneToMany(mappedBy = "equipe",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "equipe",cascade = CascadeType.MERGE)
 	private List<LeanCanvas> canvasDaEquipe =  new ArrayList<>() ;
 
 }
