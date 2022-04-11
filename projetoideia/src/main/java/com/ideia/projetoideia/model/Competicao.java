@@ -7,7 +7,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -65,5 +64,9 @@ public class Competicao {
 
 	@OneToMany(mappedBy = "competicaoCadastrada", cascade = CascadeType.MERGE)
 	private List<Equipe> equipesCadastradas = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "competicao", cascade = CascadeType.MERGE)
+	private List<PapelUsuarioCompeticao> papeisUsuarioCompeticao = new ArrayList<>();
+
 
 }
