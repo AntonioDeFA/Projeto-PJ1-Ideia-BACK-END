@@ -16,20 +16,20 @@ import lombok.Data;
 @Table(name = "tb_papel_usuario_competicao")
 @Data
 public class PapelUsuarioCompeticao {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Integer id;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "usuario_fk")
 	private Usuario usuario;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "competicao_fk")
 	private Competicao competicao;
-	
+
 	@Enumerated(EnumType.STRING)
 	private TipoPapelUsuario tipoPapelUsuario;
-	
+
 }

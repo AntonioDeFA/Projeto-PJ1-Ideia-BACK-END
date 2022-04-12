@@ -35,7 +35,7 @@ public class Usuario implements UserDetails {
 
 	@Column(nullable = false, name = "nome_usuario")
 	private String nomeUsuario;
-	
+
 	@Column(nullable = false, unique = true)
 	private String email;
 
@@ -44,7 +44,7 @@ public class Usuario implements UserDetails {
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	private List<Perfil> perfis;
-	
+
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.MERGE)
 	private List<PapelUsuarioCompeticao> papeisUsuarioCompeticao = new ArrayList<>();
 

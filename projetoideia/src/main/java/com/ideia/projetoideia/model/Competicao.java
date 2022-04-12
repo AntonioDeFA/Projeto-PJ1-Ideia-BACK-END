@@ -64,9 +64,8 @@ public class Competicao {
 
 	@OneToMany(mappedBy = "competicaoCadastrada", cascade = CascadeType.MERGE)
 	private List<Equipe> equipesCadastradas = new ArrayList<>();
-	
+
 	@OneToMany(mappedBy = "competicao", cascade = CascadeType.MERGE)
 	private List<PapelUsuarioCompeticao> papeisUsuarioCompeticao = new ArrayList<>();
-
 
 }

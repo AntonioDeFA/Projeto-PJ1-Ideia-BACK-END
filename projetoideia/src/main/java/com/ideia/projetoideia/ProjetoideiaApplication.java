@@ -19,12 +19,15 @@ import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.Etapa;
 import com.ideia.projetoideia.model.LeanCanvas;
+import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
 import com.ideia.projetoideia.model.TipoEtapa;
+import com.ideia.projetoideia.model.TipoPapelUsuario;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.EquipeRepositorio;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
 import com.ideia.projetoideia.repository.LeanCanvasRepositorio;
+import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
 import com.ideia.projetoideia.services.CompeticaoService;
 import com.ideia.projetoideia.services.EquipeService;
@@ -62,10 +65,40 @@ public class ProjetoideiaApplication implements CommandLineRunner {
 
 	@Autowired
 	private EquipeRepositorio equipeRepositorio;
-
+	
+	@Autowired
+	private PapelUsuarioCompeticaoRepositorio papelUsuarioCompeticaoRepositorio;
+	
 	public void run(String... args) {
 
-				usuarioService.inicializarPerfil();
+		usuarioService.inicializarPerfil();
+		
+//		Usuario usuario = new Usuario();
+		
+//		usuario.setNomeUsuario("Teste");
+//		usuario.setEmail("Teste@gmail.com");
+//		usuario.setSenha("asd123");
+//		
+//		usuarioRepositorio.save(usuario);
+//		
+		Competicao competicao = new Competicao();
+		competicao.setNomeCompeticao("teste");
+		competicao.setQntdMaximaMembrosPorEquipe(2);
+		competicao.setQntdMinimaMembrosPorEquipe(2);
+		competicao.setTempoMaximoVideoEmSeg(222f);
+		competicao.setArquivoRegulamentoCompeticao(new File("local/"));
+		
+		competicaoRepositorio.save(competicao);
+				
+		Usuario usuario = usuarioRepositorio.findById(2).get();
+		
+		PapelUsuarioCompeticao papelUsuarioCompeticao= new PapelUsuarioCompeticao();
+		papelUsuarioCompeticao.setTipoPapelUsuario(TipoPapelUsuario.AVALIADOR);
+		papelUsuarioCompeticao.setUsuario(usuario);
+		papelUsuarioCompeticao.setCompeticao(competicao);
+		
+		papelUsuarioCompeticaoRepositorio.save(papelUsuarioCompeticao);
+//		papelUsuarioCompeticaoRepositorio.save(papelUsuarioCompeticao);
 
 		//		Etapa etapa = new Etapa();
 

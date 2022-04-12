@@ -15,11 +15,14 @@ import org.springframework.stereotype.Service;
 
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Etapa;
+import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
+import com.ideia.projetoideia.model.TipoPapelUsuario;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorioCustom;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
+import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
 
 import javassist.NotFoundException;
@@ -35,6 +38,8 @@ public class CompeticaoService {
 	@Autowired
 	EtapaRepositorio etapaRepositorio;
 
+	@Autowired
+	PapelUsuarioCompeticaoRepositorio papelUsuarioCompeticaoRepositorio;
 	private final CompeticaoRepositorioCustom competicaoRepositorioCustom;
 
 	public CompeticaoService(CompeticaoRepositorioCustom competicaoRepositorioCustom) {
@@ -42,6 +47,9 @@ public class CompeticaoService {
 	}
 
 	public void criarCompeticao(Competicao competicao) throws Exception {
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+
+		Usuario usuario = usuarioRepositorio.findByEmail(autenticado.getName()).get();
 
 		List<Etapa> etapas = competicao.getEtapas();
 		for (Etapa etapa : etapas) {
@@ -51,12 +59,17 @@ public class CompeticaoService {
 		if (competicao.getQntdMaximaMembrosPorEquipe() < competicao.getQntdMinimaMembrosPorEquipe()) {
 			throw new Exception("Quantidade mínima de membros não pode ser maior que a quantidade máxima!");
 		}
-		
 		competicaoRepositorio.save(competicao);
 		for (Etapa etapa : etapas) {
 			etapa.setCompeticao(competicao);
 			etapaRepositorio.save(etapa);
 		}
+		PapelUsuarioCompeticao papelUsuarioCompeticao = new PapelUsuarioCompeticao();
+		papelUsuarioCompeticao.setTipoPapelUsuario(TipoPapelUsuario.ORGANIZADOR);
+		papelUsuarioCompeticao.setUsuario(usuario);
+		papelUsuarioCompeticao.setCompeticao(competicao);
+
+		papelUsuarioCompeticaoRepositorio.save(papelUsuarioCompeticao);
 	}
 
 	public List<Competicao> consultarCompeticoes() {
@@ -93,17 +106,17 @@ public class CompeticaoService {
 		return page;
 	}
 
-	public List<CompeticaoEtapaVigenteDto> consultarCompeticoesFaseInscricao(String nomeCompeticao, Integer mes, Integer ano) {
+	public List<CompeticaoEtapaVigenteDto> consultarCompeticoesFaseInscricao(String nomeCompeticao, Integer mes,
+			Integer ano) {
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
-		System.out.println(autenticado);
-		
+
 		Usuario usuario = usuarioRepositorio.findByEmail(autenticado.getName()).get();
-		
-		List<Competicao> competicoes =  competicaoRepositorioCustom.findByTodasCompeticoesFaseInscricao(nomeCompeticao, 
+
+		List<Competicao> competicoes = competicaoRepositorioCustom.findByTodasCompeticoesFaseInscricao(nomeCompeticao,
 				mes, ano, usuario.getId());
-		
+
 		List<CompeticaoEtapaVigenteDto> competicoesDto = new ArrayList<>();
-		
+
 		for (Competicao competicao : competicoes) {
 			CompeticaoEtapaVigenteDto competicaoEtapaVigenteDto = new CompeticaoEtapaVigenteDto(competicao);
 			competicoesDto.add(competicaoEtapaVigenteDto);
