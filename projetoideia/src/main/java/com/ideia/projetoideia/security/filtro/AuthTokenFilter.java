@@ -20,8 +20,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.ideia.projetoideia.security.util.JwtUtils;
 import com.ideia.projetoideia.services.AuthenticacaoService;
 
+public class AuthTokenFilter extends OncePerRequestFilter {
 
-public class AuthTokenFilter extends OncePerRequestFilter{
 	@Autowired
 	private JwtUtils jwtUtils;
 
@@ -36,7 +36,7 @@ public class AuthTokenFilter extends OncePerRequestFilter{
 		try {
 			String jwt = parseJwt(request);
 			System.err.println(jwt);
-			
+
 			if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
 				System.err.println("JWT ENTROU NO IF");
 				String username = jwtUtils.getUserNameFromJwtToken(jwt);

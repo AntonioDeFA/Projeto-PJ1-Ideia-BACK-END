@@ -29,7 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private AuthenticacaoService authenticacaoService;
-	
+
 	@Autowired
 	private AuthEntryPointJwt unauthorizedHandler;
 
@@ -37,7 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public AuthTokenFilter authenticationJwtTokenFilter() {
 		return new AuthTokenFilter();
 	}
-	
+
 	@Bean
 	@Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -51,21 +51,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.cors().and().csrf().disable()
-		.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests().
-		antMatchers(HttpMethod.GET,"/ideia/**").permitAll()
-		.antMatchers(HttpMethod.DELETE,"/ideia/**").permitAll()
-		.antMatchers(HttpMethod.POST,"/ideia/**").permitAll()
-		.antMatchers(HttpMethod.GET,"/ideia/usuario/**").permitAll()
-		.anyRequest().permitAll();
-		
+		http.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
+				.antMatchers(HttpMethod.GET, "/ideia/**").permitAll().antMatchers(HttpMethod.DELETE, "/ideia/**")
+				.permitAll().antMatchers(HttpMethod.POST, "/ideia/**").permitAll()
+				.antMatchers(HttpMethod.GET, "/ideia/usuario/**").permitAll().anyRequest().permitAll();
+
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-		
+
 	}
-	
+
 	@Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/ideia/seguranca/token");
-    }
+	public void configure(WebSecurity web) throws Exception {
+		web.ignoring().antMatchers("/ideia/seguranca/token");
+	}
 }

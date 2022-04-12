@@ -8,5 +8,4 @@ import com.ideia.projetoideia.model.LeanCanvas;
 @Repository
 public interface LeanCanvasRepositorio extends JpaRepository<LeanCanvas, Integer> {
 
-	
 }

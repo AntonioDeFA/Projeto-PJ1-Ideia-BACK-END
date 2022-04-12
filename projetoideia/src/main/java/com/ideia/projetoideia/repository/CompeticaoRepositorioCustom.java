@@ -1,6 +1,5 @@
 package com.ideia.projetoideia.repository;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -10,8 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import com.ideia.projetoideia.model.Competicao;
 
-import net.bytebuddy.asm.Advice.Local;
-
 @Repository
 public class CompeticaoRepositorioCustom {
 	private final EntityManager entityManager;
@@ -20,15 +17,15 @@ public class CompeticaoRepositorioCustom {
 		entityManager = en;
 	}
 
-	public List<Competicao> findByTodasCompeticoesFaseInscricao(String nome, Integer mes, Integer ano ,Integer idUser) {
+	public List<Competicao> findByTodasCompeticoesFaseInscricao(String nome, Integer mes, Integer ano, Integer idUser) {
 		String query = "SELECT c FROM Competicao AS c JOIN c.etapas e WHERE e.tipoEtapa = "
 				+ "com.ideia.projetoideia.model.TipoEtapa.INSCRICAO AND e.dataTermino >= curdate() "
 				+ "AND (c.organizador.id != :idUser AND c.equipesCadatradas.lider.id != :idUser )";
 
 		var q = montarQuery(query, nome, mes, ano);
-		
+
 		q.setParameter("idUser", idUser);
-		
+
 		return q.getResultList();
 	}
 

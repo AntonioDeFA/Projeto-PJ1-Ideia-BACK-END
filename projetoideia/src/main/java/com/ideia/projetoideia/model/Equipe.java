@@ -19,32 +19,32 @@ import javax.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Data
 @Table(name = "tb_equipe")
+@Data
 public class Equipe {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Integer id;
-	
+
 	@Column(nullable = false, name = "nome_equipe")
 	private String nomeEquipe;
-	
+
 	@Column(nullable = false)
 	private String token;
-	
+
 	@Column(nullable = false)
 	private LocalDate dataInscricao;
-	
+
 	@OneToOne
 	@JoinColumn(name = "lider_fk")
 	private Usuario lider;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "competicao_fk")
 	private Competicao competicaoCadastrada;
-	
-	@OneToMany(mappedBy = "equipe",cascade = CascadeType.MERGE)
-	private List<LeanCanvas> canvasDaEquipe =  new ArrayList<>() ;
+
+	@OneToMany(mappedBy = "equipe", cascade = CascadeType.MERGE)
+	private List<LeanCanvas> canvasDaEquipe = new ArrayList<>();
 
 }

@@ -17,7 +17,6 @@ import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.repository.PerfilRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
 import com.ideia.projetoideia.utils.EnviarEmail;
-import com.ideia.projetoideia.utils.MensagensEmail;
 
 import javassist.NotFoundException;
 
@@ -29,17 +28,16 @@ public class UsuarioService {
 
 	@Autowired
 	PerfilRepositorio perfilRepositorio;
-	
+
 	@Autowired
 	EnviarEmail enviarEmail;
-	
 
 	public void criarUsuario(Usuario user) throws Exception {
 		if (usuarioRepositorio.findByEmail(user.getEmail()).isPresent()) {
-			throw new Exception( "Não foi possível criar esta conta, pois já existe um usuário com este email cadastrado");
+			throw new Exception(
+					"Não foi possível criar esta conta, pois já existe um usuário com este email cadastrado");
 		}
 		user.setSenha(new BCryptPasswordEncoder().encode(user.getSenha()));
-		//this.inicializarPerfil();
 		List<Perfil> perfis = new ArrayList<>();
 		Perfil perfil = new Perfil();
 		perfil.setId(Perfil.PERFIL_USUARIO);
@@ -63,23 +61,22 @@ public class UsuarioService {
 
 	public Usuario consultarUsuarioPorEmail(String email) throws Exception {
 		Optional<Usuario> usuario = usuarioRepositorio.findByEmail(email);
-		
+
 		if (usuario.isPresent()) {
 			return usuario.get();
 		}
 		throw new NotFoundException("Usuario não encontrado");
-		
+
 	}
 
 	public Usuario consultarUsuarioPorId(Integer id) throws Exception {
 		Optional<Usuario> user = usuarioRepositorio.findById(id);
-		if (user.isPresent()){
+		if (user.isPresent()) {
 			return user.get();
 		}
 		throw new NotFoundException("Usuario não encontrado");
 	}
-	
-	
+
 	public void atualizarUsuario(Usuario user, Integer id) throws Exception {
 		Usuario userRecuperado = this.consultarUsuarioPorId(id);
 		userRecuperado.setNomeUsuario(user.getNomeUsuario());
@@ -93,21 +90,19 @@ public class UsuarioService {
 		Usuario usuario = consultarUsuarioPorId(id);
 		usuarioRepositorio.delete(usuario);
 	}
-	
-	
+
 	public void resetarSenhaDoUsuario(String email) throws Exception {
 		Usuario user = consultarUsuarioPorEmail(email);
-		String novaSenha="";
-		novaSenha+=System.currentTimeMillis();
-		
+		String novaSenha = "";
+		novaSenha += System.currentTimeMillis();
+
 		user.setSenha(new BCryptPasswordEncoder().encode(novaSenha));
-		
+
 		usuarioRepositorio.save(user);
-		
+
 		enviarEmail.enviarEmailDeResetDeSenha(user, novaSenha);
-		
 	}
-	
+
 	public void inicializarPerfil() {
 		List<Perfil> perfis = perfilRepositorio.findAll();
 

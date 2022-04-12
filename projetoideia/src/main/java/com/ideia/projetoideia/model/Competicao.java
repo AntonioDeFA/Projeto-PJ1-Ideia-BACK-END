@@ -22,9 +22,10 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 @Entity
-@Data
 @Table(name = "tb_competicao")
+@Data
 public class Competicao {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Integer id;

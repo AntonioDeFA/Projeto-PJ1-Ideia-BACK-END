@@ -58,17 +58,17 @@ public class ControllerEquipe {
 	public ResponseEntity<?> atualizarEquipe(@Valid @RequestBody Equipe equipe, BindingResult result,
 			@PathVariable("equipeId") Integer equipeId) {
 		if (!result.hasErrors()) {
-		try {
-			equipeService.atualizarEquipe(equipe, equipeId);
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(new IdeiaResponseFile("Atualizado com sucesso", HttpStatus.OK));
-		} catch (NotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new IdeiaResponseFile("Não foi possível atualizar", e.getMessage(), HttpStatus.NOT_FOUND));
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new IdeiaResponseFile("Não foi possível atualizar", e.getMessage(), HttpStatus.BAD_REQUEST));
-		}
+			try {
+				equipeService.atualizarEquipe(equipe, equipeId);
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(new IdeiaResponseFile("Atualizado com sucesso", HttpStatus.OK));
+			} catch (NotFoundException e) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+						new IdeiaResponseFile("Não foi possível atualizar", e.getMessage(), HttpStatus.NOT_FOUND));
+			} catch (Exception e) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+						new IdeiaResponseFile("Não foi possível atualizar", e.getMessage(), HttpStatus.BAD_REQUEST));
+			}
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new IdeiaResponseFile(
 				"Não foi possível atualizar a equipe", result.getFieldErrors(), HttpStatus.BAD_REQUEST));

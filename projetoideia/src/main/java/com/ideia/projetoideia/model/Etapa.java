@@ -21,12 +21,14 @@ import lombok.Data;
 @Table(name = "tb_etapa")
 @Data
 public class Etapa {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Integer id;
 
 	@Column(nullable = false, name = "data_inicio")
 	private LocalDate dataInicio;
+
 	@Column(nullable = false, name = "data_termino")
 	private LocalDate dataTermino;
 

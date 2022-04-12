@@ -26,21 +26,21 @@ public class LeanCanvas {
 
 	@Column(name = "metricas_chave")
 	private String metricasChave;
-	
+
 	@Column(name = "proposta_valor")
 	private String propostaValor;
-	
+
 	@Column(name = "vantagem_competitiva")
 	private String vantagemCompetitiva;
 
 	private String canais;
-	
+
 	@Column(name = "segmentos_de_clientes")
 	private String segmentosDeClientes;
-	
+
 	@Column(name = "estrutura_de_custo")
 	private String estruturaDeCusto;
-	
+
 	@Column(name = "fontes_de_receita")
 	private String fontesDeReceita;
 

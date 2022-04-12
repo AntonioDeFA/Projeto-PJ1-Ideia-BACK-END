@@ -9,20 +9,19 @@ import lombok.Data;
 
 @Data
 public class CompeticaoEtapaVigenteDto {
-	
+
 	private Integer id;
-	
+
 	private String nomeCompeticao;
-	
+
 	private String dominioCompeticao;
-	
+
 	private Usuario organizador;
-	
+
 	private Etapa etapaVigente;
-	
+
 	private Integer quantidadeDeEquipes;
-	
-	
+
 	public CompeticaoEtapaVigenteDto(Competicao competicao) {
 		this.id = competicao.getId();
 		this.nomeCompeticao = competicao.getNomeCompeticao();
@@ -30,7 +29,7 @@ public class CompeticaoEtapaVigenteDto {
 		this.organizador = competicao.getOrganizador();
 		this.quantidadeDeEquipes = competicao.getEquipesCadastradas().size();
 		for (Etapa etapa : competicao.getEtapas()) {
-			if(etapa.getTipoEtapa().equals(TipoEtapa.INSCRICAO)) {
+			if (etapa.getTipoEtapa().equals(TipoEtapa.INSCRICAO)) {
 				this.etapaVigente = etapa;
 				break;
 			}

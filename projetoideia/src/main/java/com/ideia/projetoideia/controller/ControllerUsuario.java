@@ -109,13 +109,11 @@ public class ControllerUsuario {
 			usuarioService.resetarSenhaDoUsuario(emailDto.getEmail());
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new IdeiaResponseFile("Senha resetada com sucesso", HttpStatus.OK));
-		} 	
-		catch (NotFoundException e) {
+		} catch (NotFoundException e) {
 
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.NOT_FOUND));
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));

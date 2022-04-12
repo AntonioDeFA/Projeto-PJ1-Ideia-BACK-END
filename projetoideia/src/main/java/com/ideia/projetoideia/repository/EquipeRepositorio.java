@@ -12,7 +12,7 @@ public interface EquipeRepositorio extends JpaRepository<Equipe, Integer> {
 
 	@Query(value = "Select * from db_ideia.tb_equipe as eq where eq.competicao_fk = ?1", nativeQuery = true)
 	public Page<Equipe> findByCompeticao(Integer competicaoId, PageRequest pageRequest);
-	
+
 	@Modifying
 	@Query(value = "DELETE * from db_ideia.tb_equipe as eq  where eq.competicao_fk = ?1", nativeQuery = true)
 	public void deleteByCompeticao(Integer competicaoId);

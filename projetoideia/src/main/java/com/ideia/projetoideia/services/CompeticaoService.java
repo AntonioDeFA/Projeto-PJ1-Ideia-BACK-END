@@ -29,6 +29,7 @@ import javassist.NotFoundException;
 
 @Service
 public class CompeticaoService {
+	
 	@Autowired
 	CompeticaoRepositorio competicaoRepositorio;
 
@@ -40,6 +41,7 @@ public class CompeticaoService {
 
 	@Autowired
 	PapelUsuarioCompeticaoRepositorio papelUsuarioCompeticaoRepositorio;
+	
 	private final CompeticaoRepositorioCustom competicaoRepositorioCustom;
 
 	public CompeticaoService(CompeticaoRepositorioCustom competicaoRepositorioCustom) {

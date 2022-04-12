@@ -13,8 +13,8 @@ import lombok.Data;
 
 @SuppressWarnings("serial")
 @Entity
-@Data
 @Table(name = "tb_perfil")
+@Data
 public class Perfil implements GrantedAuthority {
 
 	public static final Integer PERFIL_USUARIO = 1;

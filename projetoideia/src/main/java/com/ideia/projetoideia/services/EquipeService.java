@@ -25,16 +25,15 @@ public class EquipeService {
 		equipeRepositorio.save(equipe);
 	}
 
-	public Equipe recuperarEquipe(Integer equipeId) throws NotFoundException{
+	public Equipe recuperarEquipe(Integer equipeId) throws NotFoundException {
 		Optional<Equipe> equipe = equipeRepositorio.findById(equipeId);
-		
-		if(equipe.isPresent()) {
+
+		if (equipe.isPresent()) {
 			return equipe.get();
 		}
-		
+
 		throw new NotFoundException("Equipe não encontrada");
-		
-		
+
 	}
 
 	public List<Equipe> consultarEquipes() {

@@ -21,8 +21,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import lombok.Data;
 
 @Entity
-@Data
 @Table(name = "tb_usuario")
+@Data
 public class Usuario implements UserDetails {
 	/**
 	 * 

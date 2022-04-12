@@ -6,9 +6,10 @@ import lombok.Data;
 
 @Data
 public class LoginDto {
+	
 	@NotBlank
 	public String login;
-	
+
 	@NotBlank
 	public String senha;
 
