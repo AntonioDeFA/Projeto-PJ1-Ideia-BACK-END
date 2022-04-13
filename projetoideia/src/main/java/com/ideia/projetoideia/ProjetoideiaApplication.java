@@ -10,17 +10,18 @@ import com.ideia.projetoideia.services.UsuarioService;
 @SpringBootApplication
 public class ProjetoideiaApplication implements CommandLineRunner {
 
+	@Autowired
+	private UsuarioService usuarioService;
+	
 	public static void main(String[] args) {
 		SpringApplication.run(ProjetoideiaApplication.class, args);
 	}
 
-	@Autowired
-	private UsuarioService usuarioService;
 
 	public void run(String... args) {
 
-		usuarioService.inicializarPerfil();
-
+		usuarioService.inicializarPerfil(); 
+		
 	}
 
 }
