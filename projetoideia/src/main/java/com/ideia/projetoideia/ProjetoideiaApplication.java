@@ -17,11 +17,10 @@ public class ProjetoideiaApplication implements CommandLineRunner {
 		SpringApplication.run(ProjetoideiaApplication.class, args);
 	}
 
-
 	public void run(String... args) {
 
 		usuarioService.inicializarPerfil(); 
-		
+
 	}
 
 }

@@ -61,6 +61,7 @@ public class CompeticaoService {
 		if (competicao.getQntdMaximaMembrosPorEquipe() < competicao.getQntdMinimaMembrosPorEquipe()) {
 			throw new Exception("Quantidade mínima de membros não pode ser maior que a quantidade máxima!");
 		}
+		competicao.setOrganizador(usuario);
 		competicaoRepositorio.save(competicao);
 		for (Etapa etapa : etapas) {
 			etapa.setCompeticao(competicao);
