@@ -68,16 +68,19 @@ public class ControllerCompeticao {
 	public List<CompeticaoEtapaVigenteDto> consultarCompeticoesPorNomeMesAno(
 			@RequestParam(value = "nomeCompeticao", required = false) String nomeCompeticao,
 			@RequestParam(value = "mes", required = false) Integer mes,
-			@RequestParam(value = "ano", required = false) Integer ano) {
+			@RequestParam(value = "ano", required = false) Integer ano) throws Exception {
+		
 		return competicaoService.consultarCompeticoesFaseInscricao(nomeCompeticao, mes, ano);
+		
+				
 	}
 
 	// Retorna todas as competições relacionadas a um USUÁRIO
 	@GetMapping("/competicoes/usuario-logado")
-	public List<Competicao> consultarMinhasCompeticoes(
+	public List<CompeticaoEtapaVigenteDto> consultarMinhasCompeticoes(
 			@RequestParam(value = "nomeCompeticao", required = false) String nomeCompeticao,
 			@RequestParam(value = "mes", required = false) Integer mes,
-			@RequestParam(value = "ano", required = false) Integer ano) {
+			@RequestParam(value = "ano", required = false) Integer ano) throws Exception {
 		return competicaoService.consultarMinhasCompeticoes(nomeCompeticao, mes, ano);
 	}
 

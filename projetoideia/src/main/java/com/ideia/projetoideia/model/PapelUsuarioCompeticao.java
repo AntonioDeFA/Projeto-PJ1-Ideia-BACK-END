@@ -10,6 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 @Entity
@@ -23,10 +25,12 @@ public class PapelUsuarioCompeticao {
 
 	@ManyToOne
 	@JoinColumn(name = "usuario_fk")
+	@JsonIgnore
 	private Usuario usuario;
 
 	@ManyToOne
 	@JoinColumn(name = "competicao_fk")
+	@JsonIgnore
 	private Competicao competicao;
 
 	@Enumerated(EnumType.STRING)

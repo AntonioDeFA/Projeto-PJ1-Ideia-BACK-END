@@ -42,6 +42,9 @@ public class CompeticaoService {
 	@Autowired
 	PapelUsuarioCompeticaoRepositorio papelUsuarioCompeticaoRepositorio;
 	
+	@Autowired
+	UsuarioService usuarioService;
+	
 	private final CompeticaoRepositorioCustom competicaoRepositorioCustom;
 
 	public CompeticaoService(CompeticaoRepositorioCustom competicaoRepositorioCustom) {
@@ -49,10 +52,10 @@ public class CompeticaoService {
 	}
 
 	public void criarCompeticao(Competicao competicao) throws Exception {
-		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+		//Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 
-		Usuario usuario = usuarioRepositorio.findByEmail(autenticado.getName()).get();
-
+		//Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
+		Usuario usuario = usuarioService.consultarUsuarioPorEmail("gabryel2348369jg@gmail.com");
 		List<Etapa> etapas = competicao.getEtapas();
 		for (Etapa etapa : etapas) {
 			etapa.setCompeticao(null);
@@ -110,30 +113,38 @@ public class CompeticaoService {
 	}
 
 	public List<CompeticaoEtapaVigenteDto> consultarCompeticoesFaseInscricao(String nomeCompeticao, Integer mes,
-			Integer ano) {
-		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+			Integer ano) throws Exception {
+		//Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 
-		Usuario usuario = usuarioRepositorio.findByEmail(autenticado.getName()).get();
-
+		//Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
+		Usuario usuario = usuarioService.consultarUsuarioPorEmail("Antonio@gmail.com");
+		
 		List<Competicao> competicoes = competicaoRepositorioCustom.findByTodasCompeticoesFaseInscricao(nomeCompeticao,
 				mes, ano, usuario.getId());
 
 		List<CompeticaoEtapaVigenteDto> competicoesDto = new ArrayList<>();
-
 		for (Competicao competicao : competicoes) {
-			CompeticaoEtapaVigenteDto competicaoEtapaVigenteDto = new CompeticaoEtapaVigenteDto(competicao);
+			CompeticaoEtapaVigenteDto competicaoEtapaVigenteDto = new CompeticaoEtapaVigenteDto(competicao,"INSCRICAO");
 			competicoesDto.add(competicaoEtapaVigenteDto);
 		}
 		return competicoesDto;
 	}
 
-	public List<Competicao> consultarMinhasCompeticoes(String nomeCompeticao, Integer mes, Integer ano) {
+	public List<CompeticaoEtapaVigenteDto> consultarMinhasCompeticoes(String nomeCompeticao, Integer mes, Integer ano) throws Exception {
 
-		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+		//Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 
-		Usuario usuario = usuarioRepositorio.findByEmail(autenticado.getName()).get();
-
-		return competicaoRepositorioCustom.findByCompeticoesDoUsuario(nomeCompeticao, mes, ano, usuario.getId());
+		//Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
+		Usuario usuario = usuarioService.consultarUsuarioPorEmail("Antonio@gmail.com");
+		List<CompeticaoEtapaVigenteDto> competicoesDto = new ArrayList<>();
+		List<Competicao> competicoes = competicaoRepositorioCustom.findByCompeticoesDoUsuario(nomeCompeticao,
+				mes, ano, usuario.getId());
+		
+		for (Competicao competicao : competicoes) {
+			CompeticaoEtapaVigenteDto competicaoEtapaVigenteDto = new CompeticaoEtapaVigenteDto(competicao,"COMPETICAO");
+			competicoesDto.add(competicaoEtapaVigenteDto);
+		}
+		return competicoesDto;
 	}
 
 	public void atualizarCompeticao(Integer id, Competicao competicaoTemp) throws Exception, NotFoundException {

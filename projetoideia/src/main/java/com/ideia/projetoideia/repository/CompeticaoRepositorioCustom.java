@@ -1,5 +1,6 @@
 package com.ideia.projetoideia.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -8,6 +9,11 @@ import javax.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 
 import com.ideia.projetoideia.model.Competicao;
+import com.ideia.projetoideia.model.Equipe;
+import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
+
+import antlr.NameSpace;
+import net.bytebuddy.asm.Advice.This;
 
 @Repository
 public class CompeticaoRepositorioCustom {
@@ -18,27 +24,68 @@ public class CompeticaoRepositorioCustom {
 	}
 
 	public List<Competicao> findByTodasCompeticoesFaseInscricao(String nome, Integer mes, Integer ano, Integer idUser) {
-		String query = "SELECT c FROM Competicao AS c JOIN c.etapas e WHERE e.tipoEtapa = "
-				+ "com.ideia.projetoideia.model.TipoEtapa.INSCRICAO AND e.dataTermino >= curdate() "
-				+ "AND (c.organizador.id != :idUser AND c.equipesCadatradas.lider.id != :idUser )";
-
+		String query = "SELECT c FROM Competicao AS c JOIN  c.etapas e WHERE "
+				+ "com.ideia.projetoideia.model.TipoEtapa.INSCRICAO = e.tipoEtapa "
+				+ "AND e.dataInicio <= curdate() "
+				+ "AND e.dataTermino >= curdate()";
+		this.sanitizar(nome, mes, ano);
 		var q = montarQuery(query, nome, mes, ano);
-
-		q.setParameter("idUser", idUser);
-
-		return q.getResultList();
+		return this.retirarCompeticoesInvalidas(idUser, q.getResultList());
 	}
 
 	public List<Competicao> findByCompeticoesDoUsuario(String nome, Integer mes, Integer ano, Integer idUser) {
-		String query = "SELECT c FROM Competicao AS c JOIN c.etapas e where c.organizador.id =:idUser "
-				+ "OR c.equipesCadatradas.lider.id =:idUser ";
-
+		String query = "SELECT DISTINCT(c) FROM Competicao AS c JOIN c.etapas e "
+				+ "JOIN c.papeisUsuarioCompeticao tp "
+				+ "WHERE tp.usuario.id =: idUser";
+		
+		this.sanitizar(nome, mes, ano);
 		var q = montarQuery(query, nome, mes, ano);
 
 		q.setParameter("idUser", idUser);
 
 		return q.getResultList();
 
+	}
+	
+	private List<Competicao> retirarCompeticoesInvalidas(Integer idUser , List<Competicao> competicoesComDadosInvalidos){
+		List<Competicao> competicoesValidas = new ArrayList<>();
+		
+		for (Competicao competicao : competicoesComDadosInvalidos) {
+			
+			boolean entrou = false;
+			for (PapelUsuarioCompeticao papelUsuarioCompeticao : competicao.getPapeisUsuarioCompeticao()) {
+				if(papelUsuarioCompeticao.getUsuario().getId() == idUser) {
+					entrou = true;
+				}
+			}
+			if (entrou == false) {
+				competicoesValidas.add(competicao);
+			}
+		}
+		
+		return competicoesValidas;
+	
+	}
+	
+
+	private void sanitizar(String nome, Integer mes, Integer ano) {
+		if (nome != null) {
+			if(nome.equals("")) {
+				nome = null;
+			}
+		}
+		if (mes != null ) {
+			if(mes <= 0 || mes >=12) {
+				mes = null;
+			}
+			
+		}
+
+		if (ano != null ) {
+			if(ano <= 0) {
+				ano = null;
+			}
+		}
 	}
 
 	private TypedQuery<Competicao> montarQuery(String query, String nome, Integer mes, Integer ano) {
@@ -50,7 +97,7 @@ public class CompeticaoRepositorioCustom {
 			query += " AND (month(e.dataInicio) = :mes OR month(e.dataTermino) = :mes)";
 		}
 		if (ano != null) {
-			query += " and (year(e.dataInicio) = :ano OR year(e.dataTermino) = :ano)";
+			query += " AND (year(e.dataInicio) = :ano OR year(e.dataTermino) = :ano)";
 		}
 
 		var q = entityManager.createQuery(query, Competicao.class);
