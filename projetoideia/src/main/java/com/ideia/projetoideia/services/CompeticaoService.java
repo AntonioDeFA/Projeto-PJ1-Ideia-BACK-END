@@ -124,7 +124,8 @@ public class CompeticaoService {
 
 		List<CompeticaoEtapaVigenteDto> competicoesDto = new ArrayList<>();
 		for (Competicao competicao : competicoes) {
-			CompeticaoEtapaVigenteDto competicaoEtapaVigenteDto = new CompeticaoEtapaVigenteDto(competicao,"INSCRICAO");
+			CompeticaoEtapaVigenteDto competicaoEtapaVigenteDto = new CompeticaoEtapaVigenteDto(competicao,"INSCRICAO",
+			usuario);
 			competicoesDto.add(competicaoEtapaVigenteDto);
 		}
 		return competicoesDto;
@@ -135,13 +136,14 @@ public class CompeticaoService {
 		//Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 
 		//Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
-		Usuario usuario = usuarioService.consultarUsuarioPorEmail("Antonio@gmail.com");
+		Usuario usuario = usuarioService.consultarUsuarioPorEmail("gabryel2348369jg@gmail.com");
 		List<CompeticaoEtapaVigenteDto> competicoesDto = new ArrayList<>();
 		List<Competicao> competicoes = competicaoRepositorioCustom.findByCompeticoesDoUsuario(nomeCompeticao,
 				mes, ano, usuario.getId());
 		
 		for (Competicao competicao : competicoes) {
-			CompeticaoEtapaVigenteDto competicaoEtapaVigenteDto = new CompeticaoEtapaVigenteDto(competicao,"COMPETICAO");
+			CompeticaoEtapaVigenteDto competicaoEtapaVigenteDto = new CompeticaoEtapaVigenteDto(competicao,"COMPETICAO",
+			usuario);
 			competicoesDto.add(competicaoEtapaVigenteDto);
 		}
 		return competicoesDto;
