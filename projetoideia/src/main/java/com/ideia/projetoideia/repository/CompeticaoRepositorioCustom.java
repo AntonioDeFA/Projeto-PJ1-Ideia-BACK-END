@@ -9,15 +9,16 @@ import javax.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 
 import com.ideia.projetoideia.model.Competicao;
-import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
 
-import antlr.NameSpace;
-import net.bytebuddy.asm.Advice.This;
 
 @Repository
 public class CompeticaoRepositorioCustom {
 	private final EntityManager entityManager;
+	
+	private String nomeCompeticao;
+	private Integer mes;
+	private Integer ano;
 
 	public CompeticaoRepositorioCustom(EntityManager en) {
 		entityManager = en;
@@ -28,8 +29,13 @@ public class CompeticaoRepositorioCustom {
 				+ "com.ideia.projetoideia.model.TipoEtapa.INSCRICAO = e.tipoEtapa "
 				+ "AND e.dataInicio <= curdate() "
 				+ "AND e.dataTermino >= curdate()";
-		this.sanitizar(nome, mes, ano);
-		var q = montarQuery(query, nome, mes, ano);
+		
+		this.nomeCompeticao = nome;
+		this.mes = mes;
+		this.ano = ano;
+		
+		this.sanitizar();
+		var q = montarQuery(query);
 		return this.retirarCompeticoesInvalidas(idUser, q.getResultList());
 	}
 
@@ -38,8 +44,12 @@ public class CompeticaoRepositorioCustom {
 				+ "JOIN c.papeisUsuarioCompeticao tp "
 				+ "WHERE tp.usuario.id =: idUser";
 		
-		this.sanitizar(nome, mes, ano);
-		var q = montarQuery(query, nome, mes, ano);
+		this.nomeCompeticao = nome;
+		this.mes = mes;
+		this.ano = ano;
+		
+		this.sanitizar();
+		var q = montarQuery(query);
 
 		q.setParameter("idUser", idUser);
 
@@ -68,14 +78,14 @@ public class CompeticaoRepositorioCustom {
 	}
 	
 
-	private void sanitizar(String nome, Integer mes, Integer ano) {
-		if (nome != null) {
-			if(nome.equals("")) {
-				nome = null;
+	private void sanitizar() {
+		if (nomeCompeticao != null) {
+			if(nomeCompeticao.equals("")) {
+				nomeCompeticao = null;
 			}
 		}
 		if (mes != null ) {
-			if(mes <= 0 || mes >=12) {
+			if(mes <= 0 || mes > 12) {
 				mes = null;
 			}
 			
@@ -88,9 +98,9 @@ public class CompeticaoRepositorioCustom {
 		}
 	}
 
-	private TypedQuery<Competicao> montarQuery(String query, String nome, Integer mes, Integer ano) {
+	private TypedQuery<Competicao> montarQuery(String query) {
 
-		if (nome != null) {
+		if (nomeCompeticao != null) {
 			query += " AND c.nomeCompeticao =:nome";
 		}
 		if (mes != null) {
@@ -102,8 +112,8 @@ public class CompeticaoRepositorioCustom {
 
 		var q = entityManager.createQuery(query, Competicao.class);
 
-		if (nome != null) {
-			q.setParameter("nome", nome);
+		if (nomeCompeticao != null) {
+			q.setParameter("nome", nomeCompeticao);
 		}
 		if (mes != null) {
 			q.setParameter("mes", mes);
