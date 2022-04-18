@@ -52,10 +52,8 @@ public class CompeticaoService {
 	}
 
 	public void criarCompeticao(Competicao competicao) throws Exception {
-		//Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
-
-		//Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
-		Usuario usuario = usuarioService.consultarUsuarioPorEmail("gabryel2348369jg@gmail.com");
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
 		List<Etapa> etapas = competicao.getEtapas();
 		for (Etapa etapa : etapas) {
 			etapa.setCompeticao(null);
@@ -114,10 +112,8 @@ public class CompeticaoService {
 
 	public List<CompeticaoEtapaVigenteDto> consultarCompeticoesFaseInscricao(String nomeCompeticao, Integer mes,
 			Integer ano) throws Exception {
-		//Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
-
-		//Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
-		Usuario usuario = usuarioService.consultarUsuarioPorEmail("Antonio@gmail.com");
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
 		
 		List<Competicao> competicoes = competicaoRepositorioCustom.findByTodasCompeticoesFaseInscricao(nomeCompeticao,
 				mes, ano, usuario.getId());
@@ -133,10 +129,8 @@ public class CompeticaoService {
 
 	public List<CompeticaoEtapaVigenteDto> consultarMinhasCompeticoes(String nomeCompeticao, Integer mes, Integer ano) throws Exception {
 
-		//Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
-
-		//Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
-		Usuario usuario = usuarioService.consultarUsuarioPorEmail("gabryel2348369jg@gmail.com");
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
 		List<CompeticaoEtapaVigenteDto> competicoesDto = new ArrayList<>();
 		List<Competicao> competicoes = competicaoRepositorioCustom.findByCompeticoesDoUsuario(nomeCompeticao,
 				mes, ano, usuario.getId());
