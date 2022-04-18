@@ -21,10 +21,7 @@ import com.ideia.projetoideia.services.AuthenticacaoService;
 
 @EnableWebSecurity
 @Configuration
-@EnableGlobalMethodSecurity(
-		// securedEnabled = true,
-		// jsr250Enabled = true,
-		prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
@@ -51,18 +48,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
-				.antMatchers(HttpMethod.GET, "/ideia/**").permitAll().antMatchers(HttpMethod.DELETE, "/ideia/**")
-				.permitAll().antMatchers(HttpMethod.POST, "/ideia/**").permitAll()
-				.antMatchers(HttpMethod.GET, "/ideia/usuario/**").permitAll().anyRequest().permitAll();
-
+		http.authorizeRequests()
+			.antMatchers("/resources/**", "/webjars/**").permitAll()
+			.antMatchers(HttpMethod.POST, "/ideia/seguranca/login").permitAll()
+			.antMatchers(HttpMethod.POST, "/ideia/usuario").permitAll()
+			.antMatchers(HttpMethod.GET, "/ideia/*").hasAuthority("USUARIO")
+			.antMatchers(HttpMethod.POST, "/ideia/*").hasAuthority("USUARIO")
+			.antMatchers(HttpMethod.PUT, "/ideia/*").hasAuthority("USUARIO")
+			.antMatchers(HttpMethod.DELETE, "/ideia/*").hasAuthority("USUARIO")
+			.anyRequest().authenticated()
+			.and()
+			.cors().and()
+			.csrf().disable()
+			.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
 	}
 
-	@Override
-	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers("/ideia/seguranca/token");
-	}
 }
