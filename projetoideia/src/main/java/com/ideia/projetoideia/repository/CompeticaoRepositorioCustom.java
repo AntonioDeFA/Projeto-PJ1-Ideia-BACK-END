@@ -101,7 +101,7 @@ public class CompeticaoRepositorioCustom {
 	private TypedQuery<Competicao> montarQuery(String query) {
 
 		if (nomeCompeticao != null) {
-			query += " AND c.nomeCompeticao =:nome";
+			query += " AND c.nomeCompeticao LIKE CONCAT('%',:nome,'%')";
 		}
 		if (mes != null) {
 			query += " AND (month(e.dataInicio) = :mes OR month(e.dataTermino) = :mes)";
