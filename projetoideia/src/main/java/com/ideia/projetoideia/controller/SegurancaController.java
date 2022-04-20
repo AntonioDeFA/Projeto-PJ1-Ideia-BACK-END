@@ -8,11 +8,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.JwtRespostaDto;
 import com.ideia.projetoideia.model.dto.LoginDto;
+import com.ideia.projetoideia.model.dto.LoginTokenDto;
 import com.ideia.projetoideia.security.util.JwtUtils;
 import com.ideia.projetoideia.services.AuthenticacaoService;
+import com.ideia.projetoideia.services.EquipeService;
+import com.ideia.projetoideia.services.UsuarioService;
+import com.ideia.projetoideia.services.utils.GeradorUserToken;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +37,8 @@ public class SegurancaController {
 	private AuthenticationManager authenticationManager;
 	@Autowired
 	private JwtUtils jwtUtils;
+	@Autowired
+	private EquipeService equipeService;
 
 	@PostMapping("/login")
 	public JwtRespostaDto login(@Valid @RequestBody LoginDto loginRequest) {
@@ -46,6 +53,31 @@ public class SegurancaController {
 		JwtRespostaDto resposta = new JwtRespostaDto(jwt, userDetails.getId(), userDetails.getNomeUsuario(),
 				userDetails.getUsername(), userDetails.getEmail(), roles);
 
+		return resposta;
+	}
+	
+	@PostMapping("/token")
+	public JwtRespostaDto token(@Valid @RequestBody LoginTokenDto loginRequest) {
+		
+		Equipe equipe = equipeService.consultarEquipePorToken(loginRequest.getToken());
+		
+		JwtRespostaDto resposta = new JwtRespostaDto("",0,"","","",null);
+		
+		if(equipe != null) {
+						
+			Authentication authentication = authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(equipe.getNomeEquipe()+"token@gmail.com", GeradorUserToken.gerarSenha(equipe.getNomeEquipe())));
+
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			String jwt = jwtUtils.generateJwtToken(authentication);
+			Usuario userDetails = (Usuario) authentication.getPrincipal();
+			List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
+					.collect(Collectors.toList());
+			resposta = new JwtRespostaDto(jwt, userDetails.getId(), userDetails.getNomeUsuario(),
+					userDetails.getUsername(), userDetails.getEmail(), roles);
+
+		}
+		
 		return resposta;
 	}
 

@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.ideia.projetoideia.model.Equipe;
+import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.repository.EquipeRepositorio;
 
 import javassist.NotFoundException;
@@ -52,6 +53,12 @@ public class EquipeService {
 		Sort sort = Sort.by(sortDirection, "nome_equipe");
 		Page<Equipe> page = equipeRepositorio.findAll(PageRequest.of(--numeroPagina, 6, sort));
 		return page;
+	}
+	
+	public Equipe consultarEquipePorToken(String token){
+				
+		return equipeRepositorio.consultarEquipePorToken(token).orElse(null);
+		
 	}
 
 	public void atualizarEquipe(Equipe equipe, Integer id) throws Exception {
