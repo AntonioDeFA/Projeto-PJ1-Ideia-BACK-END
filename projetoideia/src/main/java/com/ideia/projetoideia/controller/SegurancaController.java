@@ -57,12 +57,10 @@ public class SegurancaController {
 	}
 	
 	@PostMapping("/token")
-	public JwtRespostaDto token(@Valid @RequestBody LoginTokenDto loginRequest) {
+	public JwtRespostaDto token(@Valid @RequestBody LoginTokenDto loginRequest) throws Exception{
 		
 		Equipe equipe = equipeService.consultarEquipePorToken(loginRequest.getToken());
-		
-		JwtRespostaDto resposta = new JwtRespostaDto("",0,"","","",null);
-		
+				
 		if(equipe != null) {
 						
 			Authentication authentication = authenticationManager.authenticate(
@@ -73,12 +71,12 @@ public class SegurancaController {
 			Usuario userDetails = (Usuario) authentication.getPrincipal();
 			List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
 					.collect(Collectors.toList());
-			resposta = new JwtRespostaDto(jwt, userDetails.getId(), userDetails.getNomeUsuario(),
+			return new JwtRespostaDto(jwt, userDetails.getId(), userDetails.getNomeUsuario(),
 					userDetails.getUsername(), userDetails.getEmail(), roles);
 
 		}
+		throw new Exception("Esse token não pertence a nenhuma equipe");
 		
-		return resposta;
 	}
 
 }
