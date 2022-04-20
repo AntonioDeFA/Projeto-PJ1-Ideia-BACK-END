@@ -37,6 +37,9 @@ public class UsuarioService {
 			throw new Exception(
 					"Não foi possível criar esta conta, pois já existe um usuário com este email cadastrado");
 		}
+		if (user.getSenha() == null) {
+			throw new Exception("A senha não deve pode ser nula");
+		}
 		user.setSenha(new BCryptPasswordEncoder().encode(user.getSenha()));
 		List<Perfil> perfis = new ArrayList<>();
 		Perfil perfil = new Perfil();

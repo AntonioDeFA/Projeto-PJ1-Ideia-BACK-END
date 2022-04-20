@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ideia.projetoideia.model.Equipe;
+import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
 import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.EquipeService;
 
@@ -30,7 +31,7 @@ public class ControllerEquipe {
 	EquipeService equipeService;
 
 	@PostMapping("/equipe")
-	public ResponseEntity<?> criarEquipe(@Valid @RequestBody Equipe equipe, BindingResult result) {
+	public ResponseEntity<?> criarEquipe(@Valid @RequestBody EquipeDtoCriacao equipe, BindingResult result) {
 		if (!result.hasErrors()) {
 			try {
 				equipeService.criarEquipe(equipe);
