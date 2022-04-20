@@ -88,7 +88,7 @@ public class UsuarioService {
 		}
 		throw new NotFoundException("Usuario não encontrado");
 	}
-
+	
 	public void atualizarUsuario(Usuario user, Integer id) throws Exception {
 		Usuario userRecuperado = this.consultarUsuarioPorId(id);
 		userRecuperado.setNomeUsuario(user.getNomeUsuario());

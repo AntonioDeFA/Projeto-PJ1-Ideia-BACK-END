@@ -51,6 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests()
 			.antMatchers("/resources/**", "/webjars/**").permitAll()
 			.antMatchers(HttpMethod.POST, "/ideia/seguranca/login").permitAll()
+			.antMatchers(HttpMethod.POST, "/ideia/seguranca/token").permitAll()
 			.antMatchers(HttpMethod.GET, "/ideia/usuario-logado").permitAll()
 			.antMatchers(HttpMethod.POST, "/ideia/usuario").permitAll()
 			.antMatchers(HttpMethod.PUT, "/ideia/usuario/resetar-senha").permitAll()
