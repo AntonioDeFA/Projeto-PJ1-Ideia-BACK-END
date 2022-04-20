@@ -9,11 +9,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ideia.projetoideia.model.Perfil;
 import com.ideia.projetoideia.model.Usuario;
+import com.ideia.projetoideia.model.dto.UsuarioDto;
 import com.ideia.projetoideia.repository.PerfilRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
 import com.ideia.projetoideia.utils.EnviarEmail;
@@ -37,6 +40,9 @@ public class UsuarioService {
 			throw new Exception(
 					"Não foi possível criar esta conta, pois já existe um usuário com este email cadastrado");
 		}
+		if (user.getSenha() == null) {
+			throw new Exception("A senha não deve pode ser nula");
+		}
 		user.setSenha(new BCryptPasswordEncoder().encode(user.getSenha()));
 		List<Perfil> perfis = new ArrayList<>();
 		Perfil perfil = new Perfil();
@@ -50,6 +56,12 @@ public class UsuarioService {
 
 	public List<Usuario> consultarUsuarios() {
 		return usuarioRepositorio.findAll();
+	}
+	
+	public UsuarioDto consultarUsuarioLogado() throws Exception {
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+		UsuarioDto dto = new UsuarioDto(this.consultarUsuarioPorEmail(autenticado.getName()));
+		return dto;
 	}
 
 	public Page<Usuario> consultarUsuarios(Integer numeroPagina) {

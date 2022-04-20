@@ -1,5 +1,6 @@
 package com.ideia.projetoideia.services;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,11 +9,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.ideia.projetoideia.model.Equipe;
+
 import com.ideia.projetoideia.model.Usuario;
+
+import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
+import com.ideia.projetoideia.model.TipoPapelUsuario;
+import com.ideia.projetoideia.model.Usuario;
+import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
+import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.EquipeRepositorio;
+import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
 
 import javassist.NotFoundException;
 
@@ -22,7 +33,33 @@ public class EquipeService {
 	@Autowired
 	private EquipeRepositorio equipeRepositorio;
 
-	public void criarEquipe(Equipe equipe) throws Exception {
+	@Autowired
+	private UsuarioService usuarioService;
+
+	@Autowired
+	private CompeticaoRepositorio competicaoRepositorio;
+
+	@Autowired
+	private PapelUsuarioCompeticaoRepositorio papelUsuarioCompeticaoRepositorio;
+
+	public void criarEquipe(EquipeDtoCriacao equipeDto) throws Exception {
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
+
+		Equipe equipe = new Equipe();
+		equipe.setNomeEquipe(equipeDto.getNomeEquipe());
+		equipe.setDataInscricao(LocalDate.now());
+		equipe.setToken("ffghuiadfghioadfg4564156415");
+		equipe.setCompeticaoCadastrada(competicaoRepositorio.findById(equipeDto.getIdCompeticao()).get());
+		equipe.setLider(usuario);	
+
+		PapelUsuarioCompeticao papelUsuarioCompeticao = new PapelUsuarioCompeticao();
+		papelUsuarioCompeticao.setTipoPapelUsuario(TipoPapelUsuario.COMPETIDOR);
+		papelUsuarioCompeticao.setUsuario(usuario);
+		papelUsuarioCompeticao.setCompeticao(equipe.getCompeticaoCadastrada());
+
+		papelUsuarioCompeticaoRepositorio.save(papelUsuarioCompeticao);
+
 		equipeRepositorio.save(equipe);
 	}
 

@@ -32,6 +32,8 @@ public class Competicao {
 
 	@Column(nullable = false, name = "nome_competicao")
 	@NotBlank(message = "Nome da Competiçao não pode ser nulo")
+//	@Max(value = 25 , message = "O tamanho máximo do nome da competição não pode ser maior que 25 caracteres")
+//	@Min(value = 3, message = "O tamanho minimo do nome da competição não pode ser menor que 3 caracteres")
 	private String nomeCompeticao;
 
 	@Column(nullable = false, name = "qntd_maxima_membros_por_equipe")

@@ -7,6 +7,8 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,9 +19,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.EmailDto;
+import com.ideia.projetoideia.model.dto.UsuarioDto;
 import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.UsuarioService;
 
@@ -54,6 +58,17 @@ public class ControllerUsuario {
 	@GetMapping("/usuarios")
 	public List<Usuario> consultarUsuarios() {
 		return usuarioService.consultarUsuarios();
+	}
+	
+	@GetMapping("/usuario-logado")
+	public UsuarioDto consultarUsuarioLogado() {
+		UsuarioDto usuario = null;
+		try {
+		  usuario = usuarioService.consultarUsuarioLogado();
+		}catch(Exception e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+		}
+		return usuario;
 	}
 
 	@PutMapping("/usuario/update/{usuarioId}")
