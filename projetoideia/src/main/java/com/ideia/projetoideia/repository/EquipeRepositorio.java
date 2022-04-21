@@ -1,5 +1,6 @@
 package com.ideia.projetoideia.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.ideia.projetoideia.model.Equipe;
+import com.ideia.projetoideia.model.Usuario;
 
 public interface EquipeRepositorio extends JpaRepository<Equipe, Integer> {
 
@@ -22,5 +24,7 @@ public interface EquipeRepositorio extends JpaRepository<Equipe, Integer> {
 	
 	@Query(value = "select * from tb_equipe where token = :token", nativeQuery = true)
 	public Optional<Equipe> consultarEquipePorToken(@Param("token") String token);
+	
+	public List<Equipe> findByLider(Usuario lider);
 
 }

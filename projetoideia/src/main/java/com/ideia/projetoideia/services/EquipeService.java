@@ -49,6 +49,10 @@ public class EquipeService {
 	public void criarEquipe(EquipeDtoCriacao equipeDto) throws Exception {
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
+		
+		if(equipeRepositorio.findByLider(usuario)!=null){
+			throw new Exception("Você não pode criar mais de uma equipe na mesma competição!");
+		}
 
 		Equipe equipe = new Equipe();
 		equipe.setNomeEquipe(equipeDto.getNomeEquipe());
@@ -63,7 +67,7 @@ public class EquipeService {
 		papelUsuarioCompeticao.setCompeticao(equipe.getCompeticaoCadastrada());
 
 		papelUsuarioCompeticaoRepositorio.save(papelUsuarioCompeticao);
-		
+
 		equipeRepositorio.save(equipe);
 
 		for (UsuarioDto usuarioDto : equipeDto.getUsuarios()) {
@@ -124,6 +128,14 @@ public class EquipeService {
 
 	public void deletarEquipe(Integer id) throws NotFoundException {
 		Equipe equipe = this.recuperarEquipe(id);
+		List<PapelUsuarioCompeticao> papelUsuarioCompeticoes = papelUsuarioCompeticaoRepositorio
+				.findByUsuario(equipe.getLider());
+		for (PapelUsuarioCompeticao papelUsuarioCompeticao : papelUsuarioCompeticoes) {
+			if (papelUsuarioCompeticao.getTipoPapelUsuario() == TipoPapelUsuario.COMPETIDOR) {
+				papelUsuarioCompeticaoRepositorio.delete(papelUsuarioCompeticao);
+				break;
+			}
+		}
 		equipeRepositorio.delete(equipe);
 	}
 }
