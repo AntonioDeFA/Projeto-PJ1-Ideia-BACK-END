@@ -11,9 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -43,10 +41,6 @@ public class Usuario implements UserDetails {
 
 	private String senha;
 	
-	@ManyToOne
-	@JoinColumn(name = "equipe_fk")
-	private Equipe equipe;
-
 	@ManyToMany(fetch = FetchType.EAGER)
 	private List<Perfil> perfis;
 

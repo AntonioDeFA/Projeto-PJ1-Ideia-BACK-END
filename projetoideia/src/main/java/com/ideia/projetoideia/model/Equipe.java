@@ -47,7 +47,7 @@ public class Equipe {
 	@OneToMany(mappedBy = "equipe", cascade = CascadeType.MERGE)
 	private List<LeanCanvas> canvasDaEquipe = new ArrayList<>();
 	
-	@OneToMany(mappedBy = "equipe", cascade = CascadeType.MERGE)
-	private List<Usuario> usuarios = new ArrayList<>();
+	@OneToMany(mappedBy = "equipe", cascade = CascadeType.REMOVE)
+	private List<UsuarioMembroComum> usuarios = new ArrayList<>();
 
 }

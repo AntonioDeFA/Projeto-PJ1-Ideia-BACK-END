@@ -16,14 +16,15 @@ import org.springframework.stereotype.Service;
 import com.ideia.projetoideia.model.Equipe;
 
 import com.ideia.projetoideia.model.Usuario;
-
+import com.ideia.projetoideia.model.UsuarioMembroComum;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
 import com.ideia.projetoideia.model.TipoPapelUsuario;
-import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
+import com.ideia.projetoideia.model.dto.UsuarioDto;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.EquipeRepositorio;
 import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
+import com.ideia.projetoideia.repository.UsuarioMembroComumRepositorio;
 
 import javassist.NotFoundException;
 
@@ -42,6 +43,9 @@ public class EquipeService {
 	@Autowired
 	private PapelUsuarioCompeticaoRepositorio papelUsuarioCompeticaoRepositorio;
 
+	@Autowired
+	private UsuarioMembroComumRepositorio usuarioMembroComumRepositorio;
+
 	public void criarEquipe(EquipeDtoCriacao equipeDto) throws Exception {
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
@@ -51,7 +55,7 @@ public class EquipeService {
 		equipe.setDataInscricao(LocalDate.now());
 		equipe.setToken("ffghuiadfghioadfg4564156415");
 		equipe.setCompeticaoCadastrada(competicaoRepositorio.findById(equipeDto.getIdCompeticao()).get());
-		equipe.setLider(usuario);	
+		equipe.setLider(usuario);
 
 		PapelUsuarioCompeticao papelUsuarioCompeticao = new PapelUsuarioCompeticao();
 		papelUsuarioCompeticao.setTipoPapelUsuario(TipoPapelUsuario.COMPETIDOR);
@@ -59,8 +63,19 @@ public class EquipeService {
 		papelUsuarioCompeticao.setCompeticao(equipe.getCompeticaoCadastrada());
 
 		papelUsuarioCompeticaoRepositorio.save(papelUsuarioCompeticao);
+		
+		equipeRepositorio.save(equipe);
+
+		for (UsuarioDto usuarioDto : equipeDto.getUsuarios()) {
+			UsuarioMembroComum usuarioComum = new UsuarioMembroComum();
+			usuarioComum.setEmail(usuarioDto.getEmail());
+			usuarioComum.setNome(usuarioDto.getNomeUsuario());
+			usuarioComum.setEquipe(equipe);
+			usuarioMembroComumRepositorio.save(usuarioComum);
+		}
 
 		equipeRepositorio.save(equipe);
+
 	}
 
 	public Equipe recuperarEquipe(Integer equipeId) throws NotFoundException {
@@ -91,11 +106,11 @@ public class EquipeService {
 		Page<Equipe> page = equipeRepositorio.findAll(PageRequest.of(--numeroPagina, 6, sort));
 		return page;
 	}
-	
-	public Equipe consultarEquipePorToken(String token){
-				
+
+	public Equipe consultarEquipePorToken(String token) {
+
 		return equipeRepositorio.consultarEquipePorToken(token).orElse(null);
-		
+
 	}
 
 	public void atualizarEquipe(Equipe equipe, Integer id) throws Exception {
