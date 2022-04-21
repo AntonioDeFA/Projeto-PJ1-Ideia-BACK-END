@@ -78,7 +78,7 @@ public class UsuarioService {
 		if (usuario.isPresent()) {
 			return usuario.get();
 		}
-		throw new NotFoundException("Usuario não encontrado");
+		throw new NotFoundException("Não foi encontrado um usuário com esse email");
 
 	}
 
