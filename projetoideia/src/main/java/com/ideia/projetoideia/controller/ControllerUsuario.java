@@ -7,11 +7,10 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -24,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.EmailDto;
 import com.ideia.projetoideia.model.dto.UsuarioDto;
+import com.ideia.projetoideia.model.dto.UsuarioPatchDto;
 import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.UsuarioService;
 
@@ -71,18 +71,16 @@ public class ControllerUsuario {
 		return usuario;
 	}
 
-	@PutMapping("/usuario/update/{usuarioId}")
-	public ResponseEntity<?> atualizarUsuario(@Valid @RequestBody Usuario user, BindingResult result,
-			@PathVariable("usuarioId") Integer usuarioId) {
+	@PatchMapping("/usuario/update")
+	public ResponseEntity<?> atualizarUsuario(@Valid @RequestBody UsuarioPatchDto user, BindingResult result) {
 
 		if (!result.hasErrors()) {
 
 			try {
-				usuarioService.atualizarUsuario(user, usuarioId);
+				usuarioService.atualizarUsuario(user);
 				return ResponseEntity.status(HttpStatus.OK)
 						.body(new IdeiaResponseFile("Atualizado com sucesso", HttpStatus.OK));
 			} catch (NotFoundException e) {
-
 				return ResponseEntity.status(HttpStatus.NOT_FOUND)
 						.body(new IdeiaResponseFile("Erro ao atualizar usuário", e.getMessage(), HttpStatus.NOT_FOUND));
 			} catch (Exception e) {

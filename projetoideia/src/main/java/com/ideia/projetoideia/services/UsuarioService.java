@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.ideia.projetoideia.model.Perfil;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.UsuarioDto;
+import com.ideia.projetoideia.model.dto.UsuarioPatchDto;
 import com.ideia.projetoideia.repository.PerfilRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
 import com.ideia.projetoideia.utils.EnviarEmail;
@@ -89,13 +90,22 @@ public class UsuarioService {
 		throw new NotFoundException("Usuario não encontrado");
 	}
 	
-	public void atualizarUsuario(Usuario user, Integer id) throws Exception {
-		Usuario userRecuperado = this.consultarUsuarioPorId(id);
-		userRecuperado.setNomeUsuario(user.getNomeUsuario());
-		userRecuperado.setEmail(user.getEmail());
-		userRecuperado.setSenha(user.getPassword());
-		userRecuperado.setPerfis(user.getPerfis());
-		usuarioRepositorio.save(userRecuperado);
+	public void atualizarUsuario(UsuarioPatchDto user) throws Exception {
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+		Usuario usuario =  this.consultarUsuarioPorEmail(autenticado.getName());
+		
+		if(user.getSenha()!=null) {
+			if(!user.getSenha().equals("")) {
+				usuario.setSenha(new BCryptPasswordEncoder().encode(user.getSenha()));
+			}
+		}
+		if(user.getNomeUsuario()!=null) {
+			if(!user.getNomeUsuario().equals("")) {
+				usuario.setNomeUsuario(user.getNomeUsuario());
+			}
+		}
+		
+		usuarioRepositorio.save(usuario);
 	}
 
 	public void deletarUsuarioPorId(Integer id) throws Exception {
