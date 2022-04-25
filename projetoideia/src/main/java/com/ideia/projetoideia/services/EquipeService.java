@@ -1,6 +1,7 @@
 package com.ideia.projetoideia.services;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +26,7 @@ import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.EquipeRepositorio;
 import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
 import com.ideia.projetoideia.repository.UsuarioMembroComumRepositorio;
+import com.ideia.projetoideia.services.utils.GeradorEquipeToken;
 
 import javassist.NotFoundException;
 
@@ -50,14 +52,22 @@ public class EquipeService {
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
 		
-		if(equipeRepositorio.findByLider(usuario)!=null){
-			throw new Exception("Você não pode criar mais de uma equipe na mesma competição!");
+		List<String> lista = new ArrayList<String>();
+		for(UsuarioDto user: equipeDto.getUsuarios()) {
+			lista.add(user.getEmail());
+		}
+		
+		if(equipeRepositorio.validarUsuarioLiderEOrganizador(usuario.getId(), equipeDto.getIdCompeticao())> 0){
+			throw new Exception("Você não pode criar mais de uma equipe na mesma competição, nem pode participar de uma equipe sendo o administrador da competição");
+		}
+		if(equipeRepositorio.validarMembrosDeUmaEquipeEmUmaCompeticao(lista, equipeDto.getIdCompeticao())> 0){
+			throw new Exception("Algum usuário de sua equipe já está participando dessa competição em outra equipe");
 		}
 
 		Equipe equipe = new Equipe();
 		equipe.setNomeEquipe(equipeDto.getNomeEquipe());
 		equipe.setDataInscricao(LocalDate.now());
-		equipe.setToken("ffghuiadfghioadfg4564156415");
+		equipe.setToken(GeradorEquipeToken.gerarTokenEquipe(equipeDto.getNomeEquipe()));
 		equipe.setCompeticaoCadastrada(competicaoRepositorio.findById(equipeDto.getIdCompeticao()).get());
 		equipe.setLider(usuario);
 
@@ -67,7 +77,6 @@ public class EquipeService {
 		papelUsuarioCompeticao.setCompeticao(equipe.getCompeticaoCadastrada());
 
 		papelUsuarioCompeticaoRepositorio.save(papelUsuarioCompeticao);
-
 		equipeRepositorio.save(equipe);
 
 		for (UsuarioDto usuarioDto : equipeDto.getUsuarios()) {
