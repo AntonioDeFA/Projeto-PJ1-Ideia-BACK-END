@@ -12,7 +12,6 @@ import org.springframework.data.repository.query.Param;
 
 import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.Usuario;
-import com.ideia.projetoideia.model.dto.UsuarioDto;
 
 public interface EquipeRepositorio extends JpaRepository<Equipe, Integer> {
 
@@ -31,5 +30,7 @@ public interface EquipeRepositorio extends JpaRepository<Equipe, Integer> {
 
 	@Query(value = "select count(*) from tb_usuario_membro_comum tbumc join tb_equipe tbe on tbumc.equipe_fk = tbe.id where tbumc.email in(:lista) and tbe.competicao_fk = :id_competicao", nativeQuery = true)
 	public int validarMembrosDeUmaEquipeEmUmaCompeticao(@Param("lista") List<String> emails, @Param("id_competicao") int idCompeticao);
+	
+	public List<Equipe> findByLider(Usuario lider);
 	
 }

@@ -62,13 +62,13 @@ public class Competicao {
 	@JoinColumn(name = "organizador_fk")
 	private Usuario organizador;
 
-	@OneToMany(mappedBy = "competicao", cascade = CascadeType.MERGE)
+	@OneToMany(mappedBy = "competicao", cascade = CascadeType.REMOVE)
 	private List<Etapa> etapas = new ArrayList<>();
 
-	@OneToMany(mappedBy = "competicaoCadastrada", cascade = CascadeType.MERGE)
+	@OneToMany(mappedBy = "competicaoCadastrada", cascade = CascadeType.REMOVE)
 	private List<Equipe> equipesCadastradas = new ArrayList<>();
 
-	@OneToMany(mappedBy = "competicao", cascade = CascadeType.MERGE)
+	@OneToMany(mappedBy = "competicao", cascade = CascadeType.REMOVE)
 	private List<PapelUsuarioCompeticao> papeisUsuarioCompeticao = new ArrayList<>();
 
 }

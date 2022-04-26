@@ -10,4 +10,5 @@ import com.ideia.projetoideia.model.Usuario;
 public interface PapelUsuarioCompeticaoRepositorio extends JpaRepository<PapelUsuarioCompeticao, Integer> {
 	
 	public List<PapelUsuarioCompeticao> findByUsuario(Usuario usuario);
-	}
+	
+}

@@ -130,7 +130,7 @@ public class ControllerCompeticao {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new IdeiaResponseFile("Deletada com sucesso", HttpStatus.OK));
 
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(new IdeiaResponseFile("Não foi possível deletar", e.getMessage(), HttpStatus.NOT_FOUND));

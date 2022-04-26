@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.ideia.projetoideia.model.Competicao;
+import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.Etapa;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
 import com.ideia.projetoideia.model.TipoPapelUsuario;
@@ -21,6 +22,7 @@ import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorioCustom;
+import com.ideia.projetoideia.repository.EquipeRepositorio;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
 import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
@@ -29,7 +31,7 @@ import javassist.NotFoundException;
 
 @Service
 public class CompeticaoService {
-	
+
 	@Autowired
 	CompeticaoRepositorio competicaoRepositorio;
 
@@ -41,10 +43,13 @@ public class CompeticaoService {
 
 	@Autowired
 	PapelUsuarioCompeticaoRepositorio papelUsuarioCompeticaoRepositorio;
-	
+
+	@Autowired
+	EquipeRepositorio equipeRepositorio;
+
 	@Autowired
 	UsuarioService usuarioService;
-	
+
 	private final CompeticaoRepositorioCustom competicaoRepositorioCustom;
 
 	public CompeticaoService(CompeticaoRepositorioCustom competicaoRepositorioCustom) {
@@ -114,30 +119,31 @@ public class CompeticaoService {
 			Integer ano) throws Exception {
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
-		
+
 		List<Competicao> competicoes = competicaoRepositorioCustom.findByTodasCompeticoesFaseInscricao(nomeCompeticao,
 				mes, ano, usuario.getId());
 
 		List<CompeticaoEtapaVigenteDto> competicoesDto = new ArrayList<>();
 		for (Competicao competicao : competicoes) {
-			CompeticaoEtapaVigenteDto competicaoEtapaVigenteDto = new CompeticaoEtapaVigenteDto(competicao,"INSCRICAO",
-			usuario);
+			CompeticaoEtapaVigenteDto competicaoEtapaVigenteDto = new CompeticaoEtapaVigenteDto(competicao, "INSCRICAO",
+					usuario);
 			competicoesDto.add(competicaoEtapaVigenteDto);
 		}
 		return competicoesDto;
 	}
 
-	public List<CompeticaoEtapaVigenteDto> consultarMinhasCompeticoes(String nomeCompeticao, Integer mes, Integer ano) throws Exception {
+	public List<CompeticaoEtapaVigenteDto> consultarMinhasCompeticoes(String nomeCompeticao, Integer mes, Integer ano)
+			throws Exception {
 
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
 		List<CompeticaoEtapaVigenteDto> competicoesDto = new ArrayList<>();
-		List<Competicao> competicoes = competicaoRepositorioCustom.findByCompeticoesDoUsuario(nomeCompeticao,
-				mes, ano, usuario.getId());
-		
+		List<Competicao> competicoes = competicaoRepositorioCustom.findByCompeticoesDoUsuario(nomeCompeticao, mes, ano,
+				usuario.getId());
+
 		for (Competicao competicao : competicoes) {
-			CompeticaoEtapaVigenteDto competicaoEtapaVigenteDto = new CompeticaoEtapaVigenteDto(competicao,"COMPETICAO",
-			usuario);
+			CompeticaoEtapaVigenteDto competicaoEtapaVigenteDto = new CompeticaoEtapaVigenteDto(competicao,
+					"COMPETICAO", usuario);
 			competicoesDto.add(competicaoEtapaVigenteDto);
 		}
 		return competicoesDto;
@@ -160,9 +166,37 @@ public class CompeticaoService {
 
 	}
 
-	public void deletarCompeticaoPorId(Integer id) throws NotFoundException {
+	public void deletarCompeticaoPorId(Integer id) throws Exception {
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
+		
 		Competicao competicao = recuperarCompeticaoId(id);
-		competicaoRepositorio.delete(competicao);
+		PapelUsuarioCompeticao papelUsuarioCompeticaoRecuperada = null;
+		
+		for (PapelUsuarioCompeticao papelUsuarioCompeticao : papelUsuarioCompeticaoRepositorio.findByUsuario(usuario)) {
+			if (papelUsuarioCompeticao.getCompeticao().getId() == competicao.getId()) {
+				papelUsuarioCompeticaoRecuperada = papelUsuarioCompeticao;
+				break;
+			}
+
+		}
+		
+		if (papelUsuarioCompeticaoRecuperada.getTipoPapelUsuario() == TipoPapelUsuario.ORGANIZADOR) {
+			competicaoRepositorio.delete(competicao);
+		} 
+		else if (papelUsuarioCompeticaoRecuperada.getTipoPapelUsuario() == TipoPapelUsuario.COMPETIDOR) {
+			List<Equipe> equipes = equipeRepositorio.findByLider(usuario);
+			Equipe equipeRecuperada = null;
+			for (Equipe equipe : equipes) {
+				if (equipe.getCompeticaoCadastrada().getId() == competicao.getId()) {
+					equipeRecuperada = equipe;
+					break;
+				}
+			}
+			equipeRepositorio.delete(equipeRecuperada);
+		}
+		papelUsuarioCompeticaoRepositorio.delete(papelUsuarioCompeticaoRecuperada);
+
 	}
 
 }
