@@ -16,6 +16,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 @Entity
@@ -45,9 +47,11 @@ public class Equipe {
 	private Competicao competicaoCadastrada;
 
 	@OneToMany(mappedBy = "equipe", cascade = CascadeType.REMOVE)
+	@JsonIgnore
 	private List<LeanCanvas> canvasDaEquipe = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "equipe", cascade = CascadeType.REMOVE)
+	@JsonIgnore
 	private List<UsuarioMembroComum> usuarios = new ArrayList<>();
 
 }

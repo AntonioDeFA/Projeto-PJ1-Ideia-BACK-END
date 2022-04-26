@@ -19,6 +19,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 @Entity
@@ -66,6 +68,7 @@ public class Competicao {
 	private List<Etapa> etapas = new ArrayList<>();
 
 	@OneToMany(mappedBy = "competicaoCadastrada", cascade = CascadeType.REMOVE)
+	@JsonIgnore
 	private List<Equipe> equipesCadastradas = new ArrayList<>();
 
 	@OneToMany(mappedBy = "competicao", cascade = CascadeType.REMOVE)
