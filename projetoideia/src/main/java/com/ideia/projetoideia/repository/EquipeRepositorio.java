@@ -34,4 +34,5 @@ public interface EquipeRepositorio extends JpaRepository<Equipe, Integer> {
 	@Query(value = "SELECT count(*) FROM tb_equipe where nome_equipe in (:nome_equipe) and competicao_fk = :id_competicao", nativeQuery = true)
 	public int validarNomeDeEquipe(@Param("nome_equipe") String nomeEquipe, @Param("id_competicao") int idCompeticao);
 
+	public List<Equipe> findByLider(Usuario lider);
 }
