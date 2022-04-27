@@ -57,14 +57,20 @@ public class EquipeService {
 			lista.add(user.getEmail());
 		}
 		
+		StringBuilder erros = new StringBuilder();
+		
 		if(equipeRepositorio.validarUsuarioLiderEOrganizador(usuario.getId(), equipeDto.getIdCompeticao())> 0){
-			throw new Exception("Observe se você não é o organizador desta competição ou se já não está inscrito nesta competição");
+			erros.append("Observe se você não é o organizador desta competição ou se já não está inscrito nesta competição. ");
 		}
 		if(equipeRepositorio.validarNomeDeEquipe(equipeDto.getNomeEquipe(), equipeDto.getIdCompeticao()) > 0) {
-			throw new Exception("Já existe uma equipe inscrita nesta competição com este nome. Por gentiliza, escolha outro nome para sua equipe");
+			erros.append("Já existe uma equipe inscrita nesta competição com este nome. Por gentiliza, escolha outro nome para sua equipe. ");
 		}
 		if(equipeRepositorio.validarMembrosDeUmaEquipeEmUmaCompeticao(lista, equipeDto.getIdCompeticao())> 0){
-			throw new Exception("Algum usuário de sua equipe já está participando dessa competição em outra equipe");
+			erros.append("Algum usuário de sua equipe já está participando dessa competição em outra equipe. ");
+		}
+		
+		if (erros.length() != 0) {
+			throw new Exception(erros.toString());
 		}
 
 		Equipe equipe = new Equipe();
