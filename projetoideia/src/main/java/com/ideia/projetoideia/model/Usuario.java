@@ -39,6 +39,7 @@ public class Usuario implements UserDetails {
 	@Column(nullable = false, unique = true)
 	private String email;
 
+	@Column(nullable = false)
 	private String senha;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
