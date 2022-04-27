@@ -58,7 +58,7 @@ public class EquipeService {
 		}
 		
 		if(equipeRepositorio.validarUsuarioLiderEOrganizador(usuario.getId(), equipeDto.getIdCompeticao())> 0){
-			throw new Exception("Você não pode criar mais de uma equipe na mesma competição, nem pode participar de uma equipe sendo o administrador da competição");
+			throw new Exception("Observe se você não é o organizador desta competição ou se já não está inscrito nesta competição");
 		}
 		if(equipeRepositorio.validarMembrosDeUmaEquipeEmUmaCompeticao(lista, equipeDto.getIdCompeticao())> 0){
 			throw new Exception("Algum usuário de sua equipe já está participando dessa competição em outra equipe");
