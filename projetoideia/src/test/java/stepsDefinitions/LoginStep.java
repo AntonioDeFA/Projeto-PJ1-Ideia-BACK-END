@@ -15,13 +15,6 @@ import org.openqa.selenium.WebElement;
 
 public class LoginStep {
 	
-	
-	@Dado("que inicialize usuario")
-	public void queInicializeUsuario() throws Exception {
-		
-	}
-
-
 	@Dado("que eu passe o email {string}")
 	public void queEuPasseOEmail(String email) {
 	   Na(LoginPage.class).preencherCampoEmail(email);
@@ -36,7 +29,7 @@ public class LoginStep {
 	}
 	@Entao("o sistema valida que entrou")
 	public void oSistemaValidaQueEntrou() {
-		WebElement nomeNaTela = driver.findElement(By.xpath("//*[@id=\"component-defaultHeader\"]/div/div/div[2]"));
+		WebElement nomeNaTela = driver.findElement(By.id("nome-usuario-para-teste"));
 		assertEquals(nomeNaTela.getText(),NOME_USUARIO);
 	}
 	
