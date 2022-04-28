@@ -23,8 +23,14 @@ public class CriarEquipePage {
 	@FindBy(id = "btn-adicionar-membro")
 	private WebElement botaoCadastrarMembro;
 	
+	@FindBy(id = "btn-confirmar-inscricao-para-teste")
+	private WebElement botaoConfirmarInscricao;
 	
 	
+	
+	public void clicarNoBotaoConfirmarInscricao() {
+		botaoConfirmarInscricao.click();
+	}
 	
 	public void clicarNoBotaoConfirmar() {
 		botaoConfirmar.click();
