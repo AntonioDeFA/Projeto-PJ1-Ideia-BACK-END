@@ -1,6 +1,7 @@
 #language: pt
 #enconding: UTF-8
 
+@Pesquisa
 Funcionalidade: Test Cucumber
 
 	Cenario: Pesquisar por nome da competicao

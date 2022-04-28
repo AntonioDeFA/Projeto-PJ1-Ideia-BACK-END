@@ -2,6 +2,7 @@ package pages;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.FindBys;
 
 public class TelaInicialPage {
 	
@@ -10,10 +11,7 @@ public class TelaInicialPage {
 	
 	@FindBy(xpath = "//*[@id=\"minhas-competicoes\"]/div[2]/div[1]/div/div[3]/div[1]/form/div[4]/button")
 	private WebElement botaoFiltrar;
-	
-	
-	
-	
+
 	public void clicarNoBotaoFiltrar() {
 		botaoFiltrar.click();
 	}
