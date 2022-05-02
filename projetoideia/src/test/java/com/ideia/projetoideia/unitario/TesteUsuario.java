@@ -1,6 +1,7 @@
 package com.ideia.projetoideia.unitario;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +23,7 @@ import com.ideia.projetoideia.repository.UsuarioRepositorio;
 @ContextConfiguration
 @SpringBootTest(classes = ProjetoideiaApplication.class)
 public class TesteUsuario {
-	
+
 	@Autowired
 	UsuarioRepositorio usuarioRepositorio;
 
@@ -34,10 +35,10 @@ public class TesteUsuario {
 		usuario.setEmail("joao123@gmail.com");
 		usuario.setSenha("joao123");
 	}
-	
+
 //	  						Caminho Feliz 	
 //---------------------------------------------------------------------------------------------------------------------------
-	
+
 	@Test
 	public void testeCadastroUsuarioCorreto() {
 		usuarioRepositorio.save(usuario);
@@ -46,8 +47,8 @@ public class TesteUsuario {
 		assertNotNull(usuarioTest);
 
 		usuarioRepositorio.deleteById(usuarioTest.getId());
-	}	
-	
+	}
+
 	@Test
 	public void testeAutualizarUsuarioCorreto() {
 		usuarioRepositorio.save(usuario);
@@ -57,45 +58,60 @@ public class TesteUsuario {
 
 		usuario.setNomeUsuario("Maria");
 		usuario.setEmail("maria123@gmail.com");
-		usuario.setSenha("maria123"); 
-		
+		usuario.setSenha("maria123");
+
 		usuarioRepositorio.save(usuario);
 
 		Usuario usuarioNovoTest = usuarioRepositorio.findByNomeUsuario(usuario.getNomeUsuario()).get(0);
-		assertNotNull(usuarioNovoTest); 
-		
+		assertNotNull(usuarioNovoTest);
+
 		usuarioRepositorio.deleteById(usuarioNovoTest.getId());
 	}
-	
-	
+
+	@Test
+	public void testeDeletarUsuarioCorreto() {
+
+		Integer idUsuario = usuarioRepositorio.save(usuario).getId();
+
+		Usuario usuarioRcuperada = usuarioRepositorio.findById(idUsuario).get();
+
+		assertNotNull(usuarioRcuperada); // valida que a equipe existe no banco
+
+		usuarioRepositorio.delete(usuarioRcuperada);
+
+		Usuario usuarioDeletado = usuarioRepositorio.findById(idUsuario).orElse(null);
+
+		assertNull(usuarioDeletado);
+
+	}
+
 //  						Exceptions 	
 //---------------------------------------------------------------------------------------------------------------------------
-	
+
 	@Test
 	public void testarNomeErrado() {
-		usuario.setNomeUsuario(null);;
-		assertThrows(DataIntegrityViolationException.class,() ->{
+		usuario.setNomeUsuario(null);
+		;
+		assertThrows(DataIntegrityViolationException.class, () -> {
 			usuarioRepositorio.save(usuario);
 		});
 
 	}
-
-//---------------------------------------------
 
 	@Test
 	public void testarEmailErrado() {
-		usuario.setEmail(null);;
-		assertThrows(DataIntegrityViolationException.class,() ->{
+		usuario.setEmail(null);
+		;
+		assertThrows(DataIntegrityViolationException.class, () -> {
 			usuarioRepositorio.save(usuario);
 		});
 	}
 
-//---------------------------------------------
-	
 	@Test
 	public void testarSenhaErrado() {
-		usuario.setSenha(null);;
-		assertThrows(DataIntegrityViolationException.class,() ->{
+		usuario.setSenha(null);
+		;
+		assertThrows(DataIntegrityViolationException.class, () -> {
 			usuarioRepositorio.save(usuario);
 		});
 	}
