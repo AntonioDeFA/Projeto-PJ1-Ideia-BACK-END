@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,6 +35,7 @@ public class Usuario implements UserDetails {
 	private Integer id;
 
 	@Column(nullable = false, name = "nome_usuario")
+	@Size(min=3,max=50, message = "O nome usuario deve ter entre 3 e 50 caracteres.")
 	private String nomeUsuario;
 
 	@Column(nullable = false, unique = true)

@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -30,6 +31,7 @@ public class Equipe {
 	private Integer id;
 
 	@Column(nullable = false, name = "nome_equipe")
+	@Size(min=3,max=16, message = "O nome do equipe deve ter entre 3 e 50 caracteres.")
 	private String nomeEquipe;
 
 	@Column(nullable = false)
