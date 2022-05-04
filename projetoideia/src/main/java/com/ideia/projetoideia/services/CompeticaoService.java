@@ -17,14 +17,17 @@ import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.Etapa;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
+import com.ideia.projetoideia.model.QuestaoAvaliativa;
 import com.ideia.projetoideia.model.TipoPapelUsuario;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
+import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorioCustom;
 import com.ideia.projetoideia.repository.EquipeRepositorio;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
 import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
+import com.ideia.projetoideia.repository.QuestaoAvaliativaRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
 
 import javassist.NotFoundException;
@@ -46,6 +49,9 @@ public class CompeticaoService {
 
 	@Autowired
 	EquipeRepositorio equipeRepositorio;
+
+	@Autowired
+	QuestaoAvaliativaRepositorio questaoAvaliativaRepositorio;
 
 	@Autowired
 	UsuarioService usuarioService;
@@ -76,9 +82,16 @@ public class CompeticaoService {
 		PapelUsuarioCompeticao papelUsuarioCompeticao = new PapelUsuarioCompeticao();
 		papelUsuarioCompeticao.setTipoPapelUsuario(TipoPapelUsuario.ORGANIZADOR);
 		papelUsuarioCompeticao.setUsuario(usuario);
-		papelUsuarioCompeticao.setCompeticao(competicao);
+		papelUsuarioCompeticao.setCompeticaoCadastrada(competicao);
 
 		papelUsuarioCompeticaoRepositorio.save(papelUsuarioCompeticao);
+		
+		for (QuestaoAvaliativa questao : competicao.getQuestoesAvaliativas()) {
+			questao.setCompeticaoCadastrada(competicao);
+			questaoAvaliativaRepositorio.save(questao);
+			
+		}	
+		
 	}
 
 	public List<Competicao> consultarCompeticoes() {
@@ -169,22 +182,21 @@ public class CompeticaoService {
 	public void deletarCompeticaoPorId(Integer id) throws Exception {
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
-		
+
 		Competicao competicao = recuperarCompeticaoId(id);
 		PapelUsuarioCompeticao papelUsuarioCompeticaoRecuperada = null;
-		
+
 		for (PapelUsuarioCompeticao papelUsuarioCompeticao : papelUsuarioCompeticaoRepositorio.findByUsuario(usuario)) {
-			if (papelUsuarioCompeticao.getCompeticao().getId() == competicao.getId()) {
+			if (papelUsuarioCompeticao.getCompeticaoCadastrada().getId() == competicao.getId()) {
 				papelUsuarioCompeticaoRecuperada = papelUsuarioCompeticao;
 				break;
 			}
 
 		}
-		
+
 		if (papelUsuarioCompeticaoRecuperada.getTipoPapelUsuario() == TipoPapelUsuario.ORGANIZADOR) {
 			competicaoRepositorio.delete(competicao);
-		} 
-		else if (papelUsuarioCompeticaoRecuperada.getTipoPapelUsuario() == TipoPapelUsuario.COMPETIDOR) {
+		} else if (papelUsuarioCompeticaoRecuperada.getTipoPapelUsuario() == TipoPapelUsuario.COMPETIDOR) {
 			List<Equipe> equipes = equipeRepositorio.findByLider(usuario);
 			Equipe equipeRecuperada = null;
 			for (Equipe equipe : equipes) {
@@ -196,6 +208,22 @@ public class CompeticaoService {
 			equipeRepositorio.delete(equipeRecuperada);
 		}
 		papelUsuarioCompeticaoRepositorio.delete(papelUsuarioCompeticaoRecuperada);
+
+	}
+
+	public List<QuestoesAvaliativasDto> consultarQuestoesDaCompeticao(Integer competicaoId) throws NotFoundException {
+		Competicao competicaoRecuperada = recuperarCompeticaoId(competicaoId);
+
+		List<QuestaoAvaliativa> questaoAvaliativas = questaoAvaliativaRepositorio
+				.findByCompeticaoCadastrada(competicaoRecuperada);
+
+		List<QuestoesAvaliativasDto> questoesAvaliativasDto = new ArrayList<QuestoesAvaliativasDto>();
+		for (QuestaoAvaliativa questaoAvaliativa : questaoAvaliativas) {
+			QuestoesAvaliativasDto questaoDto = new QuestoesAvaliativasDto(questaoAvaliativa);
+			questoesAvaliativasDto.add(questaoDto);
+		}
+
+		return questoesAvaliativasDto;
 
 	}
 
