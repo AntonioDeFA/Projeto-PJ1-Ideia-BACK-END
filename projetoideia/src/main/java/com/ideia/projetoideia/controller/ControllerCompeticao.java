@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
+import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
 import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.CompeticaoService;
 
@@ -58,7 +59,6 @@ public class ControllerCompeticao {
 			return competicaoService.recuperarCompeticaoId(competicaoId);
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
 	}
@@ -137,5 +137,21 @@ public class ControllerCompeticao {
 		}
 
 	}
+	
+	@GetMapping("/questoes-por-competicao/{competicaoId}")
+	public List<QuestoesAvaliativasDto>consultarQuestoesAvaliativasDaCompeticao(
+			@PathVariable("competicaoId")Integer competicaoId){
+		try {
+			return competicaoService.consultarQuestoesDaCompeticao(competicaoId);
+
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		}
+		catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+		
+	}
+	
 
 }

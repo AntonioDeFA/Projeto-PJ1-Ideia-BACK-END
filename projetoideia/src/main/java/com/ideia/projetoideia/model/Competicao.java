@@ -73,6 +73,6 @@ public class Competicao {
 	private List<PapelUsuarioCompeticao> papeisUsuarioCompeticao = new ArrayList<>();
 
 	@OneToMany(mappedBy = "competicaoCadastrada", cascade = CascadeType.REMOVE)
-	private List<QuestaoAvaliativa> questaoAvaliativas = new ArrayList<>();
+	private List<QuestaoAvaliativa> questoesAvaliativas = new ArrayList<>();
 
 }
