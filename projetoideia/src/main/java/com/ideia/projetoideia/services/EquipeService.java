@@ -83,7 +83,7 @@ public class EquipeService {
 		PapelUsuarioCompeticao papelUsuarioCompeticao = new PapelUsuarioCompeticao();
 		papelUsuarioCompeticao.setTipoPapelUsuario(TipoPapelUsuario.COMPETIDOR);
 		papelUsuarioCompeticao.setUsuario(usuario);
-		papelUsuarioCompeticao.setCompeticao(equipe.getCompeticaoCadastrada());
+		papelUsuarioCompeticao.setCompeticaoCadastrada(equipe.getCompeticaoCadastrada());
 
 		papelUsuarioCompeticaoRepositorio.save(papelUsuarioCompeticao);
 		equipeRepositorio.save(equipe);
