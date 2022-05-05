@@ -43,11 +43,19 @@ public class Equipe {
 	@OneToOne
 	@JoinColumn(name = "lider_fk")
 	private Usuario lider;
-
+	
+	@OneToOne
+	@JoinColumn(name = "avaliador_fk")
+	private Usuario avaliador;
+	
 	@ManyToOne
-	@JoinColumn(name = "competicao_fk")
+	@JoinColumn(name = "competicao_cadastrada_fk")
 	private Competicao competicaoCadastrada;
 
+	@OneToMany(mappedBy = "equipe", cascade = CascadeType.REMOVE)
+	@JsonIgnore
+	private List<Pitch> pitchDaEquipe = new ArrayList<>();
+	
 	@OneToMany(mappedBy = "equipe", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	private List<LeanCanvas> canvasDaEquipe = new ArrayList<>();

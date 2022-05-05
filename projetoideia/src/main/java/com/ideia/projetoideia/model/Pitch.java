@@ -1,5 +1,6 @@
 package com.ideia.projetoideia.model;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,52 +16,46 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 
 @Entity
-@Table(name = "tb_lean_canvas")
+@Table(name = "tb_pitch")
 @Data
-public class LeanCanvas {
-
+public class Pitch {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Integer id;
-
-	private String problema;
-
-	private String solucao;
-
-	@Column(name = "metricas_chave")
-	private String metricasChave;
-
-	@Column(name = "proposta_valor")
-	private String propostaValor;
-
-	@Column(name = "vantagem_competitiva")
-	private String vantagemCompetitiva;
-
-	private String canais;
-
-	@Column(name = "segmentos_de_clientes")
-	private String segmentosDeClientes;
-
-	@Column(name = "estrutura_de_custo")
-	private String estruturaDeCusto;
-
-	@Column(name = "fontes_de_receita")
-	private String fontesDeReceita;
-
+	
+	@Column(nullable = false)
+	@NotNull(message = "O arquivo não pode ser nulo.")
+	private File video;
+	
+	@Column(nullable = false)
+	private String titulo;
+	
+	@Column(nullable = false)
+	private String descricao;
+	
 	@Enumerated(EnumType.STRING)
-	private EtapaArtefatoPitch etapaSolucaoCanvas;
-
+	private EtapaArtefatoPitch etapaAvaliacaoVideo;
+	
+	@Column(nullable = false, name = "pitch_deck")
+	private File pitchDeck;
+	
 	@ManyToOne
 	@JoinColumn(name = "equipe_fk")
 	private Equipe equipe;
 	
-	@OneToMany(mappedBy = "leanCanvas", cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "pitch", cascade = CascadeType.REMOVE)
+	@JsonIgnore
+	private List<AvaliacaoPitch> avaliacaoPitch = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "pitch", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	private List<FeedbackAvaliativo> feedbackAvaliativos = new ArrayList<>();
 
