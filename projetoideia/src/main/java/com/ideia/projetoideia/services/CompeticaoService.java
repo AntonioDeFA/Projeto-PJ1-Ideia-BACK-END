@@ -22,6 +22,7 @@ import com.ideia.projetoideia.model.TipoPapelUsuario;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
+import com.ideia.projetoideia.model.dto.UsuarioNaoRelacionadoDTO;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorioCustom;
 import com.ideia.projetoideia.repository.EquipeRepositorio;
@@ -177,6 +178,28 @@ public class CompeticaoService {
 
 		competicaoRepositorio.save(comp);
 
+	}
+
+	public List<UsuarioNaoRelacionadoDTO> consultarUsuariosSemCompeticao(Integer idCompeticao) throws Exception {
+		List<UsuarioNaoRelacionadoDTO> usuarios = new ArrayList<UsuarioNaoRelacionadoDTO>();
+		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
+		List<PapelUsuarioCompeticao> papeis = papelUsuarioCompeticaoRepositorio.findByCompeticaoCadastrada(competicao);
+		for (Usuario usuarioRecuperado : usuarioRepositorio.findAll()) {
+			boolean entrou = false;
+			for (PapelUsuarioCompeticao papelUsuarioCompeticao : papeis) {
+				if (papelUsuarioCompeticao.getUsuario().getId() == usuarioRecuperado.getId()) {
+					entrou = true;
+				}
+			}
+			if(!entrou) {
+				usuarios.add(new UsuarioNaoRelacionadoDTO(usuarioRecuperado));
+			}
+				
+		}
+		if (usuarios.size() == 0) {
+			throw new Exception("Não existe nenhum usuario não cadastrado nessa competição.");
+		}
+		return usuarios;
 	}
 
 	public void deletarCompeticaoPorId(Integer id) throws Exception {

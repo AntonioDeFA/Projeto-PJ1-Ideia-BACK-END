@@ -22,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
+import com.ideia.projetoideia.model.dto.UsuarioNaoRelacionadoDTO;
 import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.CompeticaoService;
 
@@ -69,10 +70,9 @@ public class ControllerCompeticao {
 			@RequestParam(value = "nomeCompeticao", required = false) String nomeCompeticao,
 			@RequestParam(value = "mes", required = false) Integer mes,
 			@RequestParam(value = "ano", required = false) Integer ano) throws Exception {
-		
+
 		return competicaoService.consultarCompeticoesFaseInscricao(nomeCompeticao, mes, ano);
-		
-				
+
 	}
 
 	// Retorna todas as competições relacionadas a um USUÁRIO
@@ -92,6 +92,15 @@ public class ControllerCompeticao {
 	@GetMapping("/competicoes/usuario/{usuarioId}")
 	public List<Competicao> consultarCompeticoesDoUsuario(@PathVariable("usuarioId") Integer usuarioId) {
 		return competicaoService.consultarCompeticoesDoUsuario(usuarioId);
+	}
+
+	@GetMapping("/competicao/{idCompeticao}/usuarios-nao-relacionados")
+	public List<UsuarioNaoRelacionadoDTO> consultarUsuariosSemCompeticao(@PathVariable("idCompeticao") Integer idCompeticao){
+		try {
+			return competicaoService.consultarUsuariosSemCompeticao(idCompeticao);
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+		}
 	}
 
 	@PutMapping("/competicao/update/{competicaoId}")
@@ -137,21 +146,19 @@ public class ControllerCompeticao {
 		}
 
 	}
-	
+
 	@GetMapping("/questoes-por-competicao/{competicaoId}")
-	public List<QuestoesAvaliativasDto>consultarQuestoesAvaliativasDaCompeticao(
-			@PathVariable("competicaoId")Integer competicaoId){
+	public List<QuestoesAvaliativasDto> consultarQuestoesAvaliativasDaCompeticao(
+			@PathVariable("competicaoId") Integer competicaoId) {
 		try {
 			return competicaoService.consultarQuestoesDaCompeticao(competicaoId);
 
 		} catch (NotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
-		
+
 	}
-	
 
 }
