@@ -63,5 +63,9 @@ public class Equipe {
 	@OneToMany(mappedBy = "equipe", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	private List<UsuarioMembroComum> usuarios = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "equipe", cascade = CascadeType.REMOVE)
+	@JsonIgnore
+	private List<AcessoMaterialEstudo> acessoMaterialEstudo = new ArrayList<>();
 
 }

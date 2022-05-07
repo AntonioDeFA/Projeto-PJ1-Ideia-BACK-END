@@ -8,8 +8,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 
@@ -26,16 +28,18 @@ public class AvaliacaoPitch {
 	private Date dataAvaliacao;
 	
 	@Column(nullable = false, name = "nota_atribuida")
+	@NotNull(message = "Você deve escrever qual uma nota")
 	private Float notaAtribuida;
 	
 	@Column(nullable = false)
+	@NotNull(message = "Você deve escrever qual uma observação")
 	private String observacao;
 	
 	@OneToOne
 	@JoinColumn(name = "pitch_fk")
 	private Pitch pitch;
 	
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "questao_avaliativa_fk")
 	private QuestaoAvaliativa questaoAvaliativa;
 	

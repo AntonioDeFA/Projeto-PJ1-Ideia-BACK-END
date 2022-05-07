@@ -18,6 +18,7 @@ import com.ideia.projetoideia.model.Perfil;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.UsuarioDto;
 import com.ideia.projetoideia.model.dto.UsuarioPatchDto;
+import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
 import com.ideia.projetoideia.repository.PerfilRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
 import com.ideia.projetoideia.utils.EnviarEmail;
@@ -35,6 +36,9 @@ public class UsuarioService {
 
 	@Autowired
 	EnviarEmail enviarEmail;
+
+	@Autowired
+	PapelUsuarioCompeticaoRepositorio papelUsuarioCompeticaoRepositorio;
 
 	public void criarUsuario(Usuario user) throws Exception {
 		if (usuarioRepositorio.findByEmail(user.getEmail()).isPresent()) {
@@ -58,7 +62,20 @@ public class UsuarioService {
 	public List<Usuario> consultarUsuarios() {
 		return usuarioRepositorio.findAll();
 	}
-	
+
+	public List<Usuario> consultarUsuariosSemCompeticao() throws Exception {
+		List<Usuario> usuarios = new ArrayList<Usuario>();
+		for (Usuario usuarioRecuperado : usuarioRepositorio.findAll()) {
+			if (papelUsuarioCompeticaoRepositorio.findByUsuario(usuarioRecuperado).size() == 0) {
+				usuarios.add(usuarioRecuperado);
+			}
+		}
+		if (usuarios.size() == 0) {
+			throw new Exception("Não existe nenhum usuario sem competição.");
+		}
+		return usuarios;
+	}
+
 	public UsuarioDto consultarUsuarioLogado() throws Exception {
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 		UsuarioDto dto = new UsuarioDto(this.consultarUsuarioPorEmail(autenticado.getName()));
@@ -89,22 +106,22 @@ public class UsuarioService {
 		}
 		throw new NotFoundException("Usuario não encontrado");
 	}
-	
+
 	public void atualizarUsuario(UsuarioPatchDto user) throws Exception {
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
-		Usuario usuario =  this.consultarUsuarioPorEmail(autenticado.getName());
-		
-		if(user.getSenha()!=null) {
-			if(!user.getSenha().equals("")) {
+		Usuario usuario = this.consultarUsuarioPorEmail(autenticado.getName());
+
+		if (user.getSenha() != null) {
+			if (!user.getSenha().equals("")) {
 				usuario.setSenha(new BCryptPasswordEncoder().encode(user.getSenha()));
 			}
 		}
-		if(user.getNomeUsuario()!=null) {
-			if(!user.getNomeUsuario().equals("")) {
+		if (user.getNomeUsuario() != null) {
+			if (!user.getNomeUsuario().equals("")) {
 				usuario.setNomeUsuario(user.getNomeUsuario());
 			}
 		}
-		
+
 		usuarioRepositorio.save(usuario);
 	}
 

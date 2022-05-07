@@ -1,7 +1,10 @@
 package com.ideia.projetoideia.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -40,6 +44,10 @@ public class Etapa {
 	@JsonIgnore
 	private Competicao competicao;
 
+	@OneToMany(mappedBy = "etapa", cascade = CascadeType.REMOVE)
+	@JsonIgnore
+	private List<MaterialEstudo> materialEstudo = new ArrayList<>();
+	
 	public boolean isVigente() {
 		LocalDate dataAtual = LocalDate.now();
 

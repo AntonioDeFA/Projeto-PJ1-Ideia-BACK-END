@@ -85,13 +85,13 @@ public class CompeticaoService {
 		papelUsuarioCompeticao.setCompeticaoCadastrada(competicao);
 
 		papelUsuarioCompeticaoRepositorio.save(papelUsuarioCompeticao);
-		
+
 		for (QuestaoAvaliativa questao : competicao.getQuestoesAvaliativas()) {
 			questao.setCompeticaoCadastrada(competicao);
 			questaoAvaliativaRepositorio.save(questao);
-			
-		}	
-		
+
+		}
+
 	}
 
 	public List<Competicao> consultarCompeticoes() {

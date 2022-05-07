@@ -11,8 +11,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 
@@ -32,6 +34,7 @@ public class FeedbackAvaliativo {
 	private TipoFeedback tipoFeedback;
 	
 	@Column(nullable = false)
+	@NotNull(message = "Você deve escrever qual uam sugestão")
 	private String sugestao;
 	
 	@OneToOne(cascade = CascadeType.MERGE)
@@ -42,7 +45,7 @@ public class FeedbackAvaliativo {
 	@JoinColumn(name = "consultor_fk")
 	private Usuario consultor;
 	
-	@OneToOne(cascade = CascadeType.MERGE)
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "lean_canvas_fk")
 	private LeanCanvas leanCanvas;
 }

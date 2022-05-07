@@ -2,8 +2,9 @@ package com.ideia.projetoideia.model;
 
 public enum EtapaArtefatoPitch {
 
-	EM_ELABORACAO("EM_ELABORACAO"), EM_CONSULTORIA("EM_CONSULTORIA"), EM_AVALIACAO("EM_AVALIACAO"), APROVADO("APROVADO");
-	
+	EM_ELABORACAO("EM_ELABORACAO"), EM_CONSULTORIA("EM_CONSULTORIA"), EM_AVALIACAO("EM_AVALIACAO"),
+	APROVADO("APROVADO");
+
 	private String value;
 
 	EtapaArtefatoPitch(String value) {

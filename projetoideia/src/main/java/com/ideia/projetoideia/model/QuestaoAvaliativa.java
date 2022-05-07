@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -30,9 +31,11 @@ public class QuestaoAvaliativa {
 	private Integer id;
 	
 	@Column(nullable = false, name = "nota_maxima")
+	@NotNull(message = "Você deve colocar qual a nota máxima")
 	private Float notaMax;
 	
 	@Column(nullable = false)
+	@NotNull(message = "Você deve escrever qual a questão")
 	private String questao;
 	
 	@Column(nullable = false)

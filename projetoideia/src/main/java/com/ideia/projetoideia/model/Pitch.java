@@ -36,9 +36,11 @@ public class Pitch {
 	private File video;
 	
 	@Column(nullable = false)
+	@NotNull(message = "Você deve escrever qual um titulo")
 	private String titulo;
 	
 	@Column(nullable = false)
+	@NotNull(message = "Você deve escrever qual uma descrição")
 	private String descricao;
 	
 	@Enumerated(EnumType.STRING)
