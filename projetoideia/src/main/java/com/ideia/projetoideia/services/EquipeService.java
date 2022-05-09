@@ -1,6 +1,7 @@
 package com.ideia.projetoideia.services;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,14 +17,16 @@ import org.springframework.stereotype.Service;
 import com.ideia.projetoideia.model.Equipe;
 
 import com.ideia.projetoideia.model.Usuario;
-
+import com.ideia.projetoideia.model.UsuarioMembroComum;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
 import com.ideia.projetoideia.model.TipoPapelUsuario;
-import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
+import com.ideia.projetoideia.model.dto.UsuarioDto;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.EquipeRepositorio;
 import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
+import com.ideia.projetoideia.repository.UsuarioMembroComumRepositorio;
+import com.ideia.projetoideia.services.utils.GeradorEquipeToken;
 
 import javassist.NotFoundException;
 
@@ -42,25 +45,59 @@ public class EquipeService {
 	@Autowired
 	private PapelUsuarioCompeticaoRepositorio papelUsuarioCompeticaoRepositorio;
 
+	@Autowired
+	private UsuarioMembroComumRepositorio usuarioMembroComumRepositorio;
+
 	public void criarEquipe(EquipeDtoCriacao equipeDto) throws Exception {
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
+		
+		List<String> lista = new ArrayList<String>();
+		for(UsuarioDto user: equipeDto.getUsuarios()) {
+			lista.add(user.getEmail());
+		}
+		
+		StringBuilder erros = new StringBuilder();
+		
+		if(equipeRepositorio.validarUsuarioLiderEOrganizador(usuario.getId(), equipeDto.getIdCompeticao())> 0){
+			erros.append("Observe se você não é o organizador desta competição ou se já não está inscrito nesta competição. ");
+		}
+		if(equipeRepositorio.validarNomeDeEquipe(equipeDto.getNomeEquipe(), equipeDto.getIdCompeticao()) > 0) {
+			erros.append("Já existe uma equipe inscrita nesta competição com este nome. Por gentiliza, escolha outro nome para sua equipe. ");
+		}
+		if(equipeRepositorio.validarMembrosDeUmaEquipeEmUmaCompeticao(lista, equipeDto.getIdCompeticao())> 0){
+			erros.append("Algum usuário de sua equipe já está participando dessa competição em outra equipe. ");
+		}
+		
+		if (erros.length() != 0) {
+			throw new Exception(erros.toString());
+		}
 
 		Equipe equipe = new Equipe();
 		equipe.setNomeEquipe(equipeDto.getNomeEquipe());
 		equipe.setDataInscricao(LocalDate.now());
-		equipe.setToken("ffghuiadfghioadfg4564156415");
+		equipe.setToken(GeradorEquipeToken.gerarTokenEquipe(equipeDto.getNomeEquipe()));
 		equipe.setCompeticaoCadastrada(competicaoRepositorio.findById(equipeDto.getIdCompeticao()).get());
-		equipe.setLider(usuario);	
+		equipe.setLider(usuario);
 
 		PapelUsuarioCompeticao papelUsuarioCompeticao = new PapelUsuarioCompeticao();
 		papelUsuarioCompeticao.setTipoPapelUsuario(TipoPapelUsuario.COMPETIDOR);
 		papelUsuarioCompeticao.setUsuario(usuario);
-		papelUsuarioCompeticao.setCompeticao(equipe.getCompeticaoCadastrada());
+		papelUsuarioCompeticao.setCompeticaoCadastrada(equipe.getCompeticaoCadastrada());
 
 		papelUsuarioCompeticaoRepositorio.save(papelUsuarioCompeticao);
+		equipeRepositorio.save(equipe);
+
+		for (UsuarioDto usuarioDto : equipeDto.getUsuarios()) {
+			UsuarioMembroComum usuarioComum = new UsuarioMembroComum();
+			usuarioComum.setEmail(usuarioDto.getEmail());
+			usuarioComum.setNome(usuarioDto.getNomeUsuario());
+			usuarioComum.setEquipe(equipe);
+			usuarioMembroComumRepositorio.save(usuarioComum);
+		}
 
 		equipeRepositorio.save(equipe);
+
 	}
 
 	public Equipe recuperarEquipe(Integer equipeId) throws NotFoundException {
@@ -91,11 +128,11 @@ public class EquipeService {
 		Page<Equipe> page = equipeRepositorio.findAll(PageRequest.of(--numeroPagina, 6, sort));
 		return page;
 	}
-	
-	public Equipe consultarEquipePorToken(String token){
-				
+
+	public Equipe consultarEquipePorToken(String token) {
+
 		return equipeRepositorio.consultarEquipePorToken(token).orElse(null);
-		
+
 	}
 
 	public void atualizarEquipe(Equipe equipe, Integer id) throws Exception {
@@ -109,6 +146,14 @@ public class EquipeService {
 
 	public void deletarEquipe(Integer id) throws NotFoundException {
 		Equipe equipe = this.recuperarEquipe(id);
+		List<PapelUsuarioCompeticao> papelUsuarioCompeticoes = papelUsuarioCompeticaoRepositorio
+				.findByUsuario(equipe.getLider());
+		for (PapelUsuarioCompeticao papelUsuarioCompeticao : papelUsuarioCompeticoes) {
+			if (papelUsuarioCompeticao.getTipoPapelUsuario() == TipoPapelUsuario.COMPETIDOR) {
+				papelUsuarioCompeticaoRepositorio.delete(papelUsuarioCompeticao);
+				break;
+			}
+		}
 		equipeRepositorio.delete(equipe);
 	}
 }

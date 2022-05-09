@@ -9,6 +9,7 @@ import io.cucumber.java.pt.Quando;
 import pages.CriarEquipePage;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static utils.Utils.*;
 
 import java.util.List;
@@ -72,7 +73,21 @@ public class CadastroEquipeStep {
 			assertNotNull(listaCompeticoes);
 		}
 		
-
+		@Entao("deleta a equipe")
+		public void deletaAEquipe() {
+			WebElement lixeira = driver.findElement(By.xpath("//*[@id=\"icons\"]/i[2]"));
+			lixeira.click();
+			
+			WebElement botaoConfirmarExclusao = driver.findElement(By.id("btn-confirmar-deletar"));
+			botaoConfirmarExclusao.click();
+		}
+		
+		@Entao("o programa valida o erro {string}")
+		public void oProgramaValidaOErro(String valor) {
+		    WebElement element = driver.findElement(By.id("filled-search-nomeEquipe-helper-text"));
+		    
+		    assertEquals(element.getText(),valor);
+		}
 
 
 }

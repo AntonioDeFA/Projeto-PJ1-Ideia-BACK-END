@@ -31,7 +31,7 @@ public class PapelUsuarioCompeticao {
 	@ManyToOne
 	@JoinColumn(name = "competicao_fk")
 	@JsonIgnore
-	private Competicao competicao;
+	private Competicao competicaoCadastrada;
 
 	@Enumerated(EnumType.STRING)
 	private TipoPapelUsuario tipoPapelUsuario;

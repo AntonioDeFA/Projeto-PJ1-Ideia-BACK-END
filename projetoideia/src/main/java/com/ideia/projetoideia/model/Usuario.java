@@ -11,14 +11,15 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 
@@ -36,19 +37,25 @@ public class Usuario implements UserDetails {
 	private Integer id;
 
 	@Column(nullable = false, name = "nome_usuario")
+	@Size(min=3,max=50, message = "O nome usuario deve ter entre 3 e 50 caracteres.")
 	private String nomeUsuario;
 
 	@Column(nullable = false, unique = true)
 	private String email;
 
+	@Column(nullable = false)
 	private String senha;
 	
-	@ManyToOne
-	@JoinColumn(name = "equipe_fk")
-	private Equipe equipe;
-
 	@ManyToMany(fetch = FetchType.EAGER)
 	private List<Perfil> perfis;
+	
+	@OneToMany(mappedBy = "lider", cascade = CascadeType.REMOVE)
+	@JsonIgnore
+	private List<Equipe> equipesLider = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "avaliador", cascade = CascadeType.REMOVE)
+	@JsonIgnore
+	private List<Equipe> equipesAvaliador = new ArrayList<>();
 
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.MERGE)
 	private List<PapelUsuarioCompeticao> papeisUsuarioCompeticao = new ArrayList<>();
@@ -56,6 +63,14 @@ public class Usuario implements UserDetails {
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.MERGE)
 	private List<Convite> convites = new ArrayList<>();
 	
+	@OneToMany(mappedBy = "avaliador", cascade = CascadeType.REMOVE)
+	@JsonIgnore
+	private List<AvaliacaoPitch> avaliacaoPitch = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "consultor", cascade = CascadeType.REMOVE)
+	@JsonIgnore
+	private List<FeedbackAvaliativo> feedbackAvaliativos = new ArrayList<>();
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		// TODO Auto-generated method stub

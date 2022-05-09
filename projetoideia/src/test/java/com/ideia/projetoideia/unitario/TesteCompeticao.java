@@ -1,11 +1,10 @@
 package com.ideia.projetoideia.unitario;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 
-
 import java.io.File;
-
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,7 +40,6 @@ public class TesteCompeticao {
 		competicao.setArquivoRegulamentoCompeticao(new File("local"));
 	}
 
-	
 //  							Caminho Feliz 	
 //---------------------------------------------------------------------------------------------------------------------------
 
@@ -54,29 +52,45 @@ public class TesteCompeticao {
 
 		competicaoRepositorio.deleteById(competicaoTest.getId());
 	}
-	
+
 	@Test
 	public void testeAtualizarCompeticao() {
 		competicaoRepositorio.save(competicao);
 		Competicao competicaoTest = competicaoRepositorio.findByNomeCompeticao(competicao.getNomeCompeticao()).get(0);
 		assertNotNull(competicaoTest);
-		
+
 		competicaoTest.setNomeCompeticao("Novo nome da Competição");
 		competicaoTest.setQntdMaximaMembrosPorEquipe(10);
 		competicaoTest.setQntdMinimaMembrosPorEquipe(9);
 		competicaoTest.setTempoMaximoVideoEmSeg(200f);
 		competicaoTest.setArquivoRegulamentoCompeticao(new File("remoto"));
-		
+
 		competicaoRepositorio.save(competicaoTest);
-		
-		Competicao competicaoNovoTest = competicaoRepositorio.findByNomeCompeticao(competicaoTest.getNomeCompeticao()).get(0);
+
+		Competicao competicaoNovoTest = competicaoRepositorio.findByNomeCompeticao(competicaoTest.getNomeCompeticao())
+				.get(0);
 		assertNotNull(competicaoNovoTest);
-		
+
 		competicaoRepositorio.deleteById(competicaoNovoTest.getId());
-		
+
 	}
 	
-	
+	@Test
+	public void testeDeletarCompeticaoCorreto() {
+
+		Integer idCompeticao = competicaoRepositorio.save(competicao).getId();
+
+		Competicao competicaoRcuperada = competicaoRepositorio.findById(idCompeticao).get();
+
+		assertNotNull(competicaoRcuperada); // valida que a equipe existe no banco
+
+		competicaoRepositorio.delete(competicaoRcuperada);
+
+		Competicao competicaoDeletado = competicaoRepositorio.findById(idCompeticao).orElse(null);
+
+		assertNull(competicaoDeletado);
+
+	}
 	
 //                                       Exceptions 	
 //  ---------------------------------------------------------------------------------------------------------------------------
@@ -84,19 +98,19 @@ public class TesteCompeticao {
 	@Test
 	public void testeCadastroComNomeEmBrancoException() {
 		competicao.setNomeCompeticao(null);
-		
-		assertThrows(TransactionSystemException.class,() ->{
+
+		assertThrows(TransactionSystemException.class, () -> {
 			competicaoRepositorio.save(competicao);
 		});
-		
-		
+
 	}
+
 //------------------- Exception Maximo e Minimo membros de Equipe   -------------
 	@Test
 	public void testeQuantidadeMaiorQueMaxMembroExeption() {
 		competicao.setQntdMaximaMembrosPorEquipe(31);
-		
-		assertThrows(TransactionSystemException.class,() ->{
+
+		assertThrows(TransactionSystemException.class, () -> {
 			competicaoRepositorio.save(competicao);
 		});
 	}
@@ -104,14 +118,15 @@ public class TesteCompeticao {
 	@Test
 	public void testeQuantidadeMenorQueMaxMembroExeption() {
 		competicao.setQntdMaximaMembrosPorEquipe(0);
-		assertThrows(TransactionSystemException.class,() ->{
+		assertThrows(TransactionSystemException.class, () -> {
 			competicaoRepositorio.save(competicao);
 		});
 	}
+
 	@Test
 	public void testeQuantidadeMaiorQueMinMembro() {
 		competicao.setQntdMinimaMembrosPorEquipe(30);
-		assertThrows(TransactionSystemException.class,() ->{
+		assertThrows(TransactionSystemException.class, () -> {
 			competicaoRepositorio.save(competicao);
 		});
 	}
@@ -119,19 +134,17 @@ public class TesteCompeticao {
 	@Test
 	public void testeQuantidadeMenorQueMinMembro() {
 		competicao.setQntdMinimaMembrosPorEquipe(0);
-		assertThrows(TransactionSystemException.class,() ->{
+		assertThrows(TransactionSystemException.class, () -> {
 			competicaoRepositorio.save(competicao);
 		});
 	}
-	
+
 //---------------------------------------------
 
-	
-	
 	@Test
 	public void testeTempoMaiorQueTempoMaximoVideo() {
 		competicao.setTempoMaximoVideoEmSeg(1801f);
-		assertThrows(TransactionSystemException.class,() ->{
+		assertThrows(TransactionSystemException.class, () -> {
 			competicaoRepositorio.save(competicao);
 		});
 	}
@@ -139,14 +152,15 @@ public class TesteCompeticao {
 	@Test
 	public void testeTempoMenoQueTempoMaximoVideo() {
 		competicao.setTempoMaximoVideoEmSeg(29f);
-		assertThrows(TransactionSystemException.class,() ->{
+		assertThrows(TransactionSystemException.class, () -> {
 			competicaoRepositorio.save(competicao);
 		});
 	}
+
 	@Test
 	public void testeSemArquivo() {
 		competicao.setArquivoRegulamentoCompeticao(null);
-		assertThrows(TransactionSystemException.class,() ->{
+		assertThrows(TransactionSystemException.class, () -> {
 			competicaoRepositorio.save(competicao);
 		});
 	}

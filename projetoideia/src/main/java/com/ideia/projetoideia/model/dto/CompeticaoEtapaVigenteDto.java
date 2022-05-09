@@ -48,7 +48,7 @@ public class CompeticaoEtapaVigenteDto {
 			}
 		} else if (valid.equals("COMPETICAO")) {
 			for (PapelUsuarioCompeticao papelUsuarioCompeticao : competicao.getPapeisUsuarioCompeticao()) {
-				if (papelUsuarioCompeticao.getCompeticao().getId() == competicao.getId()
+				if (papelUsuarioCompeticao.getCompeticaoCadastrada().getId() == competicao.getId()
 						&& papelUsuarioCompeticao.getUsuario().getId() == usuarioLogado.getId()) {
 					this.papelUsuario = papelUsuarioCompeticao.getTipoPapelUsuario();
 				}

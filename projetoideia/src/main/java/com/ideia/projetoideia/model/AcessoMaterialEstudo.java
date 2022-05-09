@@ -1,5 +1,8 @@
 package com.ideia.projetoideia.model;
 
+
+import java.sql.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,27 +11,26 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
 
 import lombok.Data;
 
 @Entity
+@Table(name = "tb_acesso_material_estudo")
 @Data
-@Table(name = "tb_usuario_membro_comum")
-public class UsuarioMembroComum {
+public class AcessoMaterialEstudo {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Integer id;
-
-	@Column(nullable = false)
-	private String email;
-
-	@Column(nullable = false)
-	@Size(min=3,max=50, message = "O nome usuario deve ter entre 3 e 50 caracteres.")
-	private String nome;
+	
+	@Column(name = "tb_data_acesso")
+	private Date dataAcesso;
 	
 	@ManyToOne
 	@JoinColumn(name = "equipe_fk")
 	private Equipe equipe;
 	
+	@ManyToOne
+	@JoinColumn(name = "material_estudo_fk")
+	private MaterialEstudo materialEstudo;
 }

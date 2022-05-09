@@ -12,5 +12,6 @@ monochrome = true,tags = "@CriarEquipe",
 plugin = {"pretty","html:target/cucumber/report"})
 public class RunnerCriarEquipe {
 	
+	
 
 }

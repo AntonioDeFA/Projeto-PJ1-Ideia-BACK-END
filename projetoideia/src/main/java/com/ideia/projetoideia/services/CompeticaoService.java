@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.ideia.projetoideia.TipoConvite;
 import com.ideia.projetoideia.model.Competicao;
+
 import com.ideia.projetoideia.model.Convite;
 import com.ideia.projetoideia.model.Etapa;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
@@ -27,8 +28,21 @@ import com.ideia.projetoideia.model.dto.ConviteDto;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorioCustom;
 import com.ideia.projetoideia.repository.ConviteRepositorio;
+import com.ideia.projetoideia.model.Equipe;
+import com.ideia.projetoideia.model.Etapa;
+import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
+import com.ideia.projetoideia.model.QuestaoAvaliativa;
+import com.ideia.projetoideia.model.TipoPapelUsuario;
+import com.ideia.projetoideia.model.Usuario;
+import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
+import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
+import com.ideia.projetoideia.model.dto.UsuarioNaoRelacionadoDTO;
+import com.ideia.projetoideia.repository.CompeticaoRepositorio;
+import com.ideia.projetoideia.repository.CompeticaoRepositorioCustom;
+import com.ideia.projetoideia.repository.EquipeRepositorio;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
 import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
+import com.ideia.projetoideia.repository.QuestaoAvaliativaRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
 import com.ideia.projetoideia.utils.EnviarEmail;
 
@@ -58,6 +72,12 @@ public class CompeticaoService {
 	@Autowired
 	ConviteRepositorio conviteRepositorio;
 
+	@Autowired
+	EquipeRepositorio equipeRepositorio;
+
+	@Autowired
+	QuestaoAvaliativaRepositorio questaoAvaliativaRepositorio;
+
 	private final CompeticaoRepositorioCustom competicaoRepositorioCustom;
 
 	public CompeticaoService(CompeticaoRepositorioCustom competicaoRepositorioCustom) {
@@ -84,9 +104,16 @@ public class CompeticaoService {
 		PapelUsuarioCompeticao papelUsuarioCompeticao = new PapelUsuarioCompeticao();
 		papelUsuarioCompeticao.setTipoPapelUsuario(TipoPapelUsuario.ORGANIZADOR);
 		papelUsuarioCompeticao.setUsuario(usuario);
-		papelUsuarioCompeticao.setCompeticao(competicao);
+		papelUsuarioCompeticao.setCompeticaoCadastrada(competicao);
 
 		papelUsuarioCompeticaoRepositorio.save(papelUsuarioCompeticao);
+
+		for (QuestaoAvaliativa questao : competicao.getQuestoesAvaliativas()) {
+			questao.setCompeticaoCadastrada(competicao);
+			questaoAvaliativaRepositorio.save(questao);
+
+		}
+
 	}
 
 	public List<Competicao> consultarCompeticoes() {
@@ -174,9 +201,74 @@ public class CompeticaoService {
 
 	}
 
-	public void deletarCompeticaoPorId(Integer id) throws NotFoundException {
+	public List<UsuarioNaoRelacionadoDTO> consultarUsuariosSemCompeticao(Integer idCompeticao) throws Exception {
+		List<UsuarioNaoRelacionadoDTO> usuarios = new ArrayList<UsuarioNaoRelacionadoDTO>();
+		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
+		List<PapelUsuarioCompeticao> papeis = papelUsuarioCompeticaoRepositorio.findByCompeticaoCadastrada(competicao);
+		for (Usuario usuarioRecuperado : usuarioRepositorio.findAll()) {
+			boolean entrou = false;
+			for (PapelUsuarioCompeticao papelUsuarioCompeticao : papeis) {
+				if (papelUsuarioCompeticao.getUsuario().getId() == usuarioRecuperado.getId()) {
+					entrou = true;
+				}
+			}
+			if(!entrou) {
+				usuarios.add(new UsuarioNaoRelacionadoDTO(usuarioRecuperado));
+			}
+				
+		}
+		if (usuarios.size() == 0) {
+			throw new Exception("Não existe nenhum usuario não cadastrado nessa competição.");
+		}
+		return usuarios;
+	}
+
+	public void deletarCompeticaoPorId(Integer id) throws Exception {
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
+
 		Competicao competicao = recuperarCompeticaoId(id);
-		competicaoRepositorio.delete(competicao);
+		PapelUsuarioCompeticao papelUsuarioCompeticaoRecuperada = null;
+
+		for (PapelUsuarioCompeticao papelUsuarioCompeticao : papelUsuarioCompeticaoRepositorio.findByUsuario(usuario)) {
+			if (papelUsuarioCompeticao.getCompeticaoCadastrada().getId() == competicao.getId()) {
+				papelUsuarioCompeticaoRecuperada = papelUsuarioCompeticao;
+				break;
+			}
+
+		}
+
+		if (papelUsuarioCompeticaoRecuperada.getTipoPapelUsuario() == TipoPapelUsuario.ORGANIZADOR) {
+			competicaoRepositorio.delete(competicao);
+		} else if (papelUsuarioCompeticaoRecuperada.getTipoPapelUsuario() == TipoPapelUsuario.COMPETIDOR) {
+			List<Equipe> equipes = equipeRepositorio.findByLider(usuario);
+			Equipe equipeRecuperada = null;
+			for (Equipe equipe : equipes) {
+				if (equipe.getCompeticaoCadastrada().getId() == competicao.getId()) {
+					equipeRecuperada = equipe;
+					break;
+				}
+			}
+			equipeRepositorio.delete(equipeRecuperada);
+		}
+		papelUsuarioCompeticaoRepositorio.delete(papelUsuarioCompeticaoRecuperada);
+
+	}
+
+	public List<QuestoesAvaliativasDto> consultarQuestoesDaCompeticao(Integer competicaoId) throws NotFoundException {
+		Competicao competicaoRecuperada = recuperarCompeticaoId(competicaoId);
+
+		List<QuestaoAvaliativa> questaoAvaliativas = questaoAvaliativaRepositorio
+				.findByCompeticaoCadastrada(competicaoRecuperada);
+
+		List<QuestoesAvaliativasDto> questoesAvaliativasDto = new ArrayList<QuestoesAvaliativasDto>();
+		for (QuestaoAvaliativa questaoAvaliativa : questaoAvaliativas) {
+			QuestoesAvaliativasDto questaoDto = new QuestoesAvaliativasDto(questaoAvaliativa);
+			questoesAvaliativasDto.add(questaoDto);
+		}
+
+		return questoesAvaliativasDto;
+
 	}
 
 	public void convidarUsuario(ConviteDto conviteDto) throws Exception {

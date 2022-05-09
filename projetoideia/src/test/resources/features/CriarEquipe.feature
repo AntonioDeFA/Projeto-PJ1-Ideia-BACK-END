@@ -19,4 +19,15 @@ Funcionalidade: Criar Equipe
 		Quando clicar no botao confirmar
 		E clicar no botao confirmar inscricao 
 		Entao o programa valida que a equipe foi criada
+		E deleta a equipe
+		
+	Cenario: Criar Equipe sem nome da equipe
+		Dado que eu selecione uma competicao na fase de inscricao
+		E clicar no botao adicionar membro
+		E clicar no botao adicionar 
+		Quando eu passar o nome do membro "Usuario Test 1"
+		E passar o email do membro "usuarioteste1@gmail.com"
+		E clicar no botao adicionar
+		Quando clicar no botao confirmar
+		Entao o programa valida o erro "Campo obrigatório" 
 		

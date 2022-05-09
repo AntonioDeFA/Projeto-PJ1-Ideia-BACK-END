@@ -1,6 +1,5 @@
 package com.ideia.projetoideia.model;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,43 +15,41 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 
 @Entity
-@Table(name = "tb_etapa")
+@Table(name = "tb_questao_avaliativa")
 @Data
-public class Etapa {
+public class QuestaoAvaliativa {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Integer id;
-
-	@Column(nullable = false, name = "data_inicio")
-	private LocalDate dataInicio;
-
-	@Column(nullable = false, name = "data_termino")
-	private LocalDate dataTermino;
-
+	
+	@Column(nullable = false, name = "nota_maxima")
+	@NotNull(message = "Você deve colocar qual a nota máxima")
+	private Float notaMax;
+	
+	@Column(nullable = false)
+	@NotNull(message = "Você deve escrever qual a questão")
+	private String questao;
+	
+	@Column(nullable = false)
+	private Integer enumeracao;
+	
 	@Enumerated(EnumType.STRING)
-	private TipoEtapa tipoEtapa;
-
+	private TipoQuestaoAvaliativa tipoQuestaoAvaliativa;
+	
 	@ManyToOne
 	@JoinColumn(name = "competicao_fk")
-	@JsonIgnore
-	private Competicao competicao;
-
-	@OneToMany(mappedBy = "etapa", cascade = CascadeType.REMOVE)
-	@JsonIgnore
-	private List<MaterialEstudo> materialEstudo = new ArrayList<>();
+	private Competicao competicaoCadastrada;
 	
-	public boolean isVigente() {
-		LocalDate dataAtual = LocalDate.now();
-
-		return (dataAtual.isAfter(dataInicio) || dataAtual.isEqual(dataInicio) && dataAtual.isBefore(dataTermino)
-				|| dataAtual.isEqual(dataTermino));
-	}
-
+	@OneToMany(mappedBy = "questaoAvaliativa", cascade = CascadeType.REMOVE)
+	@JsonIgnore
+	private List<AvaliacaoPitch> avaliacaoPitch = new ArrayList<>();
+	
 }

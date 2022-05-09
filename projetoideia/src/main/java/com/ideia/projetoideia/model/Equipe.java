@@ -15,6 +15,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 
@@ -28,6 +31,7 @@ public class Equipe {
 	private Integer id;
 
 	@Column(nullable = false, name = "nome_equipe")
+	@Size(min=3,max=16, message = "O nome do equipe deve ter entre 3 e 50 caracteres.")
 	private String nomeEquipe;
 
 	@Column(nullable = false)
@@ -39,15 +43,29 @@ public class Equipe {
 	@OneToOne
 	@JoinColumn(name = "lider_fk")
 	private Usuario lider;
-
+	
+	@OneToOne
+	@JoinColumn(name = "avaliador_fk")
+	private Usuario avaliador;
+	
 	@ManyToOne
-	@JoinColumn(name = "competicao_fk")
+	@JoinColumn(name = "competicao_cadastrada_fk")
 	private Competicao competicaoCadastrada;
 
-	@OneToMany(mappedBy = "equipe", cascade = CascadeType.MERGE)
+	@OneToMany(mappedBy = "equipe", cascade = CascadeType.REMOVE)
+	@JsonIgnore
+	private List<Pitch> pitchDaEquipe = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "equipe", cascade = CascadeType.REMOVE)
+	@JsonIgnore
 	private List<LeanCanvas> canvasDaEquipe = new ArrayList<>();
 	
-	@OneToMany(mappedBy = "equipe", cascade = CascadeType.MERGE)
-	private List<Usuario> usuarios = new ArrayList<>();
+	@OneToMany(mappedBy = "equipe", cascade = CascadeType.REMOVE)
+	@JsonIgnore
+	private List<UsuarioMembroComum> usuarios = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "equipe", cascade = CascadeType.REMOVE)
+	@JsonIgnore
+	private List<AcessoMaterialEstudo> acessoMaterialEstudo = new ArrayList<>();
 
 }
