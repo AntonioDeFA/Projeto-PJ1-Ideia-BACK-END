@@ -60,6 +60,9 @@ public class Usuario implements UserDetails {
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.MERGE)
 	private List<PapelUsuarioCompeticao> papeisUsuarioCompeticao = new ArrayList<>();
 	
+	@OneToMany(mappedBy = "usuario", cascade = CascadeType.MERGE)
+	private List<Convite> convites = new ArrayList<>();
+	
 	@OneToMany(mappedBy = "avaliador", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	private List<AvaliacaoPitch> avaliacaoPitch = new ArrayList<>();

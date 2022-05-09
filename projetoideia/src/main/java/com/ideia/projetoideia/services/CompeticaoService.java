@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -13,7 +14,20 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.ideia.projetoideia.TipoConvite;
 import com.ideia.projetoideia.model.Competicao;
+
+import com.ideia.projetoideia.model.Convite;
+import com.ideia.projetoideia.model.Etapa;
+import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
+import com.ideia.projetoideia.model.StatusConvite;
+import com.ideia.projetoideia.model.TipoPapelUsuario;
+import com.ideia.projetoideia.model.Usuario;
+import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
+import com.ideia.projetoideia.model.dto.ConviteDto;
+import com.ideia.projetoideia.repository.CompeticaoRepositorio;
+import com.ideia.projetoideia.repository.CompeticaoRepositorioCustom;
+import com.ideia.projetoideia.repository.ConviteRepositorio;
 import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.Etapa;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
@@ -30,6 +44,7 @@ import com.ideia.projetoideia.repository.EtapaRepositorio;
 import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
 import com.ideia.projetoideia.repository.QuestaoAvaliativaRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
+import com.ideia.projetoideia.utils.EnviarEmail;
 
 import javassist.NotFoundException;
 
@@ -49,13 +64,19 @@ public class CompeticaoService {
 	PapelUsuarioCompeticaoRepositorio papelUsuarioCompeticaoRepositorio;
 
 	@Autowired
+	UsuarioService usuarioService;
+	
+	@Autowired
+	EnviarEmail enviarEmail;
+
+	@Autowired
+	ConviteRepositorio conviteRepositorio;
+
+	@Autowired
 	EquipeRepositorio equipeRepositorio;
 
 	@Autowired
 	QuestaoAvaliativaRepositorio questaoAvaliativaRepositorio;
-
-	@Autowired
-	UsuarioService usuarioService;
 
 	private final CompeticaoRepositorioCustom competicaoRepositorioCustom;
 
@@ -247,6 +268,48 @@ public class CompeticaoService {
 		}
 
 		return questoesAvaliativasDto;
+
+	}
+
+	public void convidarUsuario(ConviteDto conviteDto) throws Exception {
+
+		Competicao competicao = this.recuperarCompeticaoId(conviteDto.getIdCompeticao());
+
+		Usuario usuario = usuarioService.consultarUsuarioPorEmail(conviteDto.getEmailDoUsuario());
+		
+		List<Convite> convites = conviteRepositorio.findAll();
+		
+		for(Convite convi : convites) {
+			if(convi.getCompeticao().getId() == competicao.getId() 
+					&& convi.getUsuario().getId() == usuario.getId()) {
+				throw new DuplicateKeyException("Usuário já possui convites para essa competição");
+			}
+		}
+		
+		Convite convite = new Convite();
+
+		competicao.getConvites().add(convite);
+
+		usuario.getConvites().add(convite);
+		convite.setCompeticao(competicao);
+		
+		convite.setUsuario(usuario);
+		
+		convite.setStatusConvite(StatusConvite.ENVIADO);
+		if (conviteDto.getTipoConvite().equals(TipoConvite.CONSULTOR)) {
+			convite.setTipoConvite(TipoConvite.CONSULTOR);
+		} else {
+			convite.setTipoConvite(TipoConvite.AVALIADOR);
+		}
+		competicaoRepositorio.save(competicao);
+
+		usuarioRepositorio.save(usuario);
+
+		
+		enviarEmail.enviarEmailConviteUsuario(usuario,convite.getTipoConvite(), competicao);
+		
+		
+		
 
 	}
 
