@@ -16,12 +16,9 @@ import org.springframework.stereotype.Service;
 
 import com.ideia.projetoideia.TipoConvite;
 import com.ideia.projetoideia.model.Competicao;
-
 import com.ideia.projetoideia.model.Convite;
 import com.ideia.projetoideia.model.Etapa;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
-import com.ideia.projetoideia.model.StatusConvite;
-import com.ideia.projetoideia.model.TipoPapelUsuario;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
@@ -29,16 +26,11 @@ import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorioCustom;
 import com.ideia.projetoideia.repository.ConviteRepositorio;
 import com.ideia.projetoideia.model.Equipe;
-import com.ideia.projetoideia.model.Etapa;
-import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
 import com.ideia.projetoideia.model.QuestaoAvaliativa;
-import com.ideia.projetoideia.model.TipoPapelUsuario;
-import com.ideia.projetoideia.model.Usuario;
-import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
 import com.ideia.projetoideia.model.dto.UsuarioNaoRelacionadoDTO;
-import com.ideia.projetoideia.repository.CompeticaoRepositorio;
-import com.ideia.projetoideia.repository.CompeticaoRepositorioCustom;
+import com.ideia.projetoideia.model.enums.StatusConvite;
+import com.ideia.projetoideia.model.enums.TipoPapelUsuario;
 import com.ideia.projetoideia.repository.EquipeRepositorio;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
 import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
@@ -65,7 +57,7 @@ public class CompeticaoService {
 
 	@Autowired
 	UsuarioService usuarioService;
-	
+
 	@Autowired
 	EnviarEmail enviarEmail;
 
@@ -84,7 +76,7 @@ public class CompeticaoService {
 		this.competicaoRepositorioCustom = competicaoRepositorioCustom;
 	}
 
-	public void criarCompeticao(Competicao competicao) throws Exception {
+	public Integer criarCompeticao(Competicao competicao) throws Exception {
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
 		List<Etapa> etapas = competicao.getEtapas();
@@ -96,7 +88,7 @@ public class CompeticaoService {
 			throw new Exception("Quantidade mínima de membros não pode ser maior que a quantidade máxima!");
 		}
 		competicao.setOrganizador(usuario);
-		competicaoRepositorio.save(competicao);
+		Integer idCompeticao = competicaoRepositorio.save(competicao).getId();
 		for (Etapa etapa : etapas) {
 			etapa.setCompeticao(competicao);
 			etapaRepositorio.save(etapa);
@@ -113,7 +105,24 @@ public class CompeticaoService {
 			questaoAvaliativaRepositorio.save(questao);
 
 		}
-
+		return idCompeticao;
+	}
+	
+	public void atualizarCompeticao(Integer id, Competicao competicaoTemp) throws Exception, NotFoundException {
+		Competicao comp = recuperarCompeticaoId(id);
+		if (comp.getQntdMaximaMembrosPorEquipe() < comp.getQntdMinimaMembrosPorEquipe()) {
+			throw new Exception("Quantidade mínima de membros não pode ser maior que a quantidade máxima!");
+		}
+		comp.setNomeCompeticao(competicaoTemp.getNomeCompeticao());
+		comp.setArquivoRegulamentoCompeticao(competicaoTemp.getArquivoRegulamentoCompeticao());
+		comp.setEtapas(competicaoTemp.getEtapas());
+		comp.setDominioCompeticao(competicaoTemp.getDominioCompeticao());
+		comp.setQntdMaximaMembrosPorEquipe(competicaoTemp.getQntdMaximaMembrosPorEquipe());
+		comp.setQntdMinimaMembrosPorEquipe(competicaoTemp.getQntdMinimaMembrosPorEquipe());
+		comp.setTempoMaximoVideoEmSeg(competicaoTemp.getTempoMaximoVideoEmSeg());
+		
+		competicaoRepositorio.save(comp);
+		
 	}
 
 	public List<Competicao> consultarCompeticoes() {
@@ -184,23 +193,6 @@ public class CompeticaoService {
 		return competicoesDto;
 	}
 
-	public void atualizarCompeticao(Integer id, Competicao competicaoTemp) throws Exception, NotFoundException {
-		Competicao comp = recuperarCompeticaoId(id);
-		if (comp.getQntdMaximaMembrosPorEquipe() < comp.getQntdMinimaMembrosPorEquipe()) {
-			throw new Exception("Quantidade mínima de membros não pode ser maior que a quantidade máxima!");
-		}
-		comp.setNomeCompeticao(competicaoTemp.getNomeCompeticao());
-		comp.setArquivoRegulamentoCompeticao(competicaoTemp.getArquivoRegulamentoCompeticao());
-		comp.setEtapas(competicaoTemp.getEtapas());
-		comp.setDominioCompeticao(competicaoTemp.getDominioCompeticao());
-		comp.setQntdMaximaMembrosPorEquipe(competicaoTemp.getQntdMaximaMembrosPorEquipe());
-		comp.setQntdMinimaMembrosPorEquipe(competicaoTemp.getQntdMinimaMembrosPorEquipe());
-		comp.setTempoMaximoVideoEmSeg(competicaoTemp.getTempoMaximoVideoEmSeg());
-
-		competicaoRepositorio.save(comp);
-
-	}
-
 	public List<UsuarioNaoRelacionadoDTO> consultarUsuariosSemCompeticao(Integer idCompeticao) throws Exception {
 		List<UsuarioNaoRelacionadoDTO> usuarios = new ArrayList<UsuarioNaoRelacionadoDTO>();
 		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
@@ -212,10 +204,10 @@ public class CompeticaoService {
 					entrou = true;
 				}
 			}
-			if(!entrou) {
+			if (!entrou) {
 				usuarios.add(new UsuarioNaoRelacionadoDTO(usuarioRecuperado));
 			}
-				
+
 		}
 		if (usuarios.size() == 0) {
 			throw new Exception("Não existe nenhum usuario não cadastrado nessa competição.");
@@ -276,25 +268,24 @@ public class CompeticaoService {
 		Competicao competicao = this.recuperarCompeticaoId(conviteDto.getIdCompeticao());
 
 		Usuario usuario = usuarioService.consultarUsuarioPorEmail(conviteDto.getEmailDoUsuario());
-		
+
 		List<Convite> convites = conviteRepositorio.findAll();
-		
-		for(Convite convi : convites) {
-			if(convi.getCompeticao().getId() == competicao.getId() 
-					&& convi.getUsuario().getId() == usuario.getId()) {
+
+		for (Convite convi : convites) {
+			if (convi.getCompeticao().getId() == competicao.getId() && convi.getUsuario().getId() == usuario.getId()) {
 				throw new DuplicateKeyException("Usuário já possui convites para essa competição");
 			}
 		}
-		
+
 		Convite convite = new Convite();
 
 		competicao.getConvites().add(convite);
 
 		usuario.getConvites().add(convite);
 		convite.setCompeticao(competicao);
-		
+
 		convite.setUsuario(usuario);
-		
+
 		convite.setStatusConvite(StatusConvite.ENVIADO);
 		if (conviteDto.getTipoConvite().equals(TipoConvite.CONSULTOR)) {
 			convite.setTipoConvite(TipoConvite.CONSULTOR);
@@ -305,11 +296,7 @@ public class CompeticaoService {
 
 		usuarioRepositorio.save(usuario);
 
-		
-		enviarEmail.enviarEmailConviteUsuario(usuario,convite.getTipoConvite(), competicao);
-		
-		
-		
+		enviarEmail.enviarEmailConviteUsuario(usuario, convite.getTipoConvite(), competicao);
 
 	}
 

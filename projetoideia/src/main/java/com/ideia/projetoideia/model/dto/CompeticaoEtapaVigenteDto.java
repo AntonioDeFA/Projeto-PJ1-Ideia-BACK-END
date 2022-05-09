@@ -8,9 +8,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Etapa;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
-import com.ideia.projetoideia.model.TipoEtapa;
-import com.ideia.projetoideia.model.TipoPapelUsuario;
 import com.ideia.projetoideia.model.Usuario;
+import com.ideia.projetoideia.model.enums.TipoEtapa;
+import com.ideia.projetoideia.model.enums.TipoPapelUsuario;
 
 import lombok.Data;
 

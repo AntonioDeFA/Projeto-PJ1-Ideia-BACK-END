@@ -16,6 +16,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.ideia.projetoideia.model.enums.TipoFeedback;
+
 import lombok.Data;
 
 @Entity

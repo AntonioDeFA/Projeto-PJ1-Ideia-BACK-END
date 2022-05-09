@@ -20,6 +20,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ideia.projetoideia.model.enums.TipoEtapa;
+import com.ideia.projetoideia.model.enums.TipoMaterialEstudo;
 
 import lombok.Data;
 

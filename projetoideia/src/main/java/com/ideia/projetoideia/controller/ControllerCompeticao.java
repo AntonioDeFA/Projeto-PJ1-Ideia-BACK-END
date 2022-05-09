@@ -25,7 +25,6 @@ import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
 
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
-import com.ideia.projetoideia.model.dto.UsuarioNaoRelacionadoDTO;
 
 import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.CompeticaoService;
@@ -44,9 +43,8 @@ public class ControllerCompeticao {
 		if (!result.hasErrors()) {
 			try {
 
-				competicaoService.criarCompeticao(competicao);
-				return ResponseEntity.status(HttpStatus.CREATED)
-						.body(new IdeiaResponseFile("Criada com sucesso", HttpStatus.CREATED));
+				return ResponseEntity.status(HttpStatus.CREATED).body(new IdeiaResponseFile("Criada com sucesso",
+						HttpStatus.CREATED, competicaoService.criarCompeticao(competicao)));
 			} catch (Exception e) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new IdeiaResponseFile(
 						"Não foi possível criar a competição", e.getMessage(), HttpStatus.BAD_REQUEST));
@@ -99,11 +97,13 @@ public class ControllerCompeticao {
 	}
 
 	@GetMapping("/competicao/{idCompeticao}/usuarios-nao-relacionados")
-	public List<UsuarioNaoRelacionadoDTO> consultarUsuariosSemCompeticao(@PathVariable("idCompeticao") Integer idCompeticao){
+	public ResponseEntity<?> consultarUsuariosSemCompeticao(@PathVariable("idCompeticao") Integer idCompeticao) {
 		try {
-			return competicaoService.consultarUsuariosSemCompeticao(idCompeticao);
+			return ResponseEntity.status(HttpStatus.CREATED).body(new IdeiaResponseFile("Criada com sucesso",
+					HttpStatus.CREATED, competicaoService.consultarUsuariosSemCompeticao(idCompeticao)));
 		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+					new IdeiaResponseFile("Nenhum usuario foi encontrado", e.getMessage(), HttpStatus.BAD_REQUEST));
 		}
 	}
 
@@ -150,7 +150,7 @@ public class ControllerCompeticao {
 		}
 
 	}
-	
+
 	@PostMapping("/competicao/convidar-usuario")
 	public ResponseEntity<?> convidarUsuario(@RequestBody ConviteDto conviteDto) {
 
@@ -159,13 +159,12 @@ public class ControllerCompeticao {
 			return ResponseEntity.status(HttpStatus.CREATED)
 					.body(new IdeiaResponseFile("Usuario convidado com sucesso", HttpStatus.CREATED));
 		} catch (NotFoundException e) {
-			 return ResponseEntity.status(HttpStatus.NOT_FOUND)
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(new IdeiaResponseFile("Não foi possível convidar", e.getMessage(), HttpStatus.NOT_FOUND));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new IdeiaResponseFile("Não foi possível convidar", e.getMessage(), HttpStatus.BAD_REQUEST));
 		}
-		
 
 	}
 

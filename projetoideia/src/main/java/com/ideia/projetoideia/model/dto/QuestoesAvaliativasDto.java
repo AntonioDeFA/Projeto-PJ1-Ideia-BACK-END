@@ -1,7 +1,7 @@
 package com.ideia.projetoideia.model.dto;
 
 import com.ideia.projetoideia.model.QuestaoAvaliativa;
-import com.ideia.projetoideia.model.TipoQuestaoAvaliativa;
+import com.ideia.projetoideia.model.enums.TipoQuestaoAvaliativa;
 
 import lombok.Data;
 
