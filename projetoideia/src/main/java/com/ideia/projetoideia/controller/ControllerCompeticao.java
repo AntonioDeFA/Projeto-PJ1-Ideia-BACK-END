@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
+import com.ideia.projetoideia.model.dto.ConviteDto;
 import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.CompeticaoService;
 
@@ -135,6 +136,24 @@ public class ControllerCompeticao {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(new IdeiaResponseFile("Não foi possível deletar", e.getMessage(), HttpStatus.NOT_FOUND));
 		}
+
+	}
+	
+	@PostMapping("/competicao/convidar-usuario")
+	public ResponseEntity<?> convidarUsuario(@RequestBody ConviteDto conviteDto) {
+
+		try {
+			competicaoService.convidarUsuario(conviteDto);
+			return ResponseEntity.status(HttpStatus.CREATED)
+					.body(new IdeiaResponseFile("Usuario convidado com sucesso", HttpStatus.CREATED));
+		} catch (NotFoundException e) {
+			 return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new IdeiaResponseFile("Não foi possível convidar", e.getMessage(), HttpStatus.NOT_FOUND));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new IdeiaResponseFile("Não foi possível convidar", e.getMessage(), HttpStatus.BAD_REQUEST));
+		}
+		
 
 	}
 

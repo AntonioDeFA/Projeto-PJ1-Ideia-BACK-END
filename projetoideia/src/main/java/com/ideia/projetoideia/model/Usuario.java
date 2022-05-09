@@ -52,7 +52,10 @@ public class Usuario implements UserDetails {
 
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.MERGE)
 	private List<PapelUsuarioCompeticao> papeisUsuarioCompeticao = new ArrayList<>();
-
+	
+	@OneToMany(mappedBy = "usuario", cascade = CascadeType.MERGE)
+	private List<Convite> convites = new ArrayList<>();
+	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		// TODO Auto-generated method stub
