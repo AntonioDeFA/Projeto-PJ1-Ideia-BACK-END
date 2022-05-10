@@ -302,7 +302,7 @@ public class CompeticaoService {
 	}
 	
 	
-	public List<ConsultorDto> listarConsultoresDeUmaCompeticao(Integer idCompeticao) throws Exception{
+	public List<ConsultorDto> listarConsultoresEAaliadoresDeUmaCompeticao(Integer idCompeticao , TipoConvite tipoConvite) throws Exception{
 		Competicao competicao = recuperarCompeticaoId(idCompeticao);
 		List<ConsultorDto> consultoresDto = new ArrayList<ConsultorDto>();
 		
@@ -310,25 +310,27 @@ public class CompeticaoService {
 		
 		for (Convite convite : convites) {
 			
-			if(convite.getTipoConvite().equals(TipoConvite.CONSULTOR)) {
+			if(convite.getTipoConvite().equals(tipoConvite)) {
 				ConsultorDto consultorDto = new ConsultorDto(convite.getUsuario(),convite.getStatusConvite());
 				consultoresDto.add(consultorDto);
 			}
 		}
-		
-		List<Usuario> todosOsUsuarios = usuarioRepositorio.findAll();
-		
-		for (Usuario usuario : todosOsUsuarios) {
-			if(usuarioRepositorio.listarSeUsuarioTemConvitesDeUmaCompeticao(idCompeticao, usuario.getId()).isEmpty()) {
-				if(usuarioRepositorio.listarSeUsuarioTemRelacaoComCompeticao(idCompeticao, usuario.getId()).isEmpty()) {
-					ConsultorDto consultorDto = new ConsultorDto(usuario,null);
-					consultoresDto.add(consultorDto);
-				}	
-			}
-		}
-		
-		
 		return consultoresDto;
+		
+		
+//		List<Usuario> todosOsUsuarios = usuarioRepositorio.findAll();
+//		
+//		for (Usuario usuario : todosOsUsuarios) {
+//			if(usuarioRepositorio.listarSeUsuarioTemConvitesDeUmaCompeticao(idCompeticao, usuario.getId()).isEmpty()) {
+//				if(usuarioRepositorio.listarSeUsuarioTemRelacaoComCompeticao(idCompeticao, usuario.getId()).isEmpty()) {
+//					ConsultorDto consultorDto = new ConsultorDto(usuario,null);
+//					consultoresDto.add(consultorDto);
+//				}	
+//			}
+//		}
+		
+		
+		
 	}			
 	
 

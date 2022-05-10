@@ -19,14 +19,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.ideia.projetoideia.TipoConvite;
 import com.ideia.projetoideia.model.Competicao;
-import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.ConsultorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
-
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
-import com.ideia.projetoideia.model.dto.UsuarioDto;
 import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.CompeticaoService;
 
@@ -172,7 +170,17 @@ public class ControllerCompeticao {
 	@GetMapping("/competicao/{idCompeticao}/consultores")
 	public List<ConsultorDto>listarConsultoresDeUmaCompeticao(@PathVariable("idCompeticao")Integer idCompeticao){
 		try {
-			return competicaoService.listarConsultoresDeUmaCompeticao(idCompeticao);
+			return competicaoService.listarConsultoresEAaliadoresDeUmaCompeticao(idCompeticao , TipoConvite.CONSULTOR);
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage()); 
+		}
+		
+	}
+	
+	@GetMapping("/competicao/{idCompeticao}/avaliadores")
+	public List<ConsultorDto>listarAvaliadoresDeUmaCompeticao(@PathVariable("idCompeticao")Integer idCompeticao){
+		try {
+			return competicaoService.listarConsultoresEAaliadoresDeUmaCompeticao(idCompeticao , TipoConvite.AVALIADOR);
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage()); 
 		}
