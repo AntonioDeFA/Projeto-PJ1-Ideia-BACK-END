@@ -20,12 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Competicao;
+import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
-
+import com.ideia.projetoideia.model.dto.ConsultorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
 
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
-
+import com.ideia.projetoideia.model.dto.UsuarioDto;
 import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.CompeticaoService;
 
@@ -166,6 +167,16 @@ public class ControllerCompeticao {
 					.body(new IdeiaResponseFile("Não foi possível convidar", e.getMessage(), HttpStatus.BAD_REQUEST));
 		}
 
+	}
+	
+	@GetMapping("/competicao/{idCompeticao}/consultores")
+	public List<ConsultorDto>listarConsultoresDeUmaCompeticao(@PathVariable("idCompeticao")Integer idCompeticao){
+		try {
+			return competicaoService.listarConsultoresDeUmaCompeticao(idCompeticao);
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage()); 
+		}
+		
 	}
 
 	@GetMapping("/questoes-por-competicao/{competicaoId}")

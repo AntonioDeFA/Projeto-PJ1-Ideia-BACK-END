@@ -14,4 +14,6 @@ public interface PapelUsuarioCompeticaoRepositorio extends JpaRepository<PapelUs
 	
 	public List<PapelUsuarioCompeticao> findByCompeticaoCadastrada(Competicao competicaoCadastrada);
 	
+	
+	
 }

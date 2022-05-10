@@ -21,6 +21,7 @@ import com.ideia.projetoideia.model.Etapa;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
+import com.ideia.projetoideia.model.dto.ConsultorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorioCustom;
@@ -299,5 +300,36 @@ public class CompeticaoService {
 		enviarEmail.enviarEmailConviteUsuario(usuario, convite.getTipoConvite(), competicao);
 
 	}
+	
+	
+	public List<ConsultorDto> listarConsultoresDeUmaCompeticao(Integer idCompeticao) throws Exception{
+		Competicao competicao = recuperarCompeticaoId(idCompeticao);
+		List<ConsultorDto> consultoresDto = new ArrayList<ConsultorDto>();
+		
+		List<Convite> convites = conviteRepositorio.findByCompeticao(competicao);
+		
+		for (Convite convite : convites) {
+			
+			if(convite.getTipoConvite().equals(TipoConvite.CONSULTOR)) {
+				ConsultorDto consultorDto = new ConsultorDto(convite.getUsuario(),convite.getStatusConvite());
+				consultoresDto.add(consultorDto);
+			}
+		}
+		
+		List<Usuario> todosOsUsuarios = usuarioRepositorio.findAll();
+		
+		for (Usuario usuario : todosOsUsuarios) {
+			if(usuarioRepositorio.listarSeUsuarioTemConvitesDeUmaCompeticao(idCompeticao, usuario.getId()).isEmpty()) {
+				if(usuarioRepositorio.listarSeUsuarioTemRelacaoComCompeticao(idCompeticao, usuario.getId()).isEmpty()) {
+					ConsultorDto consultorDto = new ConsultorDto(usuario,null);
+					consultoresDto.add(consultorDto);
+				}	
+			}
+		}
+		
+		
+		return consultoresDto;
+	}			
+	
 
 }
