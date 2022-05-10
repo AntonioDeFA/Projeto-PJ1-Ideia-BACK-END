@@ -277,6 +277,16 @@ public class CompeticaoService {
 				throw new DuplicateKeyException("Usuário já possui convites para essa competição");
 			}
 		}
+		
+		List<PapelUsuarioCompeticao> papeis = papelUsuarioCompeticaoRepositorio.findByCompeticaoCadastrada(competicao);
+		
+		for (PapelUsuarioCompeticao papelUsuarioCompeticao : papeis) {
+			
+			if(papelUsuarioCompeticao.getUsuario().getId() == usuario.getId()) {
+				throw new DuplicateKeyException("Usuário já possui ligação com essa competição");
+			}
+			
+		}
 
 		Convite convite = new Convite();
 
