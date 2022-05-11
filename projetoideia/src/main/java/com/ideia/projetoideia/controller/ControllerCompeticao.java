@@ -23,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
+import com.ideia.projetoideia.model.dto.CompeticaoPutDto;
 import com.ideia.projetoideia.model.dto.ConsultorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
@@ -109,7 +110,7 @@ public class ControllerCompeticao {
 	}
 
 	@PutMapping("/competicao/update/{competicaoId}")
-	public ResponseEntity<?> atualizarCompeticao(@Valid @RequestBody Competicao competicao, BindingResult result,
+	public ResponseEntity<?> atualizarCompeticao(@Valid @RequestBody CompeticaoPutDto competicao, BindingResult result,
 			@PathVariable("competicaoId") Integer competicaoId) {
 
 		if (!result.hasErrors()) {
@@ -151,6 +152,19 @@ public class ControllerCompeticao {
 		}
 
 	}
+	
+	@GetMapping("/competicao/{idCompeticao}/regulamento")
+	public byte[] recuperarRegulamentoDaCompeticao(@PathVariable("idCompeticao")Integer idCompeticao) {
+		
+		try {
+			return competicaoService.recuperarRegulamentoCompeticao(idCompeticao);
+		}catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		}catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+	
 
 	@PostMapping("/competicao/convidar-usuario")
 	public ResponseEntity<?> convidarUsuario(@RequestBody ConviteDto conviteDto) {

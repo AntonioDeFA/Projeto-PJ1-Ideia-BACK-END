@@ -23,6 +23,7 @@ import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
+import com.ideia.projetoideia.model.dto.CompeticaoPutDto;
 import com.ideia.projetoideia.model.dto.ConsultorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
 import com.ideia.projetoideia.repository.CategoriaMaterialEstudoRepositorio;
@@ -120,19 +121,32 @@ public class CompeticaoService {
 		return idCompeticao;
 	}
 
-	public void atualizarCompeticao(Integer id, Competicao competicaoTemp) throws Exception, NotFoundException {
-		Competicao comp = recuperarCompeticaoId(id);
-		if (comp.getQntdMaximaMembrosPorEquipe() < comp.getQntdMinimaMembrosPorEquipe()) {
+	public void atualizarCompeticao(Integer idCompeticao, CompeticaoPutDto competicaoPutDto) throws Exception, NotFoundException {
+		Competicao comp = recuperarCompeticaoId(idCompeticao);
+		if (competicaoPutDto.getQntdMaximaMembrosPorEquipe() < competicaoPutDto.getQntdMinimaMembrosPorEquipe()) {
 			throw new Exception("Quantidade mínima de membros não pode ser maior que a quantidade máxima!");
 		}
-		comp.setNomeCompeticao(competicaoTemp.getNomeCompeticao());
-		comp.setArquivoRegulamentoCompeticao(competicaoTemp.getArquivoRegulamentoCompeticao());
-		comp.setEtapas(competicaoTemp.getEtapas());
-		comp.setDominioCompeticao(competicaoTemp.getDominioCompeticao());
-		comp.setQntdMaximaMembrosPorEquipe(competicaoTemp.getQntdMaximaMembrosPorEquipe());
-		comp.setQntdMinimaMembrosPorEquipe(competicaoTemp.getQntdMinimaMembrosPorEquipe());
-		comp.setTempoMaximoVideoEmSeg(competicaoTemp.getTempoMaximoVideoEmSeg());
+		
+		if(!comp.isElaboracao()) {
+			throw new Exception("A competição deve estar na etapa de elaboração");
+		}
+		
+		for (Etapa etapa : competicaoPutDto.getEtapas()) {
 
+			Etapa EtapaCompeticaoVingente = etapaRepositorio.findEtapaCompeticao(etapa.getTipoEtapa().getValue(),
+					idCompeticao);
+			EtapaCompeticaoVingente.setDataInicio(etapa.getDataInicio());
+			EtapaCompeticaoVingente.setDataTermino(etapa.getDataTermino());
+			etapaRepositorio.save(EtapaCompeticaoVingente);
+		}
+		
+		comp.setArquivoRegulamentoCompeticao(competicaoPutDto.getArquivoRegulamentoCompeticao());
+		comp.setDominioCompeticao(competicaoPutDto.getDominioCompeticao());
+		comp.setQntdMaximaMembrosPorEquipe(competicaoPutDto.getQntdMaximaMembrosPorEquipe());
+		comp.setQntdMinimaMembrosPorEquipe(competicaoPutDto.getQntdMinimaMembrosPorEquipe());
+		comp.setNomeCompeticao(competicaoPutDto.getNomeCompeticao());
+		comp.setTempoMaximoVideoEmSeg(competicaoPutDto.getTempoMaximoVideoEmSeg());
+		
 		competicaoRepositorio.save(comp);
 
 	}
@@ -349,6 +363,14 @@ public class CompeticaoService {
 //			}
 //		}
 	}
+	
+	
+	public byte[]recuperarRegulamentoCompeticao(Integer idCompeticao) throws Exception{
+		Competicao comp = recuperarCompeticaoId(idCompeticao);
+		
+		return  comp.getArquivoRegulamentoCompeticao();
+		
+	}
 
 	public void patchCompeticao(CompeticaoPatchDto competicaoPatchDto, Integer idCompeticao) throws Exception {
 		Competicao competicao = recuperarCompeticaoId(idCompeticao);
@@ -411,18 +433,6 @@ public class CompeticaoService {
 				questaoAvaliativa.setCompeticaoCadastrada(competicao);
 				questaoAvaliativaRepositorio.save(questaoAvaliativa);
 			}
-		}
-
-		if (competicaoPatchDto.getQntdMaximaMembrosPorEquipe() != null) {
-			competicao.setQntdMaximaMembrosPorEquipe(competicaoPatchDto.getQntdMaximaMembrosPorEquipe());
-		}
-
-		if (competicaoPatchDto.getQntdMinimaMembrosPorEquipe() != null) {
-			competicao.setQntdMinimaMembrosPorEquipe(competicaoPatchDto.getQntdMinimaMembrosPorEquipe());
-		}
-		
-		if(competicaoPatchDto.getDominioCompeticao()!=null) {
-			competicao.setDominioCompeticao(competicaoPatchDto.getDominioCompeticao());
 		}
 
 		competicao.setElaboracao(competicaoPatchDto.isElaboracao());
