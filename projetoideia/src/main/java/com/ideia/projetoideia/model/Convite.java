@@ -11,8 +11,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ideia.projetoideia.TipoConvite;
 import com.ideia.projetoideia.model.enums.StatusConvite;
+import com.ideia.projetoideia.model.enums.TipoConvite;
 
 import lombok.Data;
 

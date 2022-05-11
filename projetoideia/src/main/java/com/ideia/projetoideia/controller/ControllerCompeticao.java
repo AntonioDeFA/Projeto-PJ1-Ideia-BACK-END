@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.ideia.projetoideia.TipoConvite;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
 import com.ideia.projetoideia.model.dto.ConsultorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
+import com.ideia.projetoideia.model.enums.TipoConvite;
 import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.CompeticaoService;
 

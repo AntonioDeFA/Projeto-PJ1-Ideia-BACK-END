@@ -1,8 +1,8 @@
 package com.ideia.projetoideia.utils;
 
-import com.ideia.projetoideia.TipoConvite;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Usuario;
+import com.ideia.projetoideia.model.enums.TipoConvite;
 
 public class MensagensEmail {
 

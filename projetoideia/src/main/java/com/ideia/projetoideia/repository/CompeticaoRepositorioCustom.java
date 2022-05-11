@@ -64,11 +64,11 @@ public class CompeticaoRepositorioCustom {
 			
 			boolean entrou = false;
 			for (PapelUsuarioCompeticao papelUsuarioCompeticao : competicao.getPapeisUsuarioCompeticao()) {
-				if(papelUsuarioCompeticao.getUsuario().getId() == idUser || competicao.isElaboracao()) {
+				if(papelUsuarioCompeticao.getUsuario().getId() == idUser) {
 					entrou = true;
 				}
 			}
-			if (entrou == false) {
+			if (entrou == false && !competicao.isElaboracao()) {
 				competicoesValidas.add(competicao);
 			}
 		}

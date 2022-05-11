@@ -1,4 +1,4 @@
-package com.ideia.projetoideia;
+package com.ideia.projetoideia.model.enums;
 
 
 public enum TipoConvite {

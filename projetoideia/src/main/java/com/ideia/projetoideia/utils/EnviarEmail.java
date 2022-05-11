@@ -5,9 +5,9 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
-import com.ideia.projetoideia.TipoConvite;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Usuario;
+import com.ideia.projetoideia.model.enums.TipoConvite;
 
 @Component
 public class EnviarEmail {

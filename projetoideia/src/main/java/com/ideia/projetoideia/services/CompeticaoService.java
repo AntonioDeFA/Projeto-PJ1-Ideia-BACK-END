@@ -14,7 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.ideia.projetoideia.TipoConvite;
 import com.ideia.projetoideia.model.CategoriaMaterialEstudo;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Convite;
@@ -35,8 +34,8 @@ import com.ideia.projetoideia.model.QuestaoAvaliativa;
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
 import com.ideia.projetoideia.model.dto.UsuarioNaoRelacionadoDTO;
 import com.ideia.projetoideia.model.enums.StatusConvite;
+import com.ideia.projetoideia.model.enums.TipoConvite;
 import com.ideia.projetoideia.model.enums.TipoEtapa;
-import com.ideia.projetoideia.model.enums.TipoMaterialEstudo;
 import com.ideia.projetoideia.model.enums.TipoPapelUsuario;
 import com.ideia.projetoideia.repository.EquipeRepositorio;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
@@ -77,12 +76,11 @@ public class CompeticaoService {
 
 	@Autowired
 	QuestaoAvaliativaRepositorio questaoAvaliativaRepositorio;
-	
+
 	@Autowired
 	MaterialEstudoRepositorio materialEstudoRepositorio;
 	@Autowired
 	CategoriaMaterialEstudoRepositorio categoriaMaterialEstudoRepositorio;
-	
 
 	private final CompeticaoRepositorioCustom competicaoRepositorioCustom;
 
@@ -367,14 +365,14 @@ public class CompeticaoService {
 
 			if (etapa.getTipoEtapa().equals(TipoEtapa.AQUECIMENTO)) {
 
-				for (MaterialEstudo materias : competicaoPatchDto.getMateriaisDeEstudo()) {
+				for (MaterialEstudo material : competicaoPatchDto.getMateriaisDeEstudo()) {
 
-					materias.setEtapa(EtapaCompeticaoVingente);
-					
-					CategoriaMaterialEstudo cat = materias.getCategoriaMaterialEstudo();
+					material.setEtapa(EtapaCompeticaoVingente);
+
+					CategoriaMaterialEstudo cat = material.getCategoriaMaterialEstudo();
 					categoriaMaterialEstudoRepositorio.save(cat);
-					materialEstudoRepositorio.save(materias);
-					
+					materialEstudoRepositorio.save(material);
+
 				}
 
 			}

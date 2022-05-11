@@ -1,6 +1,6 @@
 package com.ideia.projetoideia.model.dto;
 
-import com.ideia.projetoideia.TipoConvite;
+import com.ideia.projetoideia.model.enums.TipoConvite;
 
 import lombok.Data;
 
