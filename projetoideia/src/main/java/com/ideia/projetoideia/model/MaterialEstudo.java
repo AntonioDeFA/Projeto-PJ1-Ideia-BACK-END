@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -54,7 +55,7 @@ public class MaterialEstudo {
 	@JoinColumn(name = "etapa_fk")
 	private Etapa etapa;
 
-	@ManyToOne
+	@OneToOne
 	@JoinColumn(name = "categoria_material_estudo_fk")
 	private CategoriaMaterialEstudo categoriaMaterialEstudo;
 

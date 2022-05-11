@@ -359,6 +359,11 @@ public class CompeticaoService {
 
 			Etapa EtapaCompeticaoVingente = etapaRepositorio.findEtapaCompeticao(etapa.getTipoEtapa().getValue(),
 					idCompeticao);
+			
+			for (MaterialEstudo materialEstudo : materialEstudoRepositorio.findByEtapa(EtapaCompeticaoVingente)) {
+				categoriaMaterialEstudoRepositorio.delete(materialEstudo.getCategoriaMaterialEstudo());
+				materialEstudoRepositorio.delete(materialEstudo);
+			}
 
 			EtapaCompeticaoVingente.setDataInicio(etapa.getDataInicio());
 			EtapaCompeticaoVingente.setDataTermino(etapa.getDataTermino());
