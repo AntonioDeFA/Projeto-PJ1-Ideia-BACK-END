@@ -1,6 +1,5 @@
 package com.ideia.projetoideia.model.dto;
 
-import java.io.File;
 import java.util.List;
 
 import com.ideia.projetoideia.model.Etapa;
@@ -13,12 +12,6 @@ import lombok.Data;
 public class CompeticaoPatchDto {
 	
 	private String nomeCompeticao;
-	
-	private Integer qntdMaximaMembrosPorEquipe;
-	
-	private Integer qntdMinimaMembrosPorEquipe;
-	
-	private String dominioCompeticao;
 	
 	private List<Etapa> etapas;
 	
