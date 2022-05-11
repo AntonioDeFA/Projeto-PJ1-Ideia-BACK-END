@@ -44,18 +44,13 @@ public class MaterialEstudo {
 	@Column(name = "arquivo_estudo")
 	private File arquivoEstudo;
 
-	private URL link;
+	private String link;
 
-	@Column(nullable = false, name = "dica_estudo_material")
-	@NotNull(message = "Você deve escrever uma dica de estudo.")
+	@Column(name = "dica_estudo_material")
 	private String dicaEstudoMaterial;
 
-	@Column(nullable = false, name = "estimativa_tempo_consumo_minutos")
-	@NotNull(message = "Você deve colocar uma estimativa de tempo.")
+	@Column(name = "estimativa_tempo_consumo_minutos")
 	private Float estimativaTempoConsumoMinutos;
-
-	@Enumerated(EnumType.STRING)
-	private TipoMaterialEstudo tipoMaterial;
 
 	@ManyToOne
 	@JoinColumn(name = "etapa_fk")
@@ -65,23 +60,23 @@ public class MaterialEstudo {
 	@JoinColumn(name = "categoria_material_estudo_fk")
 	private CategoriaMaterialEstudo categoriaMaterialEstudo;
 
-	public void setArquivoEstudo(File arquivoEstudo) throws Exception {
-		if (!isLink()) {
-			throw new Exception("O tipo é link, então um arquivo não pode ser atribuido!");
-		}
-		this.arquivoEstudo = arquivoEstudo;
-	}
-
-	public void setLink(URL link) throws Exception {
-		if (isLink()) {
-			throw new Exception("O tipo não é link, então um link não pode ser atribuido!");
-		}
-		this.link = link;
-	}
-
-	private boolean isLink() {
-		return (tipoMaterialEstudo == TipoMaterialEstudo.LINK);
-	}
+//	public void setArquivoEstudo(File arquivoEstudo) throws Exception {
+//		if (!isLink()) {
+//			throw new Exception("O tipo é link, então um arquivo não pode ser atribuido!");
+//		}
+//		this.arquivoEstudo = arquivoEstudo;
+//	}
+//
+//	public void setLink(String link) throws Exception {
+//		if (isLink()) {
+//			throw new Exception("O tipo não é link, então um link não pode ser atribuido!");
+//		}
+//		this.link = link;
+//	}
+//
+//	private boolean isLink() {
+//		return (tipoMaterialEstudo == TipoMaterialEstudo.LINK);
+//	}
 
 	public void setEtapa(Etapa etapa) throws Exception {
 		if (etapa.getTipoEtapa() != TipoEtapa.AQUECIMENTO) {

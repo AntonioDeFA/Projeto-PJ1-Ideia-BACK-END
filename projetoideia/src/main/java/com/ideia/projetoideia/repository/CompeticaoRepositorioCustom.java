@@ -64,7 +64,7 @@ public class CompeticaoRepositorioCustom {
 			
 			boolean entrou = false;
 			for (PapelUsuarioCompeticao papelUsuarioCompeticao : competicao.getPapeisUsuarioCompeticao()) {
-				if(papelUsuarioCompeticao.getUsuario().getId() == idUser) {
+				if(papelUsuarioCompeticao.getUsuario().getId() == idUser || competicao.isElaboracao()) {
 					entrou = true;
 				}
 			}

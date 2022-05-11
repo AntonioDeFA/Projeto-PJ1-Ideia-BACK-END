@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.ideia.projetoideia.TipoConvite;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
+import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
 import com.ideia.projetoideia.model.dto.ConsultorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
@@ -199,6 +201,26 @@ public class ControllerCompeticao {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 
+	}
+	
+	@PatchMapping("/competicao/update/{competicaoId}")
+	public ResponseEntity<?>patchCompeticao(@PathVariable("competicaoId") Integer competicaoId,
+			@RequestBody CompeticaoPatchDto competicao){
+		try {
+			competicaoService.patchCompeticao(competicao, competicaoId);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("Competição Atualizada / Criada com Sucesso", HttpStatus.OK));
+		}catch (NotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new IdeiaResponseFile("Não atualizar / criar a competição", e.getMessage(), HttpStatus.NOT_FOUND));
+			}
+		catch(Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new IdeiaResponseFile("Não atualizar / criar a competiçãor", e.getMessage(), HttpStatus.BAD_REQUEST));
+		}
+		
+		
+		
 	}
 
 }

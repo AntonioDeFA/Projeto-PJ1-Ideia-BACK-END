@@ -15,14 +15,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.ideia.projetoideia.TipoConvite;
+import com.ideia.projetoideia.model.CategoriaMaterialEstudo;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Convite;
 import com.ideia.projetoideia.model.Etapa;
+import com.ideia.projetoideia.model.MaterialEstudo;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
+import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
 import com.ideia.projetoideia.model.dto.ConsultorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
+import com.ideia.projetoideia.repository.CategoriaMaterialEstudoRepositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorioCustom;
 import com.ideia.projetoideia.repository.ConviteRepositorio;
@@ -31,9 +35,12 @@ import com.ideia.projetoideia.model.QuestaoAvaliativa;
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
 import com.ideia.projetoideia.model.dto.UsuarioNaoRelacionadoDTO;
 import com.ideia.projetoideia.model.enums.StatusConvite;
+import com.ideia.projetoideia.model.enums.TipoEtapa;
+import com.ideia.projetoideia.model.enums.TipoMaterialEstudo;
 import com.ideia.projetoideia.model.enums.TipoPapelUsuario;
 import com.ideia.projetoideia.repository.EquipeRepositorio;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
+import com.ideia.projetoideia.repository.MaterialEstudoRepositorio;
 import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
 import com.ideia.projetoideia.repository.QuestaoAvaliativaRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
@@ -70,6 +77,12 @@ public class CompeticaoService {
 
 	@Autowired
 	QuestaoAvaliativaRepositorio questaoAvaliativaRepositorio;
+	
+	@Autowired
+	MaterialEstudoRepositorio materialEstudoRepositorio;
+	@Autowired
+	CategoriaMaterialEstudoRepositorio categoriaMaterialEstudoRepositorio;
+	
 
 	private final CompeticaoRepositorioCustom competicaoRepositorioCustom;
 
@@ -108,7 +121,7 @@ public class CompeticaoService {
 		}
 		return idCompeticao;
 	}
-	
+
 	public void atualizarCompeticao(Integer id, Competicao competicaoTemp) throws Exception, NotFoundException {
 		Competicao comp = recuperarCompeticaoId(id);
 		if (comp.getQntdMaximaMembrosPorEquipe() < comp.getQntdMinimaMembrosPorEquipe()) {
@@ -121,9 +134,9 @@ public class CompeticaoService {
 		comp.setQntdMaximaMembrosPorEquipe(competicaoTemp.getQntdMaximaMembrosPorEquipe());
 		comp.setQntdMinimaMembrosPorEquipe(competicaoTemp.getQntdMinimaMembrosPorEquipe());
 		comp.setTempoMaximoVideoEmSeg(competicaoTemp.getTempoMaximoVideoEmSeg());
-		
+
 		competicaoRepositorio.save(comp);
-		
+
 	}
 
 	public List<Competicao> consultarCompeticoes() {
@@ -277,15 +290,15 @@ public class CompeticaoService {
 				throw new DuplicateKeyException("Usuário já possui convites para essa competição");
 			}
 		}
-		
+
 		List<PapelUsuarioCompeticao> papeis = papelUsuarioCompeticaoRepositorio.findByCompeticaoCadastrada(competicao);
-		
+
 		for (PapelUsuarioCompeticao papelUsuarioCompeticao : papeis) {
-			
-			if(papelUsuarioCompeticao.getUsuario().getId() == usuario.getId()) {
+
+			if (papelUsuarioCompeticao.getUsuario().getId() == usuario.getId()) {
 				throw new DuplicateKeyException("Usuário já possui ligação com essa competição");
 			}
-			
+
 		}
 
 		Convite convite = new Convite();
@@ -310,24 +323,23 @@ public class CompeticaoService {
 		enviarEmail.enviarEmailConviteUsuario(usuario, convite.getTipoConvite(), competicao);
 
 	}
-	
-	
-	public List<ConsultorDto> listarConsultoresEAaliadoresDeUmaCompeticao(Integer idCompeticao , TipoConvite tipoConvite) throws Exception{
+
+	public List<ConsultorDto> listarConsultoresEAaliadoresDeUmaCompeticao(Integer idCompeticao, TipoConvite tipoConvite)
+			throws Exception {
 		Competicao competicao = recuperarCompeticaoId(idCompeticao);
 		List<ConsultorDto> consultoresDto = new ArrayList<ConsultorDto>();
-		
+
 		List<Convite> convites = conviteRepositorio.findByCompeticao(competicao);
-		
+
 		for (Convite convite : convites) {
-			
-			if(convite.getTipoConvite().equals(tipoConvite)) {
-				ConsultorDto consultorDto = new ConsultorDto(convite.getUsuario(),convite.getStatusConvite());
+
+			if (convite.getTipoConvite().equals(tipoConvite)) {
+				ConsultorDto consultorDto = new ConsultorDto(convite.getUsuario(), convite.getStatusConvite());
 				consultoresDto.add(consultorDto);
 			}
 		}
 		return consultoresDto;
-		
-		
+
 //		List<Usuario> todosOsUsuarios = usuarioRepositorio.findAll();
 //		
 //		for (Usuario usuario : todosOsUsuarios) {
@@ -338,10 +350,59 @@ public class CompeticaoService {
 //				}	
 //			}
 //		}
-		
-		
-		
-	}			
-	
+	}
+
+	public void patchCompeticao(CompeticaoPatchDto competicaoPatchDto, Integer idCompeticao) throws Exception {
+		Competicao competicao = recuperarCompeticaoId(idCompeticao);
+
+		List<Etapa> etapasDoDto = competicaoPatchDto.getEtapas();
+
+		for (Etapa etapa : etapasDoDto) {
+
+			Etapa EtapaCompeticaoVingente = etapaRepositorio.findEtapaCompeticao(etapa.getTipoEtapa().getValue(),
+					idCompeticao);
+
+			EtapaCompeticaoVingente.setDataInicio(etapa.getDataInicio());
+			EtapaCompeticaoVingente.setDataTermino(etapa.getDataTermino());
+
+			if (etapa.getTipoEtapa().equals(TipoEtapa.AQUECIMENTO)) {
+
+				for (MaterialEstudo materias : competicaoPatchDto.getMateriaisDeEstudo()) {
+
+					materias.setEtapa(EtapaCompeticaoVingente);
+					
+					CategoriaMaterialEstudo cat = materias.getCategoriaMaterialEstudo();
+					categoriaMaterialEstudoRepositorio.save(cat);
+					materialEstudoRepositorio.save(materias);
+					
+				}
+
+			}
+
+			etapaRepositorio.save(EtapaCompeticaoVingente);
+		}
+
+		if (competicaoPatchDto.getArquivoRegulamentoCompeticao() != null) {
+			competicao.setArquivoRegulamentoCompeticao(competicaoPatchDto.getArquivoRegulamentoCompeticao());
+		}
+
+		if (competicaoPatchDto.getTempoMaximoVideoEmSeg() != null) {
+			competicao.setTempoMaximoVideoEmSeg(competicaoPatchDto.getTempoMaximoVideoEmSeg());
+		}
+
+		if (competicaoPatchDto.getNomeCompeticao() != null) {
+			competicao.setNomeCompeticao(competicaoPatchDto.getNomeCompeticao());
+		}
+
+		for (QuestaoAvaliativa questaoAvaliativa : competicaoPatchDto.getQuestoesAvaliativas()) {
+			questaoAvaliativa.setCompeticaoCadastrada(competicao);
+			questaoAvaliativaRepositorio.save(questaoAvaliativa);
+		}
+
+		competicao.setElaboracao(false);
+
+		competicaoRepositorio.save(competicao);
+
+	}
 
 }
