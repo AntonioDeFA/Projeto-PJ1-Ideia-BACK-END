@@ -53,7 +53,7 @@ public class Competicao {
 
 	@Column(nullable = false, name = "arquivo_regulamento_competicao")
 	@NotNull(message = "O arquivo não pode ser nulo.")
-	private File arquivoRegulamentoCompeticao;
+	private byte[] arquivoRegulamentoCompeticao;
 
 	@Column(name = "dominio_competicao")
 	private String dominioCompeticao = "";

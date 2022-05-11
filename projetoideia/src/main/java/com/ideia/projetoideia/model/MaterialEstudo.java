@@ -41,7 +41,7 @@ public class MaterialEstudo {
 	private TipoMaterialEstudo tipoMaterialEstudo;
 
 	@Column(name = "arquivo_estudo")
-	private File arquivoEstudo;
+	private byte[] arquivoEstudo;
 
 	private String link;
 

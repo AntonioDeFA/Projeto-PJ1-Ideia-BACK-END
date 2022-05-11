@@ -355,38 +355,38 @@ public class CompeticaoService {
 
 		List<Etapa> etapasDoDto = competicaoPatchDto.getEtapas();
 
-		if(etapasDoDto != null) {
-		for (Etapa etapa : etapasDoDto) {
+		if (etapasDoDto != null) {
+			for (Etapa etapa : etapasDoDto) {
 
-			Etapa EtapaCompeticaoVingente = etapaRepositorio.findEtapaCompeticao(etapa.getTipoEtapa().getValue(),
-					idCompeticao);
-			
-			if(competicaoPatchDto.getMateriaisDeEstudo() !=null) {
-				for (MaterialEstudo materialEstudo : materialEstudoRepositorio.findByEtapa(EtapaCompeticaoVingente)) {
-				categoriaMaterialEstudoRepositorio.delete(materialEstudo.getCategoriaMaterialEstudo());
-				materialEstudoRepositorio.delete(materialEstudo);
-			}
-			}
-			
+				Etapa EtapaCompeticaoVingente = etapaRepositorio.findEtapaCompeticao(etapa.getTipoEtapa().getValue(),
+						idCompeticao);
 
-			EtapaCompeticaoVingente.setDataInicio(etapa.getDataInicio());
-			EtapaCompeticaoVingente.setDataTermino(etapa.getDataTermino());
-
-			if (etapa.getTipoEtapa().equals(TipoEtapa.AQUECIMENTO)) {
-
-				for (MaterialEstudo material : competicaoPatchDto.getMateriaisDeEstudo()) {
-
-					material.setEtapa(EtapaCompeticaoVingente);
-
-					CategoriaMaterialEstudo cat = material.getCategoriaMaterialEstudo();
-					categoriaMaterialEstudoRepositorio.save(cat);
-					materialEstudoRepositorio.save(material);
+				if (competicaoPatchDto.getMateriaisDeEstudo() != null) {
+					for (MaterialEstudo materialEstudo : materialEstudoRepositorio
+							.findByEtapa(EtapaCompeticaoVingente)) {
+						categoriaMaterialEstudoRepositorio.delete(materialEstudo.getCategoriaMaterialEstudo());
+						materialEstudoRepositorio.delete(materialEstudo);
+					}
 				}
 
-			}
+				EtapaCompeticaoVingente.setDataInicio(etapa.getDataInicio());
+				EtapaCompeticaoVingente.setDataTermino(etapa.getDataTermino());
 
-			etapaRepositorio.save(EtapaCompeticaoVingente);
-		}
+				if (etapa.getTipoEtapa().equals(TipoEtapa.AQUECIMENTO)) {
+
+					for (MaterialEstudo material : competicaoPatchDto.getMateriaisDeEstudo()) {
+
+						material.setEtapa(EtapaCompeticaoVingente);
+
+						CategoriaMaterialEstudo cat = material.getCategoriaMaterialEstudo();
+						categoriaMaterialEstudoRepositorio.save(cat);
+						materialEstudoRepositorio.save(material);
+					}
+
+				}
+
+				etapaRepositorio.save(EtapaCompeticaoVingente);
+			}
 		}
 
 		if (competicaoPatchDto.getArquivoRegulamentoCompeticao() != null) {
@@ -400,16 +400,29 @@ public class CompeticaoService {
 		if (competicaoPatchDto.getNomeCompeticao() != null) {
 			competicao.setNomeCompeticao(competicaoPatchDto.getNomeCompeticao());
 		}
-		
-		if(competicaoPatchDto.getQuestoesAvaliativas() !=null) {
-			for (QuestaoAvaliativa questaoAvaliativa : questaoAvaliativaRepositorio.findByCompeticaoCadastrada(competicao)) {
+
+		if (competicaoPatchDto.getQuestoesAvaliativas() != null) {
+			for (QuestaoAvaliativa questaoAvaliativa : questaoAvaliativaRepositorio
+					.findByCompeticaoCadastrada(competicao)) {
 				questaoAvaliativaRepositorio.deleteById(questaoAvaliativa.getId());
 			}
-			
+
 			for (QuestaoAvaliativa questaoAvaliativa : competicaoPatchDto.getQuestoesAvaliativas()) {
-			questaoAvaliativa.setCompeticaoCadastrada(competicao);
-			questaoAvaliativaRepositorio.save(questaoAvaliativa);
+				questaoAvaliativa.setCompeticaoCadastrada(competicao);
+				questaoAvaliativaRepositorio.save(questaoAvaliativa);
+			}
 		}
+
+		if (competicaoPatchDto.getQntdMaximaMembrosPorEquipe() != null) {
+			competicao.setQntdMaximaMembrosPorEquipe(competicaoPatchDto.getQntdMaximaMembrosPorEquipe());
+		}
+
+		if (competicaoPatchDto.getQntdMinimaMembrosPorEquipe() != null) {
+			competicao.setQntdMinimaMembrosPorEquipe(competicaoPatchDto.getQntdMinimaMembrosPorEquipe());
+		}
+		
+		if(competicaoPatchDto.getDominioCompeticao()!=null) {
+			competicao.setDominioCompeticao(competicaoPatchDto.getDominioCompeticao());
 		}
 
 		competicao.setElaboracao(competicaoPatchDto.isElaboracao());

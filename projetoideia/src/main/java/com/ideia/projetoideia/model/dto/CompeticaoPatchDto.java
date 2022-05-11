@@ -14,11 +14,17 @@ public class CompeticaoPatchDto {
 	
 	private String nomeCompeticao;
 	
+	private Integer qntdMaximaMembrosPorEquipe;
+	
+	private Integer qntdMinimaMembrosPorEquipe;
+	
+	private String dominioCompeticao;
+	
 	private List<Etapa> etapas;
 	
 	private List<QuestaoAvaliativa> questoesAvaliativas;
 	
-	private File arquivoRegulamentoCompeticao;
+	private byte[] arquivoRegulamentoCompeticao;
 	
 	private Float tempoMaximoVideoEmSeg;
 	

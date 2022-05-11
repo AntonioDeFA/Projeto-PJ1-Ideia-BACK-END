@@ -37,7 +37,7 @@ public class TesteCompeticao {
 		competicao.setQntdMaximaMembrosPorEquipe(25);
 		competicao.setQntdMinimaMembrosPorEquipe(2);
 		competicao.setTempoMaximoVideoEmSeg(255f);
-		competicao.setArquivoRegulamentoCompeticao(new File("local"));
+		competicao.setArquivoRegulamentoCompeticao(new byte[5]);
 	}
 
 //  							Caminho Feliz 	
@@ -63,7 +63,7 @@ public class TesteCompeticao {
 		competicaoTest.setQntdMaximaMembrosPorEquipe(10);
 		competicaoTest.setQntdMinimaMembrosPorEquipe(9);
 		competicaoTest.setTempoMaximoVideoEmSeg(200f);
-		competicaoTest.setArquivoRegulamentoCompeticao(new File("remoto"));
+		competicao.setArquivoRegulamentoCompeticao(new byte[5]);
 
 		competicaoRepositorio.save(competicaoTest);
 
