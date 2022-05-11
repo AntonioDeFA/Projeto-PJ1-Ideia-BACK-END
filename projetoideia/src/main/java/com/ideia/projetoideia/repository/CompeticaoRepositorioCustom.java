@@ -26,7 +26,7 @@ public class CompeticaoRepositorioCustom {
 
 	public List<Competicao> findByTodasCompeticoesFaseInscricao(String nome, Integer mes, Integer ano, Integer idUser) {
 		String query = "SELECT c FROM Competicao AS c JOIN  c.etapas e WHERE "
-				+ "com.ideia.projetoideia.model.TipoEtapa.INSCRICAO = e.tipoEtapa "
+				+ "com.ideia.projetoideia.model.enums.TipoEtapa.INSCRICAO = e.tipoEtapa "
 				+ "AND e.dataInicio <= curdate() "
 				+ "AND e.dataTermino >= curdate()";
 		

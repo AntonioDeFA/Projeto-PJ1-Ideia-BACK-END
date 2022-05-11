@@ -355,15 +355,19 @@ public class CompeticaoService {
 
 		List<Etapa> etapasDoDto = competicaoPatchDto.getEtapas();
 
+		if(etapasDoDto != null) {
 		for (Etapa etapa : etapasDoDto) {
 
 			Etapa EtapaCompeticaoVingente = etapaRepositorio.findEtapaCompeticao(etapa.getTipoEtapa().getValue(),
 					idCompeticao);
 			
-			for (MaterialEstudo materialEstudo : materialEstudoRepositorio.findByEtapa(EtapaCompeticaoVingente)) {
+			if(competicaoPatchDto.getMateriaisDeEstudo() !=null) {
+				for (MaterialEstudo materialEstudo : materialEstudoRepositorio.findByEtapa(EtapaCompeticaoVingente)) {
 				categoriaMaterialEstudoRepositorio.delete(materialEstudo.getCategoriaMaterialEstudo());
 				materialEstudoRepositorio.delete(materialEstudo);
 			}
+			}
+			
 
 			EtapaCompeticaoVingente.setDataInicio(etapa.getDataInicio());
 			EtapaCompeticaoVingente.setDataTermino(etapa.getDataTermino());
@@ -377,12 +381,12 @@ public class CompeticaoService {
 					CategoriaMaterialEstudo cat = material.getCategoriaMaterialEstudo();
 					categoriaMaterialEstudoRepositorio.save(cat);
 					materialEstudoRepositorio.save(material);
-
 				}
 
 			}
 
 			etapaRepositorio.save(EtapaCompeticaoVingente);
+		}
 		}
 
 		if (competicaoPatchDto.getArquivoRegulamentoCompeticao() != null) {
@@ -396,13 +400,19 @@ public class CompeticaoService {
 		if (competicaoPatchDto.getNomeCompeticao() != null) {
 			competicao.setNomeCompeticao(competicaoPatchDto.getNomeCompeticao());
 		}
-
-		for (QuestaoAvaliativa questaoAvaliativa : competicaoPatchDto.getQuestoesAvaliativas()) {
+		
+		if(competicaoPatchDto.getQuestoesAvaliativas() !=null) {
+			for (QuestaoAvaliativa questaoAvaliativa : questaoAvaliativaRepositorio.findByCompeticaoCadastrada(competicao)) {
+				questaoAvaliativaRepositorio.deleteById(questaoAvaliativa.getId());
+			}
+			
+			for (QuestaoAvaliativa questaoAvaliativa : competicaoPatchDto.getQuestoesAvaliativas()) {
 			questaoAvaliativa.setCompeticaoCadastrada(competicao);
 			questaoAvaliativaRepositorio.save(questaoAvaliativa);
 		}
+		}
 
-		competicao.setElaboracao(false);
+		competicao.setElaboracao(competicaoPatchDto.isElaboracao());
 
 		competicaoRepositorio.save(competicao);
 
