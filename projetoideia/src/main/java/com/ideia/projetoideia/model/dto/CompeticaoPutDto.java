@@ -10,19 +10,19 @@ import lombok.Data;
 
 @Data
 public class CompeticaoPutDto {
-	@NotBlank
+	
 	private String nomeCompeticao;
-	@NotBlank
+	
 	private Integer qntdMaximaMembrosPorEquipe;
-	@NotBlank
+	
 	private Integer qntdMinimaMembrosPorEquipe;
-	@NotBlank
+
 	private Float tempoMaximoVideoEmSeg;
-	@NotBlank
+	
 	private String dominioCompeticao = "";
-	@NotBlank
+
 	private byte[] arquivoRegulamentoCompeticao;
-	@NotBlank
+	
 	private List<Etapa> etapas;
 	
 
