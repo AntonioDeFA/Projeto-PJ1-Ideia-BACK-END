@@ -24,7 +24,7 @@ import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPutDto;
-import com.ideia.projetoideia.model.dto.ConsultorDto;
+import com.ideia.projetoideia.model.dto.ConsultorEAvaliadorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
 import com.ideia.projetoideia.repository.CategoriaMaterialEstudoRepositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
@@ -336,17 +336,17 @@ public class CompeticaoService {
 
 	}
 
-	public List<ConsultorDto> listarConsultoresEAaliadoresDeUmaCompeticao(Integer idCompeticao, TipoConvite tipoConvite)
+	public List<ConsultorEAvaliadorDto> listarConsultoresEAaliadoresDeUmaCompeticao(Integer idCompeticao, TipoConvite tipoConvite)
 			throws Exception {
 		Competicao competicao = recuperarCompeticaoId(idCompeticao);
-		List<ConsultorDto> consultoresDto = new ArrayList<ConsultorDto>();
+		List<ConsultorEAvaliadorDto> consultoresDto = new ArrayList<ConsultorEAvaliadorDto>();
 
 		List<Convite> convites = conviteRepositorio.findByCompeticao(competicao);
 
 		for (Convite convite : convites) {
 
 			if (convite.getTipoConvite().equals(tipoConvite)) {
-				ConsultorDto consultorDto = new ConsultorDto(convite.getUsuario(), convite.getStatusConvite());
+				ConsultorEAvaliadorDto consultorDto = new ConsultorEAvaliadorDto(convite.getUsuario(), convite.getStatusConvite());
 				consultoresDto.add(consultorDto);
 			}
 		}

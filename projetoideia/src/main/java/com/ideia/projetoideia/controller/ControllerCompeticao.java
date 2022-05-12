@@ -24,7 +24,7 @@ import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPutDto;
-import com.ideia.projetoideia.model.dto.ConsultorDto;
+import com.ideia.projetoideia.model.dto.ConsultorEAvaliadorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
 import com.ideia.projetoideia.model.enums.TipoConvite;
@@ -184,7 +184,7 @@ public class ControllerCompeticao {
 	}
 	
 	@GetMapping("/competicao/{idCompeticao}/consultores")
-	public List<ConsultorDto>listarConsultoresDeUmaCompeticao(@PathVariable("idCompeticao")Integer idCompeticao){
+	public List<ConsultorEAvaliadorDto>listarConsultoresDeUmaCompeticao(@PathVariable("idCompeticao")Integer idCompeticao){
 		try {
 			return competicaoService.listarConsultoresEAaliadoresDeUmaCompeticao(idCompeticao , TipoConvite.CONSULTOR);
 		} catch (Exception e) {
@@ -194,7 +194,7 @@ public class ControllerCompeticao {
 	}
 	
 	@GetMapping("/competicao/{idCompeticao}/avaliadores")
-	public List<ConsultorDto>listarAvaliadoresDeUmaCompeticao(@PathVariable("idCompeticao")Integer idCompeticao){
+	public List<ConsultorEAvaliadorDto>listarAvaliadoresDeUmaCompeticao(@PathVariable("idCompeticao")Integer idCompeticao){
 		try {
 			return competicaoService.listarConsultoresEAaliadoresDeUmaCompeticao(idCompeticao , TipoConvite.AVALIADOR);
 		} catch (Exception e) {

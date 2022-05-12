@@ -6,17 +6,17 @@ import com.ideia.projetoideia.model.enums.StatusConvite;
 import lombok.Data;
 
 @Data
-public class ConsultorDto {
+public class ConsultorEAvaliadorDto {
 	
-	private String emaiConsultor;
+	private String email;
 	
 	private Integer idUsuario;
 	
 	private StatusConvite statusConvite;
 	
-	public ConsultorDto(Usuario usuario , StatusConvite statusConvite) {
+	public ConsultorEAvaliadorDto(Usuario usuario , StatusConvite statusConvite) {
 		
-		this.emaiConsultor = usuario.getEmail();
+		this.email = usuario.getEmail();
 		this.idUsuario = usuario.getId();
 		this.statusConvite = statusConvite;
 		

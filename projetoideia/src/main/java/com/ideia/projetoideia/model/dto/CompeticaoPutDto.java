@@ -2,8 +2,6 @@ package com.ideia.projetoideia.model.dto;
 
 import java.util.List;
 
-import javax.validation.constraints.NotBlank;
-
 import com.ideia.projetoideia.model.Etapa;
 
 import lombok.Data;
