@@ -6,9 +6,12 @@ import static org.junit.Assert.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -22,6 +25,7 @@ import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 @WebAppConfiguration
 @ContextConfiguration
 @SpringBootTest(classes = ProjetoideiaApplication.class)
+@TestInstance(Lifecycle.PER_CLASS)
 public class TesteCompeticao {
 
 	@Autowired
@@ -37,6 +41,8 @@ public class TesteCompeticao {
 		competicao.setTempoMaximoVideoEmSeg(255f);
 		competicao.setArquivoRegulamentoCompeticao(new byte[5]);
 	}
+	
+	
 
 //  							Caminho Feliz 	
 //---------------------------------------------------------------------------------------------------------------------------
@@ -57,7 +63,7 @@ public class TesteCompeticao {
 		Competicao competicaoTest = competicaoRepositorio.findByNomeCompeticao(competicao.getNomeCompeticao()).get(0);
 		assertNotNull(competicaoTest);
 
-		competicaoTest.setNomeCompeticao("Novo nome da Competição");
+		competicaoTest.setNomeCompeticao("Nova Competição");
 		competicaoTest.setQntdMaximaMembrosPorEquipe(10);
 		competicaoTest.setQntdMinimaMembrosPorEquipe(9);
 		competicaoTest.setTempoMaximoVideoEmSeg(200f);
@@ -97,10 +103,18 @@ public class TesteCompeticao {
 	public void testeCadastroComNomeEmBrancoException() {
 		competicao.setNomeCompeticao(null);
 
+		assertThrows(DataIntegrityViolationException.class, () -> {
+			competicaoRepositorio.save(competicao);
+		});
+	}
+	
+	@Test
+	public void nomeDeCompeticaoMaximoException() {
+		competicao.setNomeCompeticao("Nome muitoooooooooo grande ");
+
 		assertThrows(TransactionSystemException.class, () -> {
 			competicaoRepositorio.save(competicao);
 		});
-
 	}
 
 //------------------- Exception Maximo e Minimo membros de Equipe   -------------

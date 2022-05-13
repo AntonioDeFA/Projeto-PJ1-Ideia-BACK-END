@@ -1,6 +1,7 @@
 package com.ideia.projetoideia.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,5 +12,7 @@ public interface QuestaoAvaliativaRepositorio extends JpaRepository<QuestaoAvali
 	
 	
 	public List<QuestaoAvaliativa> findByCompeticaoCadastrada(Competicao competicaoCadastrada);
+	
+	Optional<QuestaoAvaliativa> findByQuestao(String questao);
 
 }
