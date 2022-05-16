@@ -230,6 +230,11 @@ public class CompeticaoService {
 					entrou = true;
 				}
 			}
+			for (Convite convite : conviteRepositorio.findByUsuario(usuarioRecuperado)) {
+				if (convite.getUsuario().getId() == usuarioRecuperado.getId() && competicao.getId() == convite.getCompeticao().getId()) {
+					entrou = true;
+				}
+			}
 			if (!entrou) {
 				usuarios.add(new UsuarioNaoRelacionadoDTO(usuarioRecuperado));
 			}

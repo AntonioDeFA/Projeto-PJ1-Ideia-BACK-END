@@ -37,6 +37,7 @@ public class Convite {
 	
 	@Enumerated(EnumType.STRING)
 	private TipoConvite tipoConvite;
+	
 	@Enumerated(EnumType.STRING)
 	private StatusConvite statusConvite;
 }
