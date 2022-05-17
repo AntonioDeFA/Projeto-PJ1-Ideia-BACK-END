@@ -26,6 +26,7 @@ import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPutDto;
 import com.ideia.projetoideia.model.dto.ConsultorEAvaliadorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
+import com.ideia.projetoideia.model.dto.MaterialEstudoDTO;
 import com.ideia.projetoideia.repository.CategoriaMaterialEstudoRepositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorioCustom;
@@ -457,7 +458,6 @@ public class CompeticaoService {
 	}
 
 	public void removerUsuarioConvidado(Integer idCompeticao, Integer idUsuario) throws Exception {
-		System.out.println(idCompeticao + "" + idUsuario);
 		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
 		Usuario usuario = usuarioRepositorio.findById(idUsuario).get();
 
@@ -476,6 +476,25 @@ public class CompeticaoService {
 					papelUsuarioCompeticaoRepositorio.delete(papelUsuarioCompeticao);
 			}
 		}
+	}
+
+	public List<MaterialEstudoDTO> listarMateriaisEstudoCompeticao(Integer idCompeticao)  throws Exception {
+		System.out.println(idCompeticao);
+
+		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
+		List<Etapa> etapas = etapaRepositorio.findByCompeticao(competicao);
+
+		List<MaterialEstudoDTO> materiaisEstudo = new ArrayList<MaterialEstudoDTO>();
+		
+		for (Etapa etapa : etapas) {
+			for (MaterialEstudo materialEstudo : materialEstudoRepositorio.findByEtapa(etapa)) {
+				materiaisEstudo.add(new MaterialEstudoDTO(materialEstudo));
+			}
+		}
+		if (materiaisEstudo.size() == 0) {
+			throw new Exception("Não existe nenhum material cadastrado nessa competição.");
+		}
+		return materiaisEstudo;
 	}
 
 }

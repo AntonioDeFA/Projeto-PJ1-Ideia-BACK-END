@@ -26,6 +26,7 @@ import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPutDto;
 import com.ideia.projetoideia.model.dto.ConsultorEAvaliadorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
+import com.ideia.projetoideia.model.dto.MaterialEstudoDTO;
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
 import com.ideia.projetoideia.model.enums.TipoConvite;
 import com.ideia.projetoideia.response.IdeiaResponseFile;
@@ -250,5 +251,17 @@ public class ControllerCompeticao {
 					new IdeiaResponseFile("Não foi possível remover usuario", e.getMessage(), HttpStatus.NOT_FOUND));
 		}
 
+	}
+	
+	@GetMapping("{idCompeticao}/materiais-estudo")
+	public List<MaterialEstudoDTO> listarMateriaisEstudoCompeticao(@PathVariable("idCompeticao") Integer idCompeticao) {
+		try {
+			return competicaoService.listarMateriaisEstudoCompeticao(idCompeticao);
+
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
 	}
 }
