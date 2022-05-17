@@ -93,6 +93,10 @@ public class CompeticaoService {
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
 		List<Etapa> etapas = competicao.getEtapas();
+		if (competicaoRepositorio.findByNomeCompeticao(competicao.getNomeCompeticao()).size() != 0) {
+			throw new Exception(
+					"Não foi possível criar a competição, pois já existe uma competição com este nome cadastrado");
+		}
 		for (Etapa etapa : etapas) {
 			etapa.setCompeticao(null);
 			etapaRepositorio.save(etapa);
@@ -121,16 +125,21 @@ public class CompeticaoService {
 		return idCompeticao;
 	}
 
-	public void atualizarCompeticao(Integer idCompeticao, CompeticaoPutDto competicaoPutDto) throws Exception, NotFoundException {
+	public void atualizarCompeticao(Integer idCompeticao, CompeticaoPutDto competicaoPutDto)
+			throws Exception, NotFoundException {
 		Competicao comp = recuperarCompeticaoId(idCompeticao);
+		if (competicaoRepositorio.findByNomeCompeticao(comp.getNomeCompeticao()).size() != 0) {
+			throw new Exception(
+					"Não foi possível criar a competição, pois já existe uma competição com este nome cadastrado");
+		}
 		if (competicaoPutDto.getQntdMaximaMembrosPorEquipe() < competicaoPutDto.getQntdMinimaMembrosPorEquipe()) {
 			throw new Exception("Quantidade mínima de membros não pode ser maior que a quantidade máxima!");
 		}
-		
-		if(!comp.isElaboracao()) {
+
+		if (!comp.isElaboracao()) {
 			throw new Exception("A competição deve estar na etapa de elaboração");
 		}
-		
+
 		for (Etapa etapa : competicaoPutDto.getEtapas()) {
 
 			Etapa EtapaCompeticaoVingente = etapaRepositorio.findEtapaCompeticao(etapa.getTipoEtapa().getValue(),
@@ -139,14 +148,14 @@ public class CompeticaoService {
 			EtapaCompeticaoVingente.setDataTermino(etapa.getDataTermino());
 			etapaRepositorio.save(EtapaCompeticaoVingente);
 		}
-		
+
 		comp.setArquivoRegulamentoCompeticao(competicaoPutDto.getArquivoRegulamentoCompeticao());
 		comp.setDominioCompeticao(competicaoPutDto.getDominioCompeticao());
 		comp.setQntdMaximaMembrosPorEquipe(competicaoPutDto.getQntdMaximaMembrosPorEquipe());
 		comp.setQntdMinimaMembrosPorEquipe(competicaoPutDto.getQntdMinimaMembrosPorEquipe());
 		comp.setNomeCompeticao(competicaoPutDto.getNomeCompeticao());
 		comp.setTempoMaximoVideoEmSeg(competicaoPutDto.getTempoMaximoVideoEmSeg());
-		
+
 		competicaoRepositorio.save(comp);
 
 	}
@@ -231,7 +240,8 @@ public class CompeticaoService {
 				}
 			}
 			for (Convite convite : conviteRepositorio.findByUsuario(usuarioRecuperado)) {
-				if (convite.getUsuario().getId() == usuarioRecuperado.getId() && competicao.getId() == convite.getCompeticao().getId()) {
+				if (convite.getUsuario().getId() == usuarioRecuperado.getId()
+						&& competicao.getId() == convite.getCompeticao().getId()) {
 					entrou = true;
 				}
 			}
@@ -341,8 +351,8 @@ public class CompeticaoService {
 
 	}
 
-	public List<ConsultorEAvaliadorDto> listarConsultoresEAaliadoresDeUmaCompeticao(Integer idCompeticao, TipoConvite tipoConvite)
-			throws Exception {
+	public List<ConsultorEAvaliadorDto> listarConsultoresEAaliadoresDeUmaCompeticao(Integer idCompeticao,
+			TipoConvite tipoConvite) throws Exception {
 		Competicao competicao = recuperarCompeticaoId(idCompeticao);
 		List<ConsultorEAvaliadorDto> consultoresDto = new ArrayList<ConsultorEAvaliadorDto>();
 
@@ -351,7 +361,8 @@ public class CompeticaoService {
 		for (Convite convite : convites) {
 
 			if (convite.getTipoConvite().equals(tipoConvite)) {
-				ConsultorEAvaliadorDto consultorDto = new ConsultorEAvaliadorDto(convite.getUsuario(), convite.getStatusConvite());
+				ConsultorEAvaliadorDto consultorDto = new ConsultorEAvaliadorDto(convite.getUsuario(),
+						convite.getStatusConvite());
 				consultoresDto.add(consultorDto);
 			}
 		}
@@ -368,13 +379,12 @@ public class CompeticaoService {
 //			}
 //		}
 	}
-	
-	
-	public byte[]recuperarRegulamentoCompeticao(Integer idCompeticao) throws Exception{
+
+	public byte[] recuperarRegulamentoCompeticao(Integer idCompeticao) throws Exception {
 		Competicao comp = recuperarCompeticaoId(idCompeticao);
-		
-		return  comp.getArquivoRegulamentoCompeticao();
-		
+
+		return comp.getArquivoRegulamentoCompeticao();
+
 	}
 
 	public void patchCompeticao(CompeticaoPatchDto competicaoPatchDto, Integer idCompeticao) throws Exception {

@@ -32,7 +32,7 @@ public class Competicao {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Integer id;
 
-	@Column(nullable = false, name = "nome_competicao")
+	@Column(nullable = false, name = "nome_competicao", unique = true)
 	@Size(min = 3, max = 16, message = "O nome competição deve ter entre 3 e 16 caracteres.")
 	private String nomeCompeticao;
 
