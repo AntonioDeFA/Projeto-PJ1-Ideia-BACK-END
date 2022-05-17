@@ -456,4 +456,26 @@ public class CompeticaoService {
 
 	}
 
+	public void removerUsuarioConvidado(Integer idCompeticao, Integer idUsuario) throws Exception {
+		System.out.println(idCompeticao + "" + idUsuario);
+		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
+		Usuario usuario = usuarioRepositorio.findById(idUsuario).get();
+
+		List<PapelUsuarioCompeticao> papeisUsuarioCompeticao = papelUsuarioCompeticaoRepositorio.findByUsuario(usuario);
+		List<Convite> convites = conviteRepositorio.findByUsuario(usuario);
+
+		for (Convite convite : convites) {
+			if (convite.getCompeticao().getId() == competicao.getId()) {
+				conviteRepositorio.delete(convite);
+			}
+		}
+		for (PapelUsuarioCompeticao papelUsuarioCompeticao : papeisUsuarioCompeticao) {
+			if (papelUsuarioCompeticao.getCompeticaoCadastrada().getId() == competicao.getId()) {
+				if (papelUsuarioCompeticao.getTipoPapelUsuario().equals(TipoPapelUsuario.CONSULTOR)
+						|| papelUsuarioCompeticao.getTipoPapelUsuario().equals(TipoPapelUsuario.AVALIADOR))
+					papelUsuarioCompeticaoRepositorio.delete(papelUsuarioCompeticao);
+			}
+		}
+	}
+
 }
