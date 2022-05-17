@@ -34,7 +34,7 @@ public class Etapa {
 	@Column(nullable = false, name = "data_inicio")
 	private LocalDate dataInicio;
 
-	@Column(nullable = false, name = "data_termino")
+	@Column(name = "data_termino")
 	private LocalDate dataTermino;
 
 	@Enumerated(EnumType.STRING)

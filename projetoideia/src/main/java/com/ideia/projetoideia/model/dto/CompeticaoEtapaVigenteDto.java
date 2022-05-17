@@ -1,7 +1,5 @@
 package com.ideia.projetoideia.model.dto;
 
-import java.time.LocalDate;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.ideia.projetoideia.model.Competicao;
@@ -53,17 +51,14 @@ public class CompeticaoEtapaVigenteDto {
 					this.papelUsuario = papelUsuarioCompeticao.getTipoPapelUsuario();
 				}
 			}
-			LocalDate dataAtual = LocalDate.now();
 			for (Etapa etapa : competicao.getEtapas()) {
-				if (etapa.getDataInicio().isBefore(dataAtual)
-						|| etapa.getDataInicio().isEqual(dataAtual) && etapa.getDataTermino().isAfter(dataAtual)
-						|| etapa.getDataTermino().isEqual(dataAtual)) {
+				if (etapa.isVigente()) {
 					this.etapaVigente = etapa;
 					break;
 				}
 			}
 		}
-		if (etapaVigente.getTipoEtapa() == TipoEtapa.ELABORACAO) {
+		if (competicao.isElaboracao()) {
 			this.isElaboracao = true;
 		}
 

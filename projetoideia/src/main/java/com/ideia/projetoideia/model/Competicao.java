@@ -20,7 +20,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ideia.projetoideia.model.enums.TipoEtapa;
 
 import lombok.Data;
 
@@ -81,16 +80,5 @@ public class Competicao {
 	private List<QuestaoAvaliativa> questoesAvaliativas = new ArrayList<>();
 	
 	private boolean isElaboracao = true;
-	
-	public boolean isElaboracao(List<Etapa> etapas) {
-		for (Etapa etapa : etapas) {
-			if(etapa.getTipoEtapa()==TipoEtapa.ELABORACAO) {
-				isElaboracao = true;
-				return isElaboracao;
-			}
-		}
-		isElaboracao = false;
-		return isElaboracao;
-	}
 
 }
