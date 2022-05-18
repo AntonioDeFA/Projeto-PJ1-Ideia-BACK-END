@@ -478,14 +478,13 @@ public class CompeticaoService {
 		}
 	}
 
-	public List<MaterialEstudoDTO> listarMateriaisEstudoCompeticao(Integer idCompeticao)  throws Exception {
-		System.out.println(idCompeticao);
+	public List<MaterialEstudoDTO> listarMateriaisEstudoCompeticao(Integer idCompeticao) throws Exception {
 
 		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
 		List<Etapa> etapas = etapaRepositorio.findByCompeticao(competicao);
 
 		List<MaterialEstudoDTO> materiaisEstudo = new ArrayList<MaterialEstudoDTO>();
-		
+
 		for (Etapa etapa : etapas) {
 			for (MaterialEstudo materialEstudo : materialEstudoRepositorio.findByEtapa(etapa)) {
 				materiaisEstudo.add(new MaterialEstudoDTO(materialEstudo));
@@ -495,6 +494,24 @@ public class CompeticaoService {
 			throw new Exception("Não existe nenhum material cadastrado nessa competição.");
 		}
 		return materiaisEstudo;
+	}
+
+	public List<QuestoesAvaliativasDto> listarQuestoesAvaliativasCompeticao(Integer idCompeticao) throws Exception {
+
+		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
+		List<QuestaoAvaliativa> questaoAvaliativasRecuperadas = questaoAvaliativaRepositorio
+				.findByCompeticaoCadastrada(competicao);
+
+		List<QuestoesAvaliativasDto> questaoAvaliativas = new ArrayList<QuestoesAvaliativasDto>();
+		for (QuestaoAvaliativa questaoAvaliativa : questaoAvaliativasRecuperadas) {
+			questaoAvaliativas.add(new QuestoesAvaliativasDto(questaoAvaliativa));
+		}
+
+		if (questaoAvaliativas.size() == 0) {
+			throw new Exception("Não existe nenhuma questão cadastrada nessa competição.");
+		}
+
+		return questaoAvaliativas;
 	}
 
 }

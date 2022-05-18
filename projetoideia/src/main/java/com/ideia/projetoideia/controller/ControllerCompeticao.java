@@ -236,7 +236,7 @@ public class ControllerCompeticao {
 
 	}
 
-	@DeleteMapping("{idCompeticao}/remover-usuario-convidado/{idUsuario}")
+	@DeleteMapping("/{idCompeticao}/remover-usuario-convidado/{idUsuario}")
 	public ResponseEntity<?> removerUsuarioConvidado(@PathVariable("idCompeticao") Integer idCompeticao,
 			@PathVariable("idUsuario") Integer idUsuario) {
 		try {
@@ -252,11 +252,24 @@ public class ControllerCompeticao {
 		}
 
 	}
-	
-	@GetMapping("{idCompeticao}/materiais-estudo")
+
+	@GetMapping("/{idCompeticao}/materiais-estudo")
 	public List<MaterialEstudoDTO> listarMateriaisEstudoCompeticao(@PathVariable("idCompeticao") Integer idCompeticao) {
 		try {
 			return competicaoService.listarMateriaisEstudoCompeticao(idCompeticao);
+
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	@GetMapping("/{idCompeticao}/questoes-avaliativas")
+	public List<QuestoesAvaliativasDto> listarQuestoesAvaliativasCompeticao(
+			@PathVariable("idCompeticao") Integer idCompeticao) {
+		try {
+			return competicaoService.listarQuestoesAvaliativasCompeticao(idCompeticao);
 
 		} catch (NotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
