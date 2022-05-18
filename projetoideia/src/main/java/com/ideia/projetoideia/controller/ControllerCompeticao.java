@@ -21,11 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Competicao;
+import com.ideia.projetoideia.model.Convite;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPutDto;
 import com.ideia.projetoideia.model.dto.ConsultorEAvaliadorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
+import com.ideia.projetoideia.model.dto.EmailDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoDTO;
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
 import com.ideia.projetoideia.model.enums.TipoConvite;
@@ -236,12 +238,12 @@ public class ControllerCompeticao {
 
 	}
 
-	@DeleteMapping("/{idCompeticao}/remover-usuario-convidado/{idUsuario}")
+	@DeleteMapping("/{idCompeticao}/remover-usuario-convidado")
 	public ResponseEntity<?> removerUsuarioConvidado(@PathVariable("idCompeticao") Integer idCompeticao,
-			@PathVariable("idUsuario") Integer idUsuario) {
+			@RequestBody EmailDto email) {
 		try {
 
-			competicaoService.removerUsuarioConvidado(idCompeticao, idUsuario);
+			competicaoService.removerUsuarioConvidado(idCompeticao, email);
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new IdeiaResponseFile("Usuario removido com sucesso com sucesso", HttpStatus.OK));
 
@@ -271,6 +273,28 @@ public class ControllerCompeticao {
 		try {
 			return competicaoService.listarQuestoesAvaliativasCompeticao(idCompeticao);
 
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	@GetMapping("/convites-consultor")
+	public List<Convite> listarConvitesConsultor() {
+		try {
+			return competicaoService.listarConvites(TipoConvite.CONSULTOR);
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	@GetMapping("/convites-avaliador")
+	public List<Convite> listarConvitesAvaliador() {
+		try {
+			return competicaoService.listarConvites(TipoConvite.AVALIADOR);
 		} catch (NotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		} catch (Exception e) {

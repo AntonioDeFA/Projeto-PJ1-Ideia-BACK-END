@@ -26,6 +26,7 @@ import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPutDto;
 import com.ideia.projetoideia.model.dto.ConsultorEAvaliadorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
+import com.ideia.projetoideia.model.dto.EmailDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoDTO;
 import com.ideia.projetoideia.repository.CategoriaMaterialEstudoRepositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
@@ -457,9 +458,9 @@ public class CompeticaoService {
 
 	}
 
-	public void removerUsuarioConvidado(Integer idCompeticao, Integer idUsuario) throws Exception {
+	public void removerUsuarioConvidado(Integer idCompeticao, EmailDto email) throws Exception {
 		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
-		Usuario usuario = usuarioRepositorio.findById(idUsuario).get();
+		Usuario usuario = usuarioService.consultarUsuarioPorEmail(email.getEmail());
 
 		List<PapelUsuarioCompeticao> papeisUsuarioCompeticao = papelUsuarioCompeticaoRepositorio.findByUsuario(usuario);
 		List<Convite> convites = conviteRepositorio.findByUsuario(usuario);
@@ -512,6 +513,27 @@ public class CompeticaoService {
 		}
 
 		return questaoAvaliativas;
+	}
+
+	public List<Convite> listarConvites(TipoConvite tipoConvite) throws Exception {
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
+
+		List<Convite> convitesRecuperada = conviteRepositorio.findByUsuario(usuario);
+
+		List<Convite> convites = new ArrayList<Convite>();
+
+		for (Convite convite : convitesRecuperada) {
+
+			if (convite.getTipoConvite().equals(tipoConvite)) {
+				convites.add(convite);
+			}
+		}
+		if (convites.size() == 0) {
+			throw new Exception("Não existe nenhum convite para você ser consultor.");
+		}
+
+		return convites;
 	}
 
 }
