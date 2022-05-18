@@ -27,6 +27,7 @@ import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPutDto;
 import com.ideia.projetoideia.model.dto.ConsultorEAvaliadorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
+import com.ideia.projetoideia.model.dto.ConviteRespostaDto;
 import com.ideia.projetoideia.model.dto.EmailDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoDTO;
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
@@ -299,6 +300,17 @@ public class ControllerCompeticao {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	@PostMapping("/responder-convite")
+	public ResponseEntity<?> responderConvite(@RequestBody ConviteRespostaDto conviteRespostaDto) {
+		try {
+			competicaoService.responderConvite(conviteRespostaDto);
+			return ResponseEntity.status(HttpStatus.OK).body(new IdeiaResponseFile("Convite respondido", HttpStatus.OK));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new IdeiaResponseFile("Não foi possível responder convite", e.getMessage(), HttpStatus.BAD_REQUEST));
 		}
 	}
 }

@@ -26,6 +26,7 @@ import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPutDto;
 import com.ideia.projetoideia.model.dto.ConsultorEAvaliadorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
+import com.ideia.projetoideia.model.dto.ConviteRespostaDto;
 import com.ideia.projetoideia.model.dto.EmailDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoDTO;
 import com.ideia.projetoideia.repository.CategoriaMaterialEstudoRepositorio;
@@ -536,4 +537,37 @@ public class CompeticaoService {
 		return convites;
 	}
 
+	public void responderConvite(ConviteRespostaDto conviteRespostaDto) throws Exception {
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
+
+		List<Convite> convites = conviteRepositorio.findByUsuario(usuario);
+		if (!conviteRespostaDto.isAceito()) {
+			for (Convite convite : convites) {
+				if (convite.getCompeticao().getId() == conviteRespostaDto.getIdCompeticao()) {
+					conviteRepositorio.delete(convite);
+				}
+			}
+		} else {
+			for (Convite convite : convites) {
+				if (convite.getCompeticao().getId() == conviteRespostaDto.getIdCompeticao()) {
+					convite.setStatusConvite(StatusConvite.ACEITO);
+					conviteRepositorio.save(convite);
+
+					TipoPapelUsuario tipoPapelUsuario = TipoPapelUsuario.AVALIADOR;
+					if(convite.getTipoConvite().equals(TipoConvite.CONSULTOR)) {
+						tipoPapelUsuario= TipoPapelUsuario.CONSULTOR;
+					}
+					
+					PapelUsuarioCompeticao papelUsuarioCompeticao = new PapelUsuarioCompeticao();
+					papelUsuarioCompeticao.setTipoPapelUsuario(tipoPapelUsuario);
+					papelUsuarioCompeticao.setUsuario(usuario);
+					papelUsuarioCompeticao.setCompeticaoCadastrada(
+							competicaoRepositorio.findById(conviteRespostaDto.getIdCompeticao()).get());
+
+					papelUsuarioCompeticaoRepositorio.save(papelUsuarioCompeticao);
+				}
+			}
+		}
+	}
 }
