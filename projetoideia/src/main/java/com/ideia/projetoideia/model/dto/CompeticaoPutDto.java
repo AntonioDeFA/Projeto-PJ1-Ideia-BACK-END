@@ -19,7 +19,7 @@ public class CompeticaoPutDto {
 	
 	private String dominioCompeticao = "";
 
-	private byte[] arquivoRegulamentoCompeticao;
+	private String arquivoRegulamentoCompeticao;
 	
 	private List<Etapa> etapas;
 	
