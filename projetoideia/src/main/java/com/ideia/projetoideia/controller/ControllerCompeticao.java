@@ -1,11 +1,18 @@
 package com.ideia.projetoideia.controller;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.List;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +24,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -32,6 +40,7 @@ import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.CompeticaoService;
 
 import javassist.NotFoundException;
+import java.awt.Desktop;
 
 @RestController
 @RequestMapping("/ideia")
@@ -154,9 +163,9 @@ public class ControllerCompeticao {
 	}
 	
 	@GetMapping("/competicao/{idCompeticao}/regulamento")
-	public byte[] recuperarRegulamentoDaCompeticao(@PathVariable("idCompeticao")Integer idCompeticao) {
+	public String recuperarRegulamentoDaCompeticao(@PathVariable("idCompeticao")Integer idCompeticao) {
 		
-		try {
+		try {		
 			return competicaoService.recuperarRegulamentoCompeticao(idCompeticao);
 		}catch (NotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
