@@ -22,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Convite;
+import com.ideia.projetoideia.model.dto.CompeticaoDadosGeraisDto;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPutDto;
@@ -307,10 +308,22 @@ public class ControllerCompeticao {
 	public ResponseEntity<?> responderConvite(@RequestBody ConviteRespostaDto conviteRespostaDto) {
 		try {
 			competicaoService.responderConvite(conviteRespostaDto);
-			return ResponseEntity.status(HttpStatus.OK).body(new IdeiaResponseFile("Convite respondido", HttpStatus.OK));
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("Convite respondido", HttpStatus.OK));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new IdeiaResponseFile("Não foi possível responder convite", e.getMessage(), HttpStatus.BAD_REQUEST));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new IdeiaResponseFile(
+					"Não foi possível responder convite", e.getMessage(), HttpStatus.BAD_REQUEST));
+		}
+	}
+
+	@GetMapping("/competicao/dados-gerais/{idCompeticao}")
+	public CompeticaoDadosGeraisDto listarDasdosGeraisCompeticao(@PathVariable("idCompeticao") Integer idCompeticao) {
+		try {
+			return competicaoService.listarDasdosGeraisCompeticao(idCompeticao);
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}
 }

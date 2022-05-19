@@ -21,6 +21,7 @@ import com.ideia.projetoideia.model.Etapa;
 import com.ideia.projetoideia.model.MaterialEstudo;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
 import com.ideia.projetoideia.model.Usuario;
+import com.ideia.projetoideia.model.dto.CompeticaoDadosGeraisDto;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPutDto;
@@ -555,10 +556,10 @@ public class CompeticaoService {
 					conviteRepositorio.save(convite);
 
 					TipoPapelUsuario tipoPapelUsuario = TipoPapelUsuario.AVALIADOR;
-					if(convite.getTipoConvite().equals(TipoConvite.CONSULTOR)) {
-						tipoPapelUsuario= TipoPapelUsuario.CONSULTOR;
+					if (convite.getTipoConvite().equals(TipoConvite.CONSULTOR)) {
+						tipoPapelUsuario = TipoPapelUsuario.CONSULTOR;
 					}
-					
+
 					PapelUsuarioCompeticao papelUsuarioCompeticao = new PapelUsuarioCompeticao();
 					papelUsuarioCompeticao.setTipoPapelUsuario(tipoPapelUsuario);
 					papelUsuarioCompeticao.setUsuario(usuario);
@@ -569,5 +570,16 @@ public class CompeticaoService {
 				}
 			}
 		}
+	}
+
+	public CompeticaoDadosGeraisDto listarDasdosGeraisCompeticao(Integer idCompeticao)throws Exception{
+		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
+		List<Etapa> estapas = etapaRepositorio.findByCompeticao(competicao);
+		
+		if(competicao == null) {
+			throw new NotFoundException("Competição não encontrada");	
+		}
+		
+		return new CompeticaoDadosGeraisDto(competicao, estapas);
 	}
 }
