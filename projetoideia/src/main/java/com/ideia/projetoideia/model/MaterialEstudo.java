@@ -40,9 +40,8 @@ public class MaterialEstudo {
 	@Enumerated(EnumType.STRING)
 	private TipoMaterialEstudo tipoMaterialEstudo;
 
-	@Lob
 	@Column(name = "arquivo_estudo")
-	private byte[] arquivoEstudo;
+	private String arquivoEstudo;
 
 	private String link;
 
