@@ -17,7 +17,7 @@ public class CompeticaoPatchDto {
 	
 	private List<QuestaoAvaliativa> questoesAvaliativas;
 	
-	private byte[] arquivoRegulamentoCompeticao;
+	private String arquivoRegulamentoCompeticao;
 	
 	private Float tempoMaximoVideoEmSeg;
 	
