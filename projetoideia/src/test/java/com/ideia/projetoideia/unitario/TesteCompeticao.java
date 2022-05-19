@@ -39,7 +39,7 @@ public class TesteCompeticao {
 		competicao.setQntdMaximaMembrosPorEquipe(25);
 		competicao.setQntdMinimaMembrosPorEquipe(2);
 		competicao.setTempoMaximoVideoEmSeg(255f);
-		competicao.setArquivoRegulamentoCompeticao(new byte[5]);
+		competicao.setArquivoRegulamentoCompeticao("");
 	}
 	
 	
@@ -67,7 +67,7 @@ public class TesteCompeticao {
 		competicaoTest.setQntdMaximaMembrosPorEquipe(10);
 		competicaoTest.setQntdMinimaMembrosPorEquipe(9);
 		competicaoTest.setTempoMaximoVideoEmSeg(200f);
-		competicao.setArquivoRegulamentoCompeticao(new byte[5]);
+		competicao.setArquivoRegulamentoCompeticao("");
 
 		competicaoRepositorio.save(competicaoTest);
 
