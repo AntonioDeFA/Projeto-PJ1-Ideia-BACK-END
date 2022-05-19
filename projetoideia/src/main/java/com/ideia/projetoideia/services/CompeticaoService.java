@@ -1,5 +1,7 @@
 package com.ideia.projetoideia.services;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +46,7 @@ import com.ideia.projetoideia.repository.MaterialEstudoRepositorio;
 import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
 import com.ideia.projetoideia.repository.QuestaoAvaliativaRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
+import com.ideia.projetoideia.services.utils.ConversorDeArquivos;
 import com.ideia.projetoideia.utils.EnviarEmail;
 
 import javassist.NotFoundException;
@@ -106,6 +109,11 @@ public class CompeticaoService {
 		}
 		competicao.setOrganizador(usuario);
 		Integer idCompeticao = competicaoRepositorio.save(competicao).getId();
+		
+		System.out.println("arquivo: " + competicao.getArquivoRegulamentoCompeticao());	
+		//aqui tem que converter a string base64 em um arquivo
+		ConversorDeArquivos.converterStringParaArquivo(competicao.getArquivoRegulamentoCompeticao(), idCompeticao);	
+		
 		for (Etapa etapa : etapas) {
 			etapa.setCompeticao(competicao);
 			etapaRepositorio.save(etapa);
@@ -380,7 +388,7 @@ public class CompeticaoService {
 //		}
 	}
 
-	public byte[] recuperarRegulamentoCompeticao(Integer idCompeticao) throws Exception {
+	public String recuperarRegulamentoCompeticao(Integer idCompeticao) throws Exception {
 		Competicao comp = recuperarCompeticaoId(idCompeticao);
 
 		return comp.getArquivoRegulamentoCompeticao();
@@ -419,6 +427,8 @@ public class CompeticaoService {
 						categoriaMaterialEstudoRepositorio.save(cat);
 						materialEstudoRepositorio.save(material);
 					}
+					//aqui a gente salva na pasta da competição, os respectivos materiais de estudo
+					ConversorDeArquivos.converterStringParaArquivo(competicaoPatchDto.getMateriaisDeEstudo(), idCompeticao);
 
 				}
 
