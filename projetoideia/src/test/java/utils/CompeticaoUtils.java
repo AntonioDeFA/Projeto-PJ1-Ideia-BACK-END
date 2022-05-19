@@ -11,7 +11,7 @@ public class CompeticaoUtils {
 		Competicao competicao = new Competicao();
 		
 		competicao.setNomeCompeticao("Competicao Teste");
-		competicao.setArquivoRegulamentoCompeticao(new byte[2]);
+		competicao.setArquivoRegulamentoCompeticao("");
 		competicao.setOrganizador(null);
 		competicao.setTempoMaximoVideoEmSeg(new Float(30));
 		competicao.setQntdMaximaMembrosPorEquipe(5);
