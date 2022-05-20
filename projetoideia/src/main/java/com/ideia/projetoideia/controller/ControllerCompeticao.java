@@ -30,6 +30,7 @@ import com.ideia.projetoideia.model.dto.ConsultorEAvaliadorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
 import com.ideia.projetoideia.model.dto.ConviteRespostaDto;
 import com.ideia.projetoideia.model.dto.EmailDto;
+import com.ideia.projetoideia.model.dto.EquipeNotaDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoDTO;
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
 import com.ideia.projetoideia.model.enums.TipoConvite;
@@ -326,4 +327,16 @@ public class ControllerCompeticao {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}
+	
+	@GetMapping("competicao/resultados-gerais/{idCompeticao}")
+	public List<EquipeNotaDto> listarResultadosEquipesCompeticao(@PathVariable("idCompeticao")Integer idCompeticao) throws Exception {
+		try {
+			return competicaoService.listarResultadosEquipesCompeticao(idCompeticao);
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}	
+	}
+	
 }

@@ -24,7 +24,7 @@ public class CompeticaoDadosGeraisDto {
 	
 	private String etapaVigente;
 	
-	private List<Etapa> estapas;
+	private List<Etapa> etapas;
 	
 	public CompeticaoDadosGeraisDto(Competicao competicao, List<Etapa> estapas) {
 		this.nomeCompeticao = competicao.getNomeCompeticao();
@@ -33,7 +33,7 @@ public class CompeticaoDadosGeraisDto {
 		this.tempoMaximoVideoEmSeg = competicao.getTempoMaximoVideoEmSeg();
 		this.arquivoRegulamentoCompeticao = competicao.getArquivoRegulamentoCompeticao();
 		this.dominioCompeticao = competicao.getDominioCompeticao();
-		this.estapas = estapas;
+		this.etapas = estapas;
 		
 		for (Etapa etapa : competicao.getEtapas()) {
 			if (etapa.isVigente()) {

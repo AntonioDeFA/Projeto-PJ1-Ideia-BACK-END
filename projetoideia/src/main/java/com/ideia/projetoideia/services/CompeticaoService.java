@@ -14,12 +14,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.ideia.projetoideia.model.AvaliacaoPitch;
 import com.ideia.projetoideia.model.CategoriaMaterialEstudo;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Convite;
 import com.ideia.projetoideia.model.Etapa;
 import com.ideia.projetoideia.model.MaterialEstudo;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
+import com.ideia.projetoideia.model.Pitch;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.CompeticaoDadosGeraisDto;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
@@ -29,7 +31,9 @@ import com.ideia.projetoideia.model.dto.ConsultorEAvaliadorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
 import com.ideia.projetoideia.model.dto.ConviteRespostaDto;
 import com.ideia.projetoideia.model.dto.EmailDto;
+import com.ideia.projetoideia.model.dto.EquipeNotaDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoDTO;
+import com.ideia.projetoideia.repository.AvaliacaoPitchRpositorio;
 import com.ideia.projetoideia.repository.CategoriaMaterialEstudoRepositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorioCustom;
@@ -38,6 +42,7 @@ import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.QuestaoAvaliativa;
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
 import com.ideia.projetoideia.model.dto.UsuarioNaoRelacionadoDTO;
+import com.ideia.projetoideia.model.enums.EtapaArtefatoPitch;
 import com.ideia.projetoideia.model.enums.StatusConvite;
 import com.ideia.projetoideia.model.enums.TipoConvite;
 import com.ideia.projetoideia.model.enums.TipoEtapa;
@@ -46,6 +51,7 @@ import com.ideia.projetoideia.repository.EquipeRepositorio;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
 import com.ideia.projetoideia.repository.MaterialEstudoRepositorio;
 import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
+import com.ideia.projetoideia.repository.PitchRepositorio;
 import com.ideia.projetoideia.repository.QuestaoAvaliativaRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
 import com.ideia.projetoideia.utils.EnviarEmail;
@@ -84,8 +90,15 @@ public class CompeticaoService {
 
 	@Autowired
 	MaterialEstudoRepositorio materialEstudoRepositorio;
+
 	@Autowired
 	CategoriaMaterialEstudoRepositorio categoriaMaterialEstudoRepositorio;
+
+	@Autowired
+	AvaliacaoPitchRpositorio avaliacaoPitchRpositorio;
+
+	@Autowired
+	PitchRepositorio pitchRepositorio;
 
 	private final CompeticaoRepositorioCustom competicaoRepositorioCustom;
 
@@ -572,14 +585,38 @@ public class CompeticaoService {
 		}
 	}
 
-	public CompeticaoDadosGeraisDto listarDasdosGeraisCompeticao(Integer idCompeticao)throws Exception{
+	public CompeticaoDadosGeraisDto listarDasdosGeraisCompeticao(Integer idCompeticao) throws Exception {
 		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
 		List<Etapa> estapas = etapaRepositorio.findByCompeticao(competicao);
-		
-		if(competicao == null) {
-			throw new NotFoundException("Competição não encontrada");	
+
+		if (competicao == null) {
+			throw new NotFoundException("Competição não encontrada");
 		}
-		
+
 		return new CompeticaoDadosGeraisDto(competicao, estapas);
+	}
+
+	public List<EquipeNotaDto> listarResultadosEquipesCompeticao(Integer idCompeticao) throws Exception {
+		List<EquipeNotaDto> equipes = new ArrayList<EquipeNotaDto>();
+		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
+		Float notaCompeticao = 0f;
+
+		for (QuestaoAvaliativa questaoAvaliativa : questaoAvaliativaRepositorio
+				.findByCompeticaoCadastrada(competicao)) {
+			notaCompeticao += questaoAvaliativa.getNotaMax();
+		}
+
+		for (Equipe equipe : equipeRepositorio.findByCompeticaoCadastrada(competicao)) {
+			Float notaEquipe = 0f;
+			for (Pitch pitch : pitchRepositorio.findByEquipe(equipe)) {
+				if (pitch.getEtapaAvaliacaoVideo().equals(EtapaArtefatoPitch.APROVADO)) {
+					for (AvaliacaoPitch avaliacao : avaliacaoPitchRpositorio.findByPitch(pitch)) {
+						notaEquipe += avaliacao.getNotaAtribuida();
+					}
+				}
+			}
+			equipes.add(new EquipeNotaDto(equipe.getNomeEquipe(), notaEquipe, notaCompeticao, equipe.getId()));
+		}
+		return equipes;
 	}
 }
