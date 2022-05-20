@@ -1,6 +1,5 @@
 package com.ideia.projetoideia.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -23,7 +22,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Convite;
-import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.dto.CompeticaoDadosGeraisDto;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
@@ -36,6 +34,7 @@ import com.ideia.projetoideia.model.dto.EquipeNomeDto;
 import com.ideia.projetoideia.model.dto.EquipeNotaDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoDTO;
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
+import com.ideia.projetoideia.model.dto.UsuarioConsultorDto;
 import com.ideia.projetoideia.model.enums.TipoConvite;
 import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.CompeticaoService;
@@ -330,26 +329,40 @@ public class ControllerCompeticao {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}
-	
+
 	@GetMapping("/competicao/resultados-gerais/{idCompeticao}")
-	public List<EquipeNotaDto> listarResultadosEquipesCompeticao(@PathVariable("idCompeticao")Integer idCompeticao) throws Exception {
+	public List<EquipeNotaDto> listarResultadosEquipesCompeticao(@PathVariable("idCompeticao") Integer idCompeticao)
+			throws Exception {
 		try {
 			return competicaoService.listarResultadosEquipesCompeticao(idCompeticao);
 		} catch (NotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-		}	
+		}
 	}
-	
-	@GetMapping("competicao/equipes/{idCompeticao}")
-	public List<EquipeNomeDto> listarEquipesCompeticao(@PathVariable("idCompeticao")Integer idCompeticao) throws Exception {
+
+	@GetMapping("/competicao/equipes/{idCompeticao}")
+	public List<EquipeNomeDto> listarEquipesCompeticao(@PathVariable("idCompeticao") Integer idCompeticao)
+			throws Exception {
 		try {
 			return competicaoService.listarEquipesCompeticao(idCompeticao);
 		} catch (NotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-		}	
+		}
+	}
+
+	@GetMapping("/competicao/consultores/{idCompeticao}")
+	public List<UsuarioConsultorDto> listarConsultoresCompeticao(@PathVariable("idCompeticao") Integer idCompeticao)
+			throws Exception {
+		try {
+			return competicaoService.listarConsultoresCompeticao(idCompeticao);
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
 	}
 }

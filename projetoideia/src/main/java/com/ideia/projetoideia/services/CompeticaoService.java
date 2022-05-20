@@ -42,6 +42,7 @@ import com.ideia.projetoideia.repository.ConviteRepositorio;
 import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.QuestaoAvaliativa;
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
+import com.ideia.projetoideia.model.dto.UsuarioConsultorDto;
 import com.ideia.projetoideia.model.dto.UsuarioNaoRelacionadoDTO;
 import com.ideia.projetoideia.model.enums.EtapaArtefatoPitch;
 import com.ideia.projetoideia.model.enums.StatusConvite;
@@ -629,5 +630,17 @@ public class CompeticaoService {
 			equipes.add(new EquipeNomeDto(equipe.getId(), equipe.getNomeEquipe()));
 		}
 		return equipes;
+	}
+	
+	public List<UsuarioConsultorDto> listarConsultoresCompeticao(Integer idCompeticao) throws Exception {
+		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
+		List<UsuarioConsultorDto> usuario = new ArrayList<UsuarioConsultorDto>();
+		
+		for (PapelUsuarioCompeticao papel : papelUsuarioCompeticaoRepositorio.findByCompeticaoCadastrada(competicao)) {
+			if(papel.getTipoPapelUsuario().equals(TipoPapelUsuario.CONSULTOR)) {
+				usuario.add(new UsuarioConsultorDto(papel.getUsuario()));
+			}
+		}
+		return usuario;
 	}
 }
