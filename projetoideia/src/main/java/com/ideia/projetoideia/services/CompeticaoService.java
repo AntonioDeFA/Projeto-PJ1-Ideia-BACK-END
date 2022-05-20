@@ -31,6 +31,7 @@ import com.ideia.projetoideia.model.dto.ConsultorEAvaliadorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
 import com.ideia.projetoideia.model.dto.ConviteRespostaDto;
 import com.ideia.projetoideia.model.dto.EmailDto;
+import com.ideia.projetoideia.model.dto.EquipeNomeDto;
 import com.ideia.projetoideia.model.dto.EquipeNotaDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoDTO;
 import com.ideia.projetoideia.repository.AvaliacaoPitchRpositorio;
@@ -616,6 +617,16 @@ public class CompeticaoService {
 				}
 			}
 			equipes.add(new EquipeNotaDto(equipe.getNomeEquipe(), notaEquipe, notaCompeticao, equipe.getId()));
+		}
+		return equipes;
+	}
+	
+	public List<EquipeNomeDto> listarEquipesCompeticao(Integer idCompeticao) throws Exception {
+		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
+		List<EquipeNomeDto> equipes = new ArrayList<EquipeNomeDto>();
+		
+		for (Equipe equipe : equipeRepositorio.findByCompeticaoCadastrada(competicao)) {
+			equipes.add(new EquipeNomeDto(equipe.getId(), equipe.getNomeEquipe()));
 		}
 		return equipes;
 	}

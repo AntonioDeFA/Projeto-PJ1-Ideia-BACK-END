@@ -1,5 +1,6 @@
 package com.ideia.projetoideia.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -22,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Convite;
+import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.dto.CompeticaoDadosGeraisDto;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
@@ -30,6 +32,7 @@ import com.ideia.projetoideia.model.dto.ConsultorEAvaliadorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
 import com.ideia.projetoideia.model.dto.ConviteRespostaDto;
 import com.ideia.projetoideia.model.dto.EmailDto;
+import com.ideia.projetoideia.model.dto.EquipeNomeDto;
 import com.ideia.projetoideia.model.dto.EquipeNotaDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoDTO;
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
@@ -328,7 +331,7 @@ public class ControllerCompeticao {
 		}
 	}
 	
-	@GetMapping("competicao/resultados-gerais/{idCompeticao}")
+	@GetMapping("/competicao/resultados-gerais/{idCompeticao}")
 	public List<EquipeNotaDto> listarResultadosEquipesCompeticao(@PathVariable("idCompeticao")Integer idCompeticao) throws Exception {
 		try {
 			return competicaoService.listarResultadosEquipesCompeticao(idCompeticao);
@@ -339,4 +342,14 @@ public class ControllerCompeticao {
 		}	
 	}
 	
+	@GetMapping("competicao/equipes/{idCompeticao}")
+	public List<EquipeNomeDto> listarEquipesCompeticao(@PathVariable("idCompeticao")Integer idCompeticao) throws Exception {
+		try {
+			return competicaoService.listarEquipesCompeticao(idCompeticao);
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}	
+	}
 }
