@@ -37,7 +37,7 @@ public class Usuario implements UserDetails {
 	private Integer id;
 
 	@Column(nullable = false, name = "nome_usuario")
-	@Size(min=3,max=50, message = "O nome usuario deve ter entre 3 e 50 caracteres.")
+	@Size(min = 3, max = 50, message = "O nome usuario deve ter entre 3 e 50 caracteres.")
 	private String nomeUsuario;
 
 	@Column(nullable = false, unique = true)
@@ -45,28 +45,28 @@ public class Usuario implements UserDetails {
 
 	@Column(nullable = false)
 	private String senha;
-	
+
 	@ManyToMany(fetch = FetchType.EAGER)
 	private List<Perfil> perfis;
-	
+
 	@OneToMany(mappedBy = "lider", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	private List<Equipe> equipesLider = new ArrayList<>();
-	
-	@OneToMany(mappedBy = "avaliador", cascade = CascadeType.REMOVE)
+
+	@OneToMany(mappedBy = "consultor", cascade = CascadeType.REMOVE)
 	@JsonIgnore
-	private List<Equipe> equipesAvaliador = new ArrayList<>();
+	private List<Equipe> equipesConsultor = new ArrayList<>();
 
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.MERGE)
 	private List<PapelUsuarioCompeticao> papeisUsuarioCompeticao = new ArrayList<>();
-	
+
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.MERGE)
 	private List<Convite> convites = new ArrayList<>();
-	
+
 	@OneToMany(mappedBy = "avaliador", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	private List<AvaliacaoPitch> avaliacaoPitch = new ArrayList<>();
-	
+
 	@OneToMany(mappedBy = "consultor", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	private List<FeedbackAvaliativo> feedbackAvaliativos = new ArrayList<>();

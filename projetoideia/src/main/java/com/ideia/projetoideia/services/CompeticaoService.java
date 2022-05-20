@@ -655,4 +655,23 @@ public class CompeticaoService {
 			throw new NotFoundException("Equipe não cadastrada nesta competição!");
 		}
 	}
+
+	public void adicionarConsultorEquipe(Integer idCompeticao, Integer idEquipe, Integer idConsultor) throws Exception {
+		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
+		Usuario usuario = usuarioRepositorio.findById(idConsultor).get();
+		Equipe equipe = equipeRepositorio.findById(idEquipe).get();
+
+		if (equipe.getCompeticaoCadastrada().getId() != idCompeticao) {
+			throw new Exception("Equipe não cadastrada nesta competição!");
+		}
+
+		for (PapelUsuarioCompeticao papel : papelUsuarioCompeticaoRepositorio.findByCompeticaoCadastrada(competicao)) {
+			if (papel.getUsuario().getId() == idConsultor
+					&& papel.getTipoPapelUsuario().equals(TipoPapelUsuario.CONSULTOR)) {
+				equipe.setConsultor(usuario);
+				equipeRepositorio.save(equipe);
+				return;
+			}
+		}
+	}
 }

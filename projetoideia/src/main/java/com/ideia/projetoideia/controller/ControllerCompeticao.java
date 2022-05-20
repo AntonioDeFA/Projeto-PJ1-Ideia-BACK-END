@@ -22,7 +22,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Convite;
-import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.dto.CompeticaoDadosGeraisDto;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
@@ -367,11 +366,28 @@ public class ControllerCompeticao {
 		}
 	}
 
-	@GetMapping("competicao/deletar-equipe/{idCompeticao}/{idEquipe}")
-	public void deletarequipe(@PathVariable("idCompeticao") Integer idCompeticao,
+	@GetMapping("/competicao/deletar-equipe/{idCompeticao}/{idEquipe}")
+	public ResponseEntity<?> deletarequipe(@PathVariable("idCompeticao") Integer idCompeticao,
 			@PathVariable("idEquipe") Integer idEquipe) throws Exception {
 		try {
 			competicaoService.deletarequipe(idCompeticao, idEquipe);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("Quipe removida da competição ", HttpStatus.OK));
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	@PostMapping("/competicao/adicionar-consultor/{idCompeticao}/{idEquipe}/{idConsultor}")
+	public ResponseEntity<?> adicionarConsultorEquipe(@PathVariable("idCompeticao") Integer idCompeticao,
+			@PathVariable("idEquipe") Integer idEquipe, @PathVariable("idConsultor") Integer idConsultor)
+			throws Exception {
+		try {
+			competicaoService.adicionarConsultorEquipe(idCompeticao, idEquipe, idConsultor);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("Consultor adcionado ", HttpStatus.OK));
 		} catch (NotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		} catch (Exception e) {
