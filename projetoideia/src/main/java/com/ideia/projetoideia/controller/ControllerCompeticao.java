@@ -22,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Convite;
+import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.dto.CompeticaoDadosGeraisDto;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
@@ -359,6 +360,18 @@ public class ControllerCompeticao {
 			throws Exception {
 		try {
 			return competicaoService.listarConsultoresCompeticao(idCompeticao);
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	@GetMapping("competicao/deletar-equipe/{idCompeticao}/{idEquipe}")
+	public void deletarequipe(@PathVariable("idCompeticao") Integer idCompeticao,
+			@PathVariable("idEquipe") Integer idEquipe) throws Exception {
+		try {
+			competicaoService.deletarequipe(idCompeticao, idEquipe);
 		} catch (NotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		} catch (Exception e) {

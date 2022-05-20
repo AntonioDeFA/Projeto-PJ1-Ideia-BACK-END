@@ -621,26 +621,38 @@ public class CompeticaoService {
 		}
 		return equipes;
 	}
-	
+
 	public List<EquipeNomeDto> listarEquipesCompeticao(Integer idCompeticao) throws Exception {
 		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
 		List<EquipeNomeDto> equipes = new ArrayList<EquipeNomeDto>();
-		
+
 		for (Equipe equipe : equipeRepositorio.findByCompeticaoCadastrada(competicao)) {
 			equipes.add(new EquipeNomeDto(equipe.getId(), equipe.getNomeEquipe()));
 		}
 		return equipes;
 	}
-	
+
 	public List<UsuarioConsultorDto> listarConsultoresCompeticao(Integer idCompeticao) throws Exception {
 		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
 		List<UsuarioConsultorDto> usuario = new ArrayList<UsuarioConsultorDto>();
-		
+
 		for (PapelUsuarioCompeticao papel : papelUsuarioCompeticaoRepositorio.findByCompeticaoCadastrada(competicao)) {
-			if(papel.getTipoPapelUsuario().equals(TipoPapelUsuario.CONSULTOR)) {
+			if (papel.getTipoPapelUsuario().equals(TipoPapelUsuario.CONSULTOR)) {
 				usuario.add(new UsuarioConsultorDto(papel.getUsuario()));
 			}
 		}
 		return usuario;
+	}
+
+	public void deletarequipe(Integer idCompeticao, Integer idEquipe) throws Exception {
+		Equipe equipe = equipeRepositorio.findById(idEquipe).get();
+
+		if (equipe.getCompeticaoCadastrada().getId() == idCompeticao) {
+			equipe.setCompeticaoCadastrada(null);
+			equipeRepositorio.save(equipe);
+			return;
+		} else {
+			throw new NotFoundException("Equipe não cadastrada nesta competição!");
+		}
 	}
 }
