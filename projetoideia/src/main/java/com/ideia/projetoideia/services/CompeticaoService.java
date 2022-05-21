@@ -147,7 +147,8 @@ public class CompeticaoService {
 	public void atualizarCompeticao(Integer idCompeticao, CompeticaoPutDto competicaoPutDto)
 			throws Exception, NotFoundException {
 		Competicao comp = recuperarCompeticaoId(idCompeticao);
-		if (competicaoRepositorio.findByNomeCompeticao(comp.getNomeCompeticao()).size() != 0) {
+		if (competicaoRepositorio.findByNomeCompeticao(comp.getNomeCompeticao()).size() != 0
+				&& comp.getId() != idCompeticao) {
 			throw new Exception(
 					"Não foi possível criar a competição, pois já existe uma competição com este nome cadastrado");
 		}
