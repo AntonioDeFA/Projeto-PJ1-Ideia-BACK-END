@@ -438,7 +438,8 @@ public class CompeticaoService {
 				EtapaCompeticaoVingente.setDataInicio(etapa.getDataInicio());
 				EtapaCompeticaoVingente.setDataTermino(etapa.getDataTermino());
 
-				if (etapa.getTipoEtapa().equals(TipoEtapa.AQUECIMENTO)) {
+				if (etapa.getTipoEtapa().equals(TipoEtapa.AQUECIMENTO) 
+						&& competicaoPatchDto.getMateriaisDeEstudo()!= null) {
 
 					for (MaterialEstudo material : competicaoPatchDto.getMateriaisDeEstudo()) {
 
