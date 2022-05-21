@@ -31,9 +31,17 @@ Funcionalidade: Competicao
 	E clique no botao salvar etapa aquecimento  
 	E passe a data de inicio da etapa imersao
 	E passe a data de termino da etapa imersao
+	E espere "10000" 
+	E clique no botao convidar 
+	E espere "20000"
 	E clique no botao salvar etapa imersao
 	E passe a data de inicio da etapa pitch
 	E passe a data de termino da etapa pitch
+	E espere "10000" 
+	E clique no botao convidar 
+	E espere "20000"
 	E clique no botao salvar etapa pitch
 	E clique no botao salvar criacao competicao
+	Entao o programa valida que a equipe foi criada
+	E deleta a equipe
 		 
