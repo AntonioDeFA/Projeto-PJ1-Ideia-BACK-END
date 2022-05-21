@@ -73,7 +73,7 @@ public class Competicao {
 	@OneToMany(mappedBy = "competicaoCadastrada", cascade = CascadeType.REMOVE)
 	private List<PapelUsuarioCompeticao> papeisUsuarioCompeticao = new ArrayList<>();
 	
-	@OneToMany(mappedBy = "competicao", cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "competicao", cascade = CascadeType.MERGE)
 	private List<Convite> convites = new ArrayList<>();
 
 	@OneToMany(mappedBy = "competicaoCadastrada", cascade = CascadeType.REMOVE)
