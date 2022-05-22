@@ -243,7 +243,7 @@ public class ControllerCompeticao {
 
 	}
 
-	@DeleteMapping("/{idCompeticao}/remover-usuario-convidado")
+	@PostMapping("/{idCompeticao}/remover-usuario-convidado")
 	public ResponseEntity<?> removerUsuarioConvidado(@PathVariable("idCompeticao") Integer idCompeticao,
 			@RequestBody EmailDto email) {
 		try {
