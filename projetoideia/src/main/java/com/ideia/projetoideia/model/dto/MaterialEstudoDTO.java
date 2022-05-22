@@ -14,7 +14,7 @@ public class MaterialEstudoDTO {
 	
 	private String link;
 	
-	private byte[] arquivoEstudo;
+	private String arquivoEstudo;
 
 	public MaterialEstudoDTO(MaterialEstudo materialEstudo) {
 		super();

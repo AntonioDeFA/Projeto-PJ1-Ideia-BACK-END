@@ -18,7 +18,7 @@ public class CompeticaoDadosGeraisDto {
 
 	private Float tempoMaximoVideoEmSeg;
 
-	private byte[] arquivoRegulamentoCompeticao;
+	private String arquivoRegulamentoCompeticao;
 
 	private String dominioCompeticao = "";
 	
