@@ -301,7 +301,12 @@ public class CompeticaoService {
 		}
 
 		if (papelUsuarioCompeticaoRecuperada.getTipoPapelUsuario() == TipoPapelUsuario.ORGANIZADOR) {
+			for (Convite conviteParaDeletar : conviteRepositorio.findByCompeticao(competicao)) {
+				conviteRepositorio.delete(conviteParaDeletar);
+			}
 			competicaoRepositorio.delete(competicao);
+			
+			
 		} else if (papelUsuarioCompeticaoRecuperada.getTipoPapelUsuario() == TipoPapelUsuario.COMPETIDOR) {
 			List<Equipe> equipes = equipeRepositorio.findByLider(usuario);
 			Equipe equipeRecuperada = null;
