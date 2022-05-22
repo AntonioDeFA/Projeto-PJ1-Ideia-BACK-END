@@ -30,7 +30,7 @@ public class CompeticaoEtapaVigenteDto {
 	@JsonInclude(value = Include.NON_NULL)
 	private TipoPapelUsuario papelUsuario;
 
-	private Boolean isElaboracao = false;
+	private Boolean isElaboracao;
 
 	public CompeticaoEtapaVigenteDto(Competicao competicao, String valid, Usuario usuarioLogado) {
 		this.id = competicao.getId();
@@ -58,9 +58,9 @@ public class CompeticaoEtapaVigenteDto {
 				}
 			}
 		}
-		if (competicao.getIsElaboracao()) {
-			this.isElaboracao = true;
-		}
+		
+		this.isElaboracao = competicao.getIsElaboracao();
+		
 
 	}
 }
