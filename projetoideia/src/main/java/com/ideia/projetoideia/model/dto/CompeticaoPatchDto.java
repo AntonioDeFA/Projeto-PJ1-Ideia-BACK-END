@@ -23,7 +23,7 @@ public class CompeticaoPatchDto {
 	
 	private List<MaterialEstudo> materiaisDeEstudo;
 	
-	private boolean isElaboracao;
+	private Boolean isElaboracao;
 	
 	
 }

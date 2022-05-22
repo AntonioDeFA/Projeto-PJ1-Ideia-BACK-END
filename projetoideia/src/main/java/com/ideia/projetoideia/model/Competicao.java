@@ -79,6 +79,6 @@ public class Competicao {
 	@OneToMany(mappedBy = "competicaoCadastrada", cascade = CascadeType.REMOVE)
 	private List<QuestaoAvaliativa> questoesAvaliativas = new ArrayList<>();
 	
-	private boolean isElaboracao = true;
+	private Boolean isElaboracao = true;
 
 }

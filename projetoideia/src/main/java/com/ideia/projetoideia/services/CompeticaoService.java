@@ -165,7 +165,7 @@ public class CompeticaoService {
 			throw new Exception("Quantidade mínima de membros não pode ser maior que a quantidade máxima!");
 		}
 
-		if (!comp.isElaboracao()) {
+		if (!comp.getIsElaboracao()) {
 			throw new Exception("A competição deve estar na etapa de elaboração");
 		}
 
@@ -479,8 +479,11 @@ public class CompeticaoService {
 				questaoAvaliativaRepositorio.save(questaoAvaliativa);
 			}
 		}
-
-		competicao.setElaboracao(competicaoPatchDto.isElaboracao());
+		
+		
+		
+		competicao.setIsElaboracao(competicaoPatchDto.getIsElaboracao());
+		
 
 		competicaoRepositorio.save(competicao);
 

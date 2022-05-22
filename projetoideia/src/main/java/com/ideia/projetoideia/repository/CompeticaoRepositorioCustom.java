@@ -68,7 +68,7 @@ public class CompeticaoRepositorioCustom {
 					entrou = true;
 				}
 			}
-			if (entrou == false && !competicao.isElaboracao()) {
+			if (entrou == false && !competicao.getIsElaboracao()) {
 				competicoesValidas.add(competicao);
 			}
 		}
