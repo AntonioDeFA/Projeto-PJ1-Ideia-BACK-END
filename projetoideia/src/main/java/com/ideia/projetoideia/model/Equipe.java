@@ -31,7 +31,7 @@ public class Equipe {
 	private Integer id;
 
 	@Column(nullable = false, name = "nome_equipe")
-	@Size(min=3,max=16, message = "O nome do equipe deve ter entre 3 e 50 caracteres.")
+	@Size(min = 3, max = 16, message = "O nome do equipe deve ter entre 3 e 50 caracteres.")
 	private String nomeEquipe;
 
 	@Column(nullable = false)
@@ -43,11 +43,11 @@ public class Equipe {
 	@OneToOne
 	@JoinColumn(name = "lider_fk")
 	private Usuario lider;
-	
+
 	@OneToOne
-	@JoinColumn(name = "avaliador_fk")
-	private Usuario avaliador;
-	
+	@JoinColumn(name = "consultor_fk")
+	private Usuario consultor;
+
 	@ManyToOne
 	@JoinColumn(name = "competicao_cadastrada_fk")
 	private Competicao competicaoCadastrada;
@@ -55,15 +55,15 @@ public class Equipe {
 	@OneToMany(mappedBy = "equipe", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	private List<Pitch> pitchDaEquipe = new ArrayList<>();
-	
+
 	@OneToMany(mappedBy = "equipe", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	private List<LeanCanvas> canvasDaEquipe = new ArrayList<>();
-	
+
 	@OneToMany(mappedBy = "equipe", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	private List<UsuarioMembroComum> usuarios = new ArrayList<>();
-	
+
 	@OneToMany(mappedBy = "equipe", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	private List<AcessoMaterialEstudo> acessoMaterialEstudo = new ArrayList<>();

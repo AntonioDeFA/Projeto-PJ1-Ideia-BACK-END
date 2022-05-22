@@ -14,5 +14,6 @@ public interface QuestaoAvaliativaRepositorio extends JpaRepository<QuestaoAvali
 	public List<QuestaoAvaliativa> findByCompeticaoCadastrada(Competicao competicaoCadastrada);
 	
 	Optional<QuestaoAvaliativa> findByQuestao(String questao);
+	
 
 }

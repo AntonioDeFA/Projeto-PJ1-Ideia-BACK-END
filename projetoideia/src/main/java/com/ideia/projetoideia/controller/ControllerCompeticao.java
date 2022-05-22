@@ -29,12 +29,20 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Competicao;
+import com.ideia.projetoideia.model.Convite;
+import com.ideia.projetoideia.model.dto.CompeticaoDadosGeraisDto;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPutDto;
 import com.ideia.projetoideia.model.dto.ConsultorEAvaliadorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
+import com.ideia.projetoideia.model.dto.ConviteRespostaDto;
+import com.ideia.projetoideia.model.dto.EmailDto;
+import com.ideia.projetoideia.model.dto.EquipeNomeDto;
+import com.ideia.projetoideia.model.dto.EquipeNotaDto;
+import com.ideia.projetoideia.model.dto.MaterialEstudoDTO;
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
+import com.ideia.projetoideia.model.dto.UsuarioConsultorDto;
 import com.ideia.projetoideia.model.enums.TipoConvite;
 import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.CompeticaoService;
@@ -161,19 +169,18 @@ public class ControllerCompeticao {
 		}
 
 	}
-	
+
 	@GetMapping("/competicao/{idCompeticao}/regulamento")
 	public String recuperarRegulamentoDaCompeticao(@PathVariable("idCompeticao")Integer idCompeticao) {
 		
 		try {		
 			return competicaoService.recuperarRegulamentoCompeticao(idCompeticao);
-		}catch (NotFoundException e) {
+		} catch (NotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-		}catch (Exception e) {
+		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}
-	
 
 	@PostMapping("/competicao/convidar-usuario")
 	public ResponseEntity<?> convidarUsuario(@RequestBody ConviteDto conviteDto) {
@@ -191,25 +198,27 @@ public class ControllerCompeticao {
 		}
 
 	}
-	
+
 	@GetMapping("/competicao/{idCompeticao}/consultores")
-	public List<ConsultorEAvaliadorDto>listarConsultoresDeUmaCompeticao(@PathVariable("idCompeticao")Integer idCompeticao){
+	public List<ConsultorEAvaliadorDto> listarConsultoresDeUmaCompeticao(
+			@PathVariable("idCompeticao") Integer idCompeticao) {
 		try {
-			return competicaoService.listarConsultoresEAaliadoresDeUmaCompeticao(idCompeticao , TipoConvite.CONSULTOR);
+			return competicaoService.listarConsultoresEAaliadoresDeUmaCompeticao(idCompeticao, TipoConvite.CONSULTOR);
 		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage()); 
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
-		
+
 	}
-	
+
 	@GetMapping("/competicao/{idCompeticao}/avaliadores")
-	public List<ConsultorEAvaliadorDto>listarAvaliadoresDeUmaCompeticao(@PathVariable("idCompeticao")Integer idCompeticao){
+	public List<ConsultorEAvaliadorDto> listarAvaliadoresDeUmaCompeticao(
+			@PathVariable("idCompeticao") Integer idCompeticao) {
 		try {
-			return competicaoService.listarConsultoresEAaliadoresDeUmaCompeticao(idCompeticao , TipoConvite.AVALIADOR);
+			return competicaoService.listarConsultoresEAaliadoresDeUmaCompeticao(idCompeticao, TipoConvite.AVALIADOR);
 		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage()); 
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
-		
+
 	}
 
 	@GetMapping("/questoes-por-competicao/{competicaoId}")
@@ -225,25 +234,173 @@ public class ControllerCompeticao {
 		}
 
 	}
-	
+
 	@PatchMapping("/competicao/update/{competicaoId}")
-	public ResponseEntity<?>patchCompeticao(@PathVariable("competicaoId") Integer competicaoId,
-			@RequestBody CompeticaoPatchDto competicao){
+	public ResponseEntity<?> patchCompeticao(@PathVariable("competicaoId") Integer competicaoId,
+			@RequestBody CompeticaoPatchDto competicao) {
 		try {
 			competicaoService.patchCompeticao(competicao, competicaoId);
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new IdeiaResponseFile("Competição Atualizada / Criada com Sucesso", HttpStatus.OK));
-		}catch (NotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new IdeiaResponseFile("Não atualizar / criar a competição", e.getMessage(), HttpStatus.NOT_FOUND));
-			}
-		catch(Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new IdeiaResponseFile("Não atualizar / criar a competiçãor", e.getMessage(), HttpStatus.BAD_REQUEST));
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+					new IdeiaResponseFile("Não atualizar / criar a competição", e.getMessage(), HttpStatus.NOT_FOUND));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new IdeiaResponseFile(
+					"Não atualizar / criar a competiçãor", e.getMessage(), HttpStatus.BAD_REQUEST));
 		}
-		
-		
-		
+
 	}
 
+	@PostMapping("/{idCompeticao}/remover-usuario-convidado")
+	public ResponseEntity<?> removerUsuarioConvidado(@PathVariable("idCompeticao") Integer idCompeticao,
+			@RequestBody EmailDto email) {
+		try {
+
+			competicaoService.removerUsuarioConvidado(idCompeticao, email);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("Usuario removido com sucesso com sucesso", HttpStatus.OK));
+
+		} catch (Exception e) {
+
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+					new IdeiaResponseFile("Não foi possível remover usuario", e.getMessage(), HttpStatus.NOT_FOUND));
+		}
+
+	}
+
+	@GetMapping("/{idCompeticao}/materiais-estudo")
+	public List<MaterialEstudoDTO> listarMateriaisEstudoCompeticao(@PathVariable("idCompeticao") Integer idCompeticao) {
+		try {
+			return competicaoService.listarMateriaisEstudoCompeticao(idCompeticao);
+
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	@GetMapping("/{idCompeticao}/questoes-avaliativas")
+	public List<QuestoesAvaliativasDto> listarQuestoesAvaliativasCompeticao(
+			@PathVariable("idCompeticao") Integer idCompeticao) {
+		try {
+			return competicaoService.listarQuestoesAvaliativasCompeticao(idCompeticao);
+
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	@GetMapping("/convites-consultor")
+	public List<Convite> listarConvitesConsultor() {
+		try {
+			return competicaoService.listarConvites(TipoConvite.CONSULTOR);
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	@GetMapping("/convites-avaliador")
+	public List<Convite> listarConvitesAvaliador() {
+		try {
+			return competicaoService.listarConvites(TipoConvite.AVALIADOR);
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	@PostMapping("/responder-convite")
+	public ResponseEntity<?> responderConvite(@RequestBody ConviteRespostaDto conviteRespostaDto) {
+		try {
+			competicaoService.responderConvite(conviteRespostaDto);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("Convite respondido", HttpStatus.OK));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new IdeiaResponseFile(
+					"Não foi possível responder convite", e.getMessage(), HttpStatus.BAD_REQUEST));
+		}
+	}
+
+	@GetMapping("/competicao/dados-gerais/{idCompeticao}")
+	public CompeticaoDadosGeraisDto listarDasdosGeraisCompeticao(@PathVariable("idCompeticao") Integer idCompeticao) {
+		try {
+			return competicaoService.listarDasdosGeraisCompeticao(idCompeticao);
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	@GetMapping("/competicao/resultados-gerais/{idCompeticao}")
+	public List<EquipeNotaDto> listarResultadosEquipesCompeticao(@PathVariable("idCompeticao") Integer idCompeticao)
+			throws Exception {
+		try {
+			return competicaoService.listarResultadosEquipesCompeticao(idCompeticao);
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	@GetMapping("/competicao/equipes/{idCompeticao}")
+	public List<EquipeNomeDto> listarEquipesCompeticao(@PathVariable("idCompeticao") Integer idCompeticao)
+			throws Exception {
+		try {
+			return competicaoService.listarEquipesCompeticao(idCompeticao);
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	@GetMapping("/competicao/consultores/{idCompeticao}")
+	public List<UsuarioConsultorDto> listarConsultoresCompeticao(@PathVariable("idCompeticao") Integer idCompeticao)
+			throws Exception {
+		try {
+			return competicaoService.listarConsultoresCompeticao(idCompeticao);
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	@GetMapping("/competicao/deletar-equipe/{idCompeticao}/{idEquipe}")
+	public ResponseEntity<?> deletarequipe(@PathVariable("idCompeticao") Integer idCompeticao,
+			@PathVariable("idEquipe") Integer idEquipe) throws Exception {
+		try {
+			competicaoService.deletarequipe(idCompeticao, idEquipe);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("Quipe removida da competição ", HttpStatus.OK));
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	@PostMapping("/competicao/adicionar-consultor/{idCompeticao}/{idEquipe}/{idConsultor}")
+	public ResponseEntity<?> adicionarConsultorEquipe(@PathVariable("idCompeticao") Integer idCompeticao,
+			@PathVariable("idEquipe") Integer idEquipe, @PathVariable("idConsultor") Integer idConsultor)
+			throws Exception {
+		try {
+			competicaoService.adicionarConsultorEquipe(idCompeticao, idEquipe, idConsultor);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("Consultor adcionado ", HttpStatus.OK));
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
 }

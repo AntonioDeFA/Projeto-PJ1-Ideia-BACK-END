@@ -16,18 +16,27 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.ideia.projetoideia.model.AvaliacaoPitch;
 import com.ideia.projetoideia.model.CategoriaMaterialEstudo;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Convite;
 import com.ideia.projetoideia.model.Etapa;
 import com.ideia.projetoideia.model.MaterialEstudo;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
+import com.ideia.projetoideia.model.Pitch;
 import com.ideia.projetoideia.model.Usuario;
+import com.ideia.projetoideia.model.dto.CompeticaoDadosGeraisDto;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPutDto;
 import com.ideia.projetoideia.model.dto.ConsultorEAvaliadorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
+import com.ideia.projetoideia.model.dto.ConviteRespostaDto;
+import com.ideia.projetoideia.model.dto.EmailDto;
+import com.ideia.projetoideia.model.dto.EquipeNomeDto;
+import com.ideia.projetoideia.model.dto.EquipeNotaDto;
+import com.ideia.projetoideia.model.dto.MaterialEstudoDTO;
+import com.ideia.projetoideia.repository.AvaliacaoPitchRpositorio;
 import com.ideia.projetoideia.repository.CategoriaMaterialEstudoRepositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorioCustom;
@@ -35,7 +44,9 @@ import com.ideia.projetoideia.repository.ConviteRepositorio;
 import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.QuestaoAvaliativa;
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
+import com.ideia.projetoideia.model.dto.UsuarioConsultorDto;
 import com.ideia.projetoideia.model.dto.UsuarioNaoRelacionadoDTO;
+import com.ideia.projetoideia.model.enums.EtapaArtefatoPitch;
 import com.ideia.projetoideia.model.enums.StatusConvite;
 import com.ideia.projetoideia.model.enums.TipoConvite;
 import com.ideia.projetoideia.model.enums.TipoEtapa;
@@ -44,6 +55,7 @@ import com.ideia.projetoideia.repository.EquipeRepositorio;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
 import com.ideia.projetoideia.repository.MaterialEstudoRepositorio;
 import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
+import com.ideia.projetoideia.repository.PitchRepositorio;
 import com.ideia.projetoideia.repository.QuestaoAvaliativaRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
 import com.ideia.projetoideia.services.utils.ConversorDeArquivos;
@@ -83,8 +95,15 @@ public class CompeticaoService {
 
 	@Autowired
 	MaterialEstudoRepositorio materialEstudoRepositorio;
+
 	@Autowired
 	CategoriaMaterialEstudoRepositorio categoriaMaterialEstudoRepositorio;
+
+	@Autowired
+	AvaliacaoPitchRpositorio avaliacaoPitchRpositorio;
+
+	@Autowired
+	PitchRepositorio pitchRepositorio;
 
 	private final CompeticaoRepositorioCustom competicaoRepositorioCustom;
 
@@ -136,7 +155,17 @@ public class CompeticaoService {
 	public void atualizarCompeticao(Integer idCompeticao, CompeticaoPutDto competicaoPutDto)
 			throws Exception, NotFoundException {
 		Competicao comp = recuperarCompeticaoId(idCompeticao);
-		if (competicaoRepositorio.findByNomeCompeticao(comp.getNomeCompeticao()).size() != 0) {
+		
+		List<Competicao> competicoes = competicaoRepositorio.findByNomeCompeticao(competicaoPutDto.getNomeCompeticao());
+		boolean entrou = false;
+		
+		for (Competicao competicao : competicoes) {
+			if(competicao.getNomeCompeticao().equals(competicaoPutDto.getNomeCompeticao())
+					&& comp.getId() != competicao.getId()) {
+				entrou = true;
+			}
+		}
+		if (entrou) {
 			throw new Exception(
 					"Não foi possível criar a competição, pois já existe uma competição com este nome cadastrado");
 		}
@@ -144,7 +173,7 @@ public class CompeticaoService {
 			throw new Exception("Quantidade mínima de membros não pode ser maior que a quantidade máxima!");
 		}
 
-		if (!comp.isElaboracao()) {
+		if (!comp.getIsElaboracao()) {
 			throw new Exception("A competição deve estar na etapa de elaboração");
 		}
 
@@ -280,7 +309,12 @@ public class CompeticaoService {
 		}
 
 		if (papelUsuarioCompeticaoRecuperada.getTipoPapelUsuario() == TipoPapelUsuario.ORGANIZADOR) {
+			for (Convite conviteParaDeletar : conviteRepositorio.findByCompeticao(competicao)) {
+				conviteRepositorio.delete(conviteParaDeletar);
+			}
 			competicaoRepositorio.delete(competicao);
+			
+			
 		} else if (papelUsuarioCompeticaoRecuperada.getTipoPapelUsuario() == TipoPapelUsuario.COMPETIDOR) {
 			List<Equipe> equipes = equipeRepositorio.findByLider(usuario);
 			Equipe equipeRecuperada = null;
@@ -417,7 +451,8 @@ public class CompeticaoService {
 				EtapaCompeticaoVingente.setDataInicio(etapa.getDataInicio());
 				EtapaCompeticaoVingente.setDataTermino(etapa.getDataTermino());
 
-				if (etapa.getTipoEtapa().equals(TipoEtapa.AQUECIMENTO)) {
+				if (etapa.getTipoEtapa().equals(TipoEtapa.AQUECIMENTO) 
+						&& competicaoPatchDto.getMateriaisDeEstudo()!= null) {
 
 					for (MaterialEstudo material : competicaoPatchDto.getMateriaisDeEstudo()) {
 
@@ -459,11 +494,213 @@ public class CompeticaoService {
 				questaoAvaliativaRepositorio.save(questaoAvaliativa);
 			}
 		}
-
-		competicao.setElaboracao(competicaoPatchDto.isElaboracao());
+		
+		
+		
+		competicao.setIsElaboracao(competicaoPatchDto.getIsElaboracao());
+		
 
 		competicaoRepositorio.save(competicao);
 
 	}
 
+	public void removerUsuarioConvidado(Integer idCompeticao, EmailDto email) throws Exception {
+		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
+		Usuario usuario = usuarioService.consultarUsuarioPorEmail(email.getEmail());
+
+		List<PapelUsuarioCompeticao> papeisUsuarioCompeticao = papelUsuarioCompeticaoRepositorio.findByUsuario(usuario);
+		List<Convite> convites = conviteRepositorio.findByUsuario(usuario);
+
+		for (Convite convite : convites) {
+			if (convite.getCompeticao().getId() == competicao.getId()) {
+				conviteRepositorio.delete(convite);
+			}
+		}
+		for (PapelUsuarioCompeticao papelUsuarioCompeticao : papeisUsuarioCompeticao) {
+			if (papelUsuarioCompeticao.getCompeticaoCadastrada().getId() == competicao.getId()) {
+				if (papelUsuarioCompeticao.getTipoPapelUsuario().equals(TipoPapelUsuario.CONSULTOR)
+						|| papelUsuarioCompeticao.getTipoPapelUsuario().equals(TipoPapelUsuario.AVALIADOR))
+					papelUsuarioCompeticaoRepositorio.delete(papelUsuarioCompeticao);
+			}
+		}
+	}
+
+	public List<MaterialEstudoDTO> listarMateriaisEstudoCompeticao(Integer idCompeticao) throws Exception {
+
+		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
+		List<Etapa> etapas = etapaRepositorio.findByCompeticao(competicao);
+
+		List<MaterialEstudoDTO> materiaisEstudo = new ArrayList<MaterialEstudoDTO>();
+
+		for (Etapa etapa : etapas) {
+			for (MaterialEstudo materialEstudo : materialEstudoRepositorio.findByEtapa(etapa)) {
+				materiaisEstudo.add(new MaterialEstudoDTO(materialEstudo));
+			}
+		}
+		if (materiaisEstudo.size() == 0) {
+			throw new Exception("Não existe nenhum material cadastrado nessa competição.");
+		}
+		return materiaisEstudo;
+	}
+
+	public List<QuestoesAvaliativasDto> listarQuestoesAvaliativasCompeticao(Integer idCompeticao) throws Exception {
+
+		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
+		List<QuestaoAvaliativa> questaoAvaliativasRecuperadas = questaoAvaliativaRepositorio
+				.findByCompeticaoCadastrada(competicao);
+
+		List<QuestoesAvaliativasDto> questaoAvaliativas = new ArrayList<QuestoesAvaliativasDto>();
+		for (QuestaoAvaliativa questaoAvaliativa : questaoAvaliativasRecuperadas) {
+			questaoAvaliativas.add(new QuestoesAvaliativasDto(questaoAvaliativa));
+		}
+
+		if (questaoAvaliativas.size() == 0) {
+			throw new Exception("Não existe nenhuma questão cadastrada nessa competição.");
+		}
+
+		return questaoAvaliativas;
+	}
+
+	public List<Convite> listarConvites(TipoConvite tipoConvite) throws Exception {
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
+
+		List<Convite> convitesRecuperada = conviteRepositorio.findByUsuario(usuario);
+
+		List<Convite> convites = new ArrayList<Convite>();
+
+		for (Convite convite : convitesRecuperada) {
+
+			if (convite.getTipoConvite().equals(tipoConvite)) {
+				convites.add(convite);
+			}
+		}
+		if (convites.size() == 0) {
+			throw new Exception("Não existe nenhum convite para você ser consultor.");
+		}
+
+		return convites;
+	}
+
+	public void responderConvite(ConviteRespostaDto conviteRespostaDto) throws Exception {
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
+
+		List<Convite> convites = conviteRepositorio.findByUsuario(usuario);
+		if (!conviteRespostaDto.isAceito()) {
+			for (Convite convite : convites) {
+				if (convite.getCompeticao().getId() == conviteRespostaDto.getIdCompeticao()) {
+					conviteRepositorio.delete(convite);
+				}
+			}
+		} else {
+			for (Convite convite : convites) {
+				if (convite.getCompeticao().getId() == conviteRespostaDto.getIdCompeticao()) {
+					convite.setStatusConvite(StatusConvite.ACEITO);
+					conviteRepositorio.save(convite);
+
+					TipoPapelUsuario tipoPapelUsuario = TipoPapelUsuario.AVALIADOR;
+					if (convite.getTipoConvite().equals(TipoConvite.CONSULTOR)) {
+						tipoPapelUsuario = TipoPapelUsuario.CONSULTOR;
+					}
+
+					PapelUsuarioCompeticao papelUsuarioCompeticao = new PapelUsuarioCompeticao();
+					papelUsuarioCompeticao.setTipoPapelUsuario(tipoPapelUsuario);
+					papelUsuarioCompeticao.setUsuario(usuario);
+					papelUsuarioCompeticao.setCompeticaoCadastrada(
+							competicaoRepositorio.findById(conviteRespostaDto.getIdCompeticao()).get());
+
+					papelUsuarioCompeticaoRepositorio.save(papelUsuarioCompeticao);
+				}
+			}
+		}
+	}
+
+	public CompeticaoDadosGeraisDto listarDasdosGeraisCompeticao(Integer idCompeticao) throws Exception {
+		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
+		List<Etapa> estapas = etapaRepositorio.findByCompeticao(competicao);
+
+		if (competicao == null) {
+			throw new NotFoundException("Competição não encontrada");
+		}
+
+		return new CompeticaoDadosGeraisDto(competicao, estapas);
+	}
+
+	public List<EquipeNotaDto> listarResultadosEquipesCompeticao(Integer idCompeticao) throws Exception {
+		List<EquipeNotaDto> equipes = new ArrayList<EquipeNotaDto>();
+		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
+		Float notaCompeticao = 0f;
+
+		for (QuestaoAvaliativa questaoAvaliativa : questaoAvaliativaRepositorio
+				.findByCompeticaoCadastrada(competicao)) {
+			notaCompeticao += questaoAvaliativa.getNotaMax();
+		}
+
+		for (Equipe equipe : equipeRepositorio.findByCompeticaoCadastrada(competicao)) {
+			Float notaEquipe = 0f;
+			for (Pitch pitch : pitchRepositorio.findByEquipe(equipe)) {
+				if (pitch.getEtapaAvaliacaoVideo().equals(EtapaArtefatoPitch.APROVADO)) {
+					for (AvaliacaoPitch avaliacao : avaliacaoPitchRpositorio.findByPitch(pitch)) {
+						notaEquipe += avaliacao.getNotaAtribuida();
+					}
+				}
+			}
+			equipes.add(new EquipeNotaDto(equipe.getNomeEquipe(), notaEquipe, notaCompeticao, equipe.getId()));
+		}
+		return equipes;
+	}
+
+	public List<EquipeNomeDto> listarEquipesCompeticao(Integer idCompeticao) throws Exception {
+		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
+		List<EquipeNomeDto> equipes = new ArrayList<EquipeNomeDto>();
+
+		for (Equipe equipe : equipeRepositorio.findByCompeticaoCadastrada(competicao)) {
+			equipes.add(new EquipeNomeDto(equipe.getId(), equipe.getNomeEquipe()));
+		}
+		return equipes;
+	}
+
+	public List<UsuarioConsultorDto> listarConsultoresCompeticao(Integer idCompeticao) throws Exception {
+		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
+		List<UsuarioConsultorDto> usuario = new ArrayList<UsuarioConsultorDto>();
+
+		for (PapelUsuarioCompeticao papel : papelUsuarioCompeticaoRepositorio.findByCompeticaoCadastrada(competicao)) {
+			if (papel.getTipoPapelUsuario().equals(TipoPapelUsuario.CONSULTOR)) {
+				usuario.add(new UsuarioConsultorDto(papel.getUsuario()));
+			}
+		}
+		return usuario;
+	}
+
+	public void deletarequipe(Integer idCompeticao, Integer idEquipe) throws Exception {
+		Equipe equipe = equipeRepositorio.findById(idEquipe).get();
+
+		if (equipe.getCompeticaoCadastrada().getId() == idCompeticao) {
+			equipe.setCompeticaoCadastrada(null);
+			equipeRepositorio.save(equipe);
+			return;
+		} else {
+			throw new NotFoundException("Equipe não cadastrada nesta competição!");
+		}
+	}
+
+	public void adicionarConsultorEquipe(Integer idCompeticao, Integer idEquipe, Integer idConsultor) throws Exception {
+		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
+		Usuario usuario = usuarioRepositorio.findById(idConsultor).get();
+		Equipe equipe = equipeRepositorio.findById(idEquipe).get();
+
+		if (equipe.getCompeticaoCadastrada().getId() != idCompeticao) {
+			throw new Exception("Equipe não cadastrada nesta competição!");
+		}
+
+		for (PapelUsuarioCompeticao papel : papelUsuarioCompeticaoRepositorio.findByCompeticaoCadastrada(competicao)) {
+			if (papel.getUsuario().getId() == idConsultor
+					&& papel.getTipoPapelUsuario().equals(TipoPapelUsuario.CONSULTOR)) {
+				equipe.setConsultor(usuario);
+				equipeRepositorio.save(equipe);
+				return;
+			}
+		}
+	}
 }
