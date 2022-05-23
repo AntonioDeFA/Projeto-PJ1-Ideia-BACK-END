@@ -51,6 +51,7 @@ public class Competicao {
 	@Max(value = 1800, message = "Tempo máximo de vídeo não pode ser maior que 30 minutos.")
 	private Float tempoMaximoVideoEmSeg;
 
+	@Lob
 	@Column(nullable = false, name = "arquivo_regulamento_competicao")
 	@NotNull(message = "O arquivo não pode ser nulo.")
 	private String arquivoRegulamentoCompeticao;
