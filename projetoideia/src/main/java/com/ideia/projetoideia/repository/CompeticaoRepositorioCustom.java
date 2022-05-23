@@ -40,7 +40,7 @@ public class CompeticaoRepositorioCustom {
 	}
 
 	public List<Competicao> findByCompeticoesDoUsuario(String nome, Integer mes, Integer ano, Integer idUser) {
-		String query = "SELECT DISTINCT(c) FROM Competicao AS c JOIN c.etapas e "
+		String query = "SELECT c FROM Competicao AS c JOIN c.etapas e "
 				+ "JOIN c.papeisUsuarioCompeticao tp "
 				+ "WHERE tp.usuario.id =: idUser";
 		
@@ -53,7 +53,7 @@ public class CompeticaoRepositorioCustom {
 
 		q.setParameter("idUser", idUser);
 
-		return q.getResultList();
+		return this.tirarDuplicados(q.getResultList());
 
 	}
 	
@@ -75,6 +75,32 @@ public class CompeticaoRepositorioCustom {
 		
 		return competicoesValidas;
 	
+	}
+	
+	
+	private List<Competicao> tirarDuplicados(List<Competicao> competicoes){
+		
+		List<Competicao> compAux = new ArrayList<Competicao>();
+		
+		
+		for (Competicao competicao : competicoes) {
+			boolean entrou = false;
+			
+			for (Competicao competicao2 : compAux) {
+				if(competicao2.getId() == competicao.getId()) {
+					entrou = true;
+				}
+			}
+			
+			if(!entrou) {
+				compAux.add(competicao);
+			}
+			
+		}
+		
+		
+		return compAux;
+		
 	}
 	
 
