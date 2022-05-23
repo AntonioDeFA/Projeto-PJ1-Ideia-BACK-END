@@ -22,17 +22,14 @@ public class ConversorDeArquivos {
 				diretorio.mkdirs();
 			}
 			
-			File arquivo = new File ("regulamentos/regutamento"+idCompeticao+".pdf");
+			File arquivo = new File ("regulamentos/regulamento"+idCompeticao+".pdf");
 			FileOutputStream fos = new FileOutputStream (arquivo);
-			
+						
 			byte[] array = Base64.getDecoder().decode(file);
 			
-			System.out.println("Regulamento: "+array);
-			System.out.println("Tamanho: "+array.length);
 			fos.write (array);
 			fos.close(); 
 			
-			System.out.println(arquivo.getAbsolutePath());
 		    
 			return arquivo.getAbsolutePath();
 		} catch (Exception e) {
