@@ -31,6 +31,7 @@ import com.ideia.projetoideia.model.dto.ConsultorEAvaliadorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
 import com.ideia.projetoideia.model.dto.ConviteListaDto;
 import com.ideia.projetoideia.model.dto.ConviteRespostaDto;
+import com.ideia.projetoideia.model.dto.ConvitesquantidadeDto;
 import com.ideia.projetoideia.model.dto.EmailDto;
 import com.ideia.projetoideia.model.dto.EquipeNomeDto;
 import com.ideia.projetoideia.model.dto.EquipeNotaDto;
@@ -127,11 +128,11 @@ public class CompeticaoService {
 		}
 		competicao.setOrganizador(usuario);
 		Integer idCompeticao = competicaoRepositorio.save(competicao).getId();
-		
-		System.out.println("arquivo: " + competicao.getArquivoRegulamentoCompeticao());	
-		//aqui tem que converter a string base64 em um arquivo
-		ConversorDeArquivos.converterStringParaArquivo(competicao.getArquivoRegulamentoCompeticao(), idCompeticao);	
-		
+
+		System.out.println("arquivo: " + competicao.getArquivoRegulamentoCompeticao());
+		// aqui tem que converter a string base64 em um arquivo
+		ConversorDeArquivos.converterStringParaArquivo(competicao.getArquivoRegulamentoCompeticao(), idCompeticao);
+
 		for (Etapa etapa : etapas) {
 			etapa.setCompeticao(competicao);
 			etapaRepositorio.save(etapa);
@@ -154,12 +155,12 @@ public class CompeticaoService {
 	public void atualizarCompeticao(Integer idCompeticao, CompeticaoPutDto competicaoPutDto)
 			throws Exception, NotFoundException {
 		Competicao comp = recuperarCompeticaoId(idCompeticao);
-		
+
 		List<Competicao> competicoes = competicaoRepositorio.findByNomeCompeticao(competicaoPutDto.getNomeCompeticao());
 		boolean entrou = false;
-		
+
 		for (Competicao competicao : competicoes) {
-			if(competicao.getNomeCompeticao().equals(competicaoPutDto.getNomeCompeticao())
+			if (competicao.getNomeCompeticao().equals(competicaoPutDto.getNomeCompeticao())
 					&& comp.getId() != competicao.getId()) {
 				entrou = true;
 			}
@@ -312,8 +313,7 @@ public class CompeticaoService {
 				conviteRepositorio.delete(conviteParaDeletar);
 			}
 			competicaoRepositorio.delete(competicao);
-			
-			
+
 		} else if (papelUsuarioCompeticaoRecuperada.getTipoPapelUsuario() == TipoPapelUsuario.COMPETIDOR) {
 			List<Equipe> equipes = equipeRepositorio.findByLider(usuario);
 			Equipe equipeRecuperada = null;
@@ -450,8 +450,8 @@ public class CompeticaoService {
 				EtapaCompeticaoVingente.setDataInicio(etapa.getDataInicio());
 				EtapaCompeticaoVingente.setDataTermino(etapa.getDataTermino());
 
-				if (etapa.getTipoEtapa().equals(TipoEtapa.AQUECIMENTO) 
-						&& competicaoPatchDto.getMateriaisDeEstudo()!= null) {
+				if (etapa.getTipoEtapa().equals(TipoEtapa.AQUECIMENTO)
+						&& competicaoPatchDto.getMateriaisDeEstudo() != null) {
 
 					for (MaterialEstudo material : competicaoPatchDto.getMateriaisDeEstudo()) {
 
@@ -461,8 +461,9 @@ public class CompeticaoService {
 						categoriaMaterialEstudoRepositorio.save(cat);
 						materialEstudoRepositorio.save(material);
 					}
-					//aqui a gente salva na pasta da competição, os respectivos materiais de estudo
-					ConversorDeArquivos.converterStringParaArquivo(competicaoPatchDto.getMateriaisDeEstudo(), idCompeticao);
+					// aqui a gente salva na pasta da competição, os respectivos materiais de estudo
+					ConversorDeArquivos.converterStringParaArquivo(competicaoPatchDto.getMateriaisDeEstudo(),
+							idCompeticao);
 
 				}
 
@@ -493,11 +494,8 @@ public class CompeticaoService {
 				questaoAvaliativaRepositorio.save(questaoAvaliativa);
 			}
 		}
-		
-		
-		
+
 		competicao.setIsElaboracao(competicaoPatchDto.getIsElaboracao());
-		
 
 		competicaoRepositorio.save(competicao);
 
@@ -701,5 +699,26 @@ public class CompeticaoService {
 				return;
 			}
 		}
+	}
+
+	public ConvitesquantidadeDto listarQuantidadeConvites(String tipoConvite) throws Exception {
+		TipoConvite tipoConviteEnum = TipoConvite.CONSULTOR;
+
+		if (tipoConvite.toUpperCase().equals("AVALIADOR")) {
+			tipoConviteEnum = TipoConvite.AVALIADOR;
+		}
+
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
+
+		List<Convite> convitesRecuperados = conviteRepositorio.findByUsuario(usuario);
+
+		ConvitesquantidadeDto quantidadeConvites = new ConvitesquantidadeDto(0);
+		for (Convite convite : convitesRecuperados) {
+			if (convite.getTipoConvite().equals(tipoConviteEnum)) {
+				quantidadeConvites.agregar();
+			}
+		}
+		return quantidadeConvites;
 	}
 }

@@ -29,6 +29,7 @@ import com.ideia.projetoideia.model.dto.ConsultorEAvaliadorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
 import com.ideia.projetoideia.model.dto.ConviteListaDto;
 import com.ideia.projetoideia.model.dto.ConviteRespostaDto;
+import com.ideia.projetoideia.model.dto.ConvitesquantidadeDto;
 import com.ideia.projetoideia.model.dto.EmailDto;
 import com.ideia.projetoideia.model.dto.EquipeNomeDto;
 import com.ideia.projetoideia.model.dto.EquipeNotaDto;
@@ -162,9 +163,9 @@ public class ControllerCompeticao {
 	}
 
 	@GetMapping("/competicao/{idCompeticao}/regulamento")
-	public String recuperarRegulamentoDaCompeticao(@PathVariable("idCompeticao")Integer idCompeticao) {
-		
-		try {		
+	public String recuperarRegulamentoDaCompeticao(@PathVariable("idCompeticao") Integer idCompeticao) {
+
+		try {
 			return competicaoService.recuperarRegulamentoCompeticao(idCompeticao);
 		} catch (NotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -388,6 +389,18 @@ public class ControllerCompeticao {
 			competicaoService.adicionarConsultorEquipe(idCompeticao, idEquipe, idConsultor);
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new IdeiaResponseFile("Consultor adcionado ", HttpStatus.OK));
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	@GetMapping("/convites/{tipoConvite}/quantidade")
+	public ConvitesquantidadeDto listarQuantidadeConvites(@PathVariable("tipoConvite") String tipoConvite)
+			throws Exception {
+		try {
+			return competicaoService.listarQuantidadeConvites(tipoConvite);
 		} catch (NotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		} catch (Exception e) {
