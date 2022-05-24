@@ -1,7 +1,5 @@
 package com.ideia.projetoideia.services;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +29,7 @@ import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPutDto;
 import com.ideia.projetoideia.model.dto.ConsultorEAvaliadorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
+import com.ideia.projetoideia.model.dto.ConviteListaDto;
 import com.ideia.projetoideia.model.dto.ConviteRespostaDto;
 import com.ideia.projetoideia.model.dto.EmailDto;
 import com.ideia.projetoideia.model.dto.EquipeNomeDto;
@@ -561,18 +560,18 @@ public class CompeticaoService {
 		return questaoAvaliativas;
 	}
 
-	public List<Convite> listarConvites(TipoConvite tipoConvite) throws Exception {
+	public List<ConviteListaDto> listarConvites(TipoConvite tipoConvite) throws Exception {
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
 
 		List<Convite> convitesRecuperada = conviteRepositorio.findByUsuario(usuario);
 
-		List<Convite> convites = new ArrayList<Convite>();
+		List<ConviteListaDto> convites = new ArrayList<ConviteListaDto>();
 
 		for (Convite convite : convitesRecuperada) {
 
 			if (convite.getTipoConvite().equals(tipoConvite)) {
-				convites.add(convite);
+				convites.add(new ConviteListaDto(convite));
 			}
 		}
 		if (convites.size() == 0) {

@@ -1,18 +1,11 @@
 package com.ideia.projetoideia.controller;
 
-import java.io.File;
-import java.nio.file.Files;
 import java.util.List;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.ContentDisposition;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,18 +17,17 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Competicao;
-import com.ideia.projetoideia.model.Convite;
 import com.ideia.projetoideia.model.dto.CompeticaoDadosGeraisDto;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPutDto;
 import com.ideia.projetoideia.model.dto.ConsultorEAvaliadorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
+import com.ideia.projetoideia.model.dto.ConviteListaDto;
 import com.ideia.projetoideia.model.dto.ConviteRespostaDto;
 import com.ideia.projetoideia.model.dto.EmailDto;
 import com.ideia.projetoideia.model.dto.EquipeNomeDto;
@@ -48,7 +40,6 @@ import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.CompeticaoService;
 
 import javassist.NotFoundException;
-import java.awt.Desktop;
 
 @RestController
 @RequestMapping("/ideia")
@@ -295,7 +286,7 @@ public class ControllerCompeticao {
 	}
 
 	@GetMapping("/convites-consultor")
-	public List<Convite> listarConvitesConsultor() {
+	public List<ConviteListaDto> listarConvitesConsultor() {
 		try {
 			return competicaoService.listarConvites(TipoConvite.CONSULTOR);
 		} catch (NotFoundException e) {
@@ -306,7 +297,7 @@ public class ControllerCompeticao {
 	}
 
 	@GetMapping("/convites-avaliador")
-	public List<Convite> listarConvitesAvaliador() {
+	public List<ConviteListaDto> listarConvitesAvaliador() {
 		try {
 			return competicaoService.listarConvites(TipoConvite.AVALIADOR);
 		} catch (NotFoundException e) {
