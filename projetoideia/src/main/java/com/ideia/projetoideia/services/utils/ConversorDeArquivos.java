@@ -61,6 +61,11 @@ public class ConversorDeArquivos {
 			
 			if(!diretorioCompeticao.exists()) {
 				diretorioCompeticao.mkdirs();
+			}else {
+				File[] files = diretorioCompeticao.listFiles();
+				for (File fileDelete : files) {
+					fileDelete.delete();
+				}
 			}
 			
 			for(MaterialEstudo material: materiais) {
@@ -71,7 +76,7 @@ public class ConversorDeArquivos {
 					
 					if(material.getTipoMaterialEstudo() == TipoMaterialEstudo.PDF) {
 						
-						File arquivo = new File ("materiais/competicao_"+idCompeticao+"material"+RandomStringUtils.randomAlphanumeric(10).toUpperCase()+".pdf");
+						File arquivo = new File ("materiais/competicao_"+idCompeticao+"/material"+RandomStringUtils.randomAlphanumeric(10).toUpperCase()+".pdf");
 						FileOutputStream fos = new FileOutputStream (arquivo);
 						
 						fos.write (array);
@@ -79,7 +84,7 @@ public class ConversorDeArquivos {
 						
 					}else {
 						
-						File arquivo = new File ("materiais/competicao_"+idCompeticao+"material"+RandomStringUtils.randomAlphanumeric(10).toUpperCase()+".pdf");
+						File arquivo = new File ("materiais/competicao_"+idCompeticao+"/material"+RandomStringUtils.randomAlphanumeric(10).toUpperCase()+".pdf");
 						FileOutputStream fos = new FileOutputStream (arquivo);
 						
 						fos.write (array);

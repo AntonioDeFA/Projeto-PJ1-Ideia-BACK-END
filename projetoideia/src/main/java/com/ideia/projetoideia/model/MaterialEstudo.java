@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -39,6 +40,7 @@ public class MaterialEstudo {
 	@Enumerated(EnumType.STRING)
 	private TipoMaterialEstudo tipoMaterialEstudo;
 
+	@Lob
 	@Column(name = "arquivo_estudo")
 	private String arquivoEstudo;
 
