@@ -715,7 +715,7 @@ public class CompeticaoService {
 
 		ConvitesquantidadeDto quantidadeConvites = new ConvitesquantidadeDto(0);
 		for (Convite convite : convitesRecuperados) {
-			if (convite.getTipoConvite().equals(tipoConviteEnum)) {
+			if (convite.getTipoConvite().equals(tipoConviteEnum) && convite.getStatusConvite().equals(StatusConvite.ENVIADO)) {
 				quantidadeConvites.agregar();
 			}
 		}
