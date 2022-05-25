@@ -38,4 +38,6 @@ public interface EquipeRepositorio extends JpaRepository<Equipe, Integer> {
 	public int validarNomeDeEquipe(@Param("nome_equipe") String nomeEquipe, @Param("id_competicao") int idCompeticao);
 
 	public List<Equipe> findByLider(Usuario lider);
+	
+	public List<Equipe> findByNomeEquipe(String nomeEquipe);
 }

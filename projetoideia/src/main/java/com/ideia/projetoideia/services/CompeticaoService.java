@@ -672,7 +672,6 @@ public class CompeticaoService {
 
 	public void deletarequipe(Integer idCompeticao, Integer idEquipe) throws Exception {
 		Equipe equipe = equipeRepositorio.findById(idEquipe).get();
-
 		if (equipe.getCompeticaoCadastrada().getId() == idCompeticao) {
 			equipe.setCompeticaoCadastrada(null);
 			equipeRepositorio.save(equipe);
