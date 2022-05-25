@@ -84,7 +84,7 @@ public class ConversorDeArquivos {
 						
 					}else {
 						
-						File arquivo = new File ("materiais/competicao_"+idCompeticao+"/material"+RandomStringUtils.randomAlphanumeric(10).toUpperCase()+".pdf");
+						File arquivo = new File ("materiais/competicao_"+idCompeticao+"/material"+RandomStringUtils.randomAlphanumeric(10).toUpperCase()+".mp4");
 						FileOutputStream fos = new FileOutputStream (arquivo);
 						
 						fos.write (array);
