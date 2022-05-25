@@ -128,10 +128,9 @@ public class CompeticaoService {
 		}
 		competicao.setOrganizador(usuario);
 		Integer idCompeticao = competicaoRepositorio.save(competicao).getId();
-
-		System.out.println("arquivo: " + competicao.getArquivoRegulamentoCompeticao());
-		// aqui tem que converter a string base64 em um arquivo
-		ConversorDeArquivos.converterStringParaArquivo(competicao.getArquivoRegulamentoCompeticao(), idCompeticao);
+		//aqui tem que converter a string base64 em um arquivo
+		ConversorDeArquivos.converterStringParaArquivo(competicao.getArquivoRegulamentoCompeticao(), idCompeticao);	
+		
 
 		for (Etapa etapa : etapas) {
 			etapa.setCompeticao(competicao);
@@ -185,8 +184,9 @@ public class CompeticaoService {
 			EtapaCompeticaoVingente.setDataTermino(etapa.getDataTermino());
 			etapaRepositorio.save(EtapaCompeticaoVingente);
 		}
-
 		comp.setArquivoRegulamentoCompeticao(competicaoPutDto.getArquivoRegulamentoCompeticao());
+		//aqui tem que converter a string base64 em um arquivo
+		ConversorDeArquivos.converterStringParaArquivo(competicaoPutDto.getArquivoRegulamentoCompeticao(), idCompeticao);
 		comp.setDominioCompeticao(competicaoPutDto.getDominioCompeticao());
 		comp.setQntdMaximaMembrosPorEquipe(competicaoPutDto.getQntdMaximaMembrosPorEquipe());
 		comp.setQntdMinimaMembrosPorEquipe(competicaoPutDto.getQntdMinimaMembrosPorEquipe());

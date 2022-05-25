@@ -2,6 +2,7 @@ package com.ideia.projetoideia.services.utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Files;
 import java.util.Base64;
 import java.util.List;
 
@@ -23,6 +24,12 @@ public class ConversorDeArquivos {
 			}
 			
 			File arquivo = new File ("regulamentos/regulamento"+idCompeticao+".pdf");
+			
+			if(arquivo.exists()) {
+				arquivo.delete();
+				arquivo = new File ("regulamentos/regulamento"+idCompeticao+".pdf");
+			}
+			
 			FileOutputStream fos = new FileOutputStream (arquivo);
 						
 			byte[] array = Base64.getDecoder().decode(file);
