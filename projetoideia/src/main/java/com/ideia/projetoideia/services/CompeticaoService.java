@@ -1,7 +1,5 @@
 package com.ideia.projetoideia.services;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +29,9 @@ import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPutDto;
 import com.ideia.projetoideia.model.dto.ConsultorEAvaliadorDto;
 import com.ideia.projetoideia.model.dto.ConviteDto;
+import com.ideia.projetoideia.model.dto.ConviteListaDto;
 import com.ideia.projetoideia.model.dto.ConviteRespostaDto;
+import com.ideia.projetoideia.model.dto.ConvitesquantidadeDto;
 import com.ideia.projetoideia.model.dto.EmailDto;
 import com.ideia.projetoideia.model.dto.EquipeNomeDto;
 import com.ideia.projetoideia.model.dto.EquipeNotaDto;
@@ -131,6 +131,7 @@ public class CompeticaoService {
 		//aqui tem que converter a string base64 em um arquivo
 		ConversorDeArquivos.converterStringParaArquivo(competicao.getArquivoRegulamentoCompeticao(), idCompeticao);	
 		
+
 		for (Etapa etapa : etapas) {
 			etapa.setCompeticao(competicao);
 			etapaRepositorio.save(etapa);
@@ -153,11 +154,12 @@ public class CompeticaoService {
 	public void atualizarCompeticao(Integer idCompeticao, CompeticaoPutDto competicaoPutDto)
 			throws Exception, NotFoundException {
 		Competicao comp = recuperarCompeticaoId(idCompeticao);
+
 		List<Competicao> competicoes = competicaoRepositorio.findByNomeCompeticao(competicaoPutDto.getNomeCompeticao());
 		boolean entrou = false;
-		
+
 		for (Competicao competicao : competicoes) {
-			if(competicao.getNomeCompeticao().equals(competicaoPutDto.getNomeCompeticao())
+			if (competicao.getNomeCompeticao().equals(competicaoPutDto.getNomeCompeticao())
 					&& comp.getId() != competicao.getId()) {
 				entrou = true;
 			}
@@ -311,8 +313,7 @@ public class CompeticaoService {
 				conviteRepositorio.delete(conviteParaDeletar);
 			}
 			competicaoRepositorio.delete(competicao);
-			
-			
+
 		} else if (papelUsuarioCompeticaoRecuperada.getTipoPapelUsuario() == TipoPapelUsuario.COMPETIDOR) {
 			List<Equipe> equipes = equipeRepositorio.findByLider(usuario);
 			Equipe equipeRecuperada = null;
@@ -449,8 +450,8 @@ public class CompeticaoService {
 				EtapaCompeticaoVingente.setDataInicio(etapa.getDataInicio());
 				EtapaCompeticaoVingente.setDataTermino(etapa.getDataTermino());
 
-				if (etapa.getTipoEtapa().equals(TipoEtapa.AQUECIMENTO) 
-						&& competicaoPatchDto.getMateriaisDeEstudo()!= null) {
+				if (etapa.getTipoEtapa().equals(TipoEtapa.AQUECIMENTO)
+						&& competicaoPatchDto.getMateriaisDeEstudo() != null) {
 
 					for (MaterialEstudo material : competicaoPatchDto.getMateriaisDeEstudo()) {
 
@@ -460,8 +461,9 @@ public class CompeticaoService {
 						categoriaMaterialEstudoRepositorio.save(cat);
 						materialEstudoRepositorio.save(material);
 					}
-					//aqui a gente salva na pasta da competição, os respectivos materiais de estudo
-					ConversorDeArquivos.converterStringParaArquivo(competicaoPatchDto.getMateriaisDeEstudo(), idCompeticao);
+					// aqui a gente salva na pasta da competição, os respectivos materiais de estudo
+					ConversorDeArquivos.converterStringParaArquivo(competicaoPatchDto.getMateriaisDeEstudo(),
+							idCompeticao);
 
 				}
 
@@ -492,11 +494,8 @@ public class CompeticaoService {
 				questaoAvaliativaRepositorio.save(questaoAvaliativa);
 			}
 		}
-		
-		
-		
+
 		competicao.setIsElaboracao(competicaoPatchDto.getIsElaboracao());
-		
 
 		competicaoRepositorio.save(competicao);
 
@@ -559,18 +558,18 @@ public class CompeticaoService {
 		return questaoAvaliativas;
 	}
 
-	public List<Convite> listarConvites(TipoConvite tipoConvite) throws Exception {
+	public List<ConviteListaDto> listarConvites(TipoConvite tipoConvite) throws Exception {
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
 
 		List<Convite> convitesRecuperada = conviteRepositorio.findByUsuario(usuario);
 
-		List<Convite> convites = new ArrayList<Convite>();
+		List<ConviteListaDto> convites = new ArrayList<ConviteListaDto>();
 
 		for (Convite convite : convitesRecuperada) {
 
-			if (convite.getTipoConvite().equals(tipoConvite)) {
-				convites.add(convite);
+			if (convite.getTipoConvite().equals(tipoConvite) && convite.getStatusConvite().equals(StatusConvite.ENVIADO)) {
+				convites.add(new ConviteListaDto(convite));
 			}
 		}
 		if (convites.size() == 0) {
@@ -700,5 +699,26 @@ public class CompeticaoService {
 				return;
 			}
 		}
+	}
+
+	public ConvitesquantidadeDto listarQuantidadeConvites(String tipoConvite) throws Exception {
+		TipoConvite tipoConviteEnum = TipoConvite.CONSULTOR;
+
+		if (tipoConvite.toUpperCase().equals("AVALIADOR")) {
+			tipoConviteEnum = TipoConvite.AVALIADOR;
+		}
+
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
+
+		List<Convite> convitesRecuperados = conviteRepositorio.findByUsuario(usuario);
+
+		ConvitesquantidadeDto quantidadeConvites = new ConvitesquantidadeDto(0);
+		for (Convite convite : convitesRecuperados) {
+			if (convite.getTipoConvite().equals(tipoConviteEnum) && convite.getStatusConvite().equals(StatusConvite.ENVIADO)) {
+				quantidadeConvites.agregar();
+			}
+		}
+		return quantidadeConvites;
 	}
 }
