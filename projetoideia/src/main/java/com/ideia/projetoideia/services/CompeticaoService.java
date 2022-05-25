@@ -568,7 +568,7 @@ public class CompeticaoService {
 
 		for (Convite convite : convitesRecuperada) {
 
-			if (convite.getTipoConvite().equals(tipoConvite)) {
+			if (convite.getTipoConvite().equals(tipoConvite) && convite.getStatusConvite().equals(StatusConvite.ENVIADO)) {
 				convites.add(new ConviteListaDto(convite));
 			}
 		}
