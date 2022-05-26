@@ -22,7 +22,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.dto.CompeticaoDadosGeraisDto;
-import com.ideia.projetoideia.model.dto.CompeticaoDto;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPutDto;
