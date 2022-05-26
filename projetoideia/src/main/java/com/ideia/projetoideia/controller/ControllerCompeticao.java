@@ -22,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.dto.CompeticaoDadosGeraisDto;
+import com.ideia.projetoideia.model.dto.CompeticaoDto;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPutDto;
@@ -367,7 +368,7 @@ public class ControllerCompeticao {
 		}
 	}
 
-	@GetMapping("/competicao/deletar-equipe/{idCompeticao}/{idEquipe}")
+	@DeleteMapping("/competicao/deletar-equipe/{idCompeticao}/{idEquipe}")
 	public ResponseEntity<?> deletarequipe(@PathVariable("idCompeticao") Integer idCompeticao,
 			@PathVariable("idEquipe") Integer idEquipe) throws Exception {
 		try {
