@@ -42,6 +42,4 @@ Funcionalidade: Competicao
 	E espere "20000"
 	E clique no botao salvar etapa pitch
 	E clique no botao salvar criacao competicao
-	Entao o programa valida que a equipe foi criada
-	E deleta a equipe
 		 

@@ -26,8 +26,9 @@ public class PitchStep {
 	}
 
 	@Quando("clique no botao salvar etapa pitch")
-	public void cliqueNoBotaoSalvarEtapaPitch() {
+	public void cliqueNoBotaoSalvarEtapaPitch() throws InterruptedException {
 		Na(EtapaPitchPage.class).clicarNoBotaoSalvar();
+		Thread.sleep(1000);
 	}
 
 	@Quando("clique no botao salvar criacao competicao")

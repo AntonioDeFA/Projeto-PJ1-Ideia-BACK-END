@@ -18,5 +18,7 @@ public class ConviteDto {
 		this.idCompeticao = idCompeticao;
 		this.tipoConvite = tipoConvite;
 	}
+	
+	public ConviteDto() {}
 
 }

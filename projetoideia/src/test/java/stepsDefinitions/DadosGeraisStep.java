@@ -50,7 +50,6 @@ public class DadosGeraisStep {
 
 	@Dado("clique no botao regulamento da competicao")
 	public void cliqueNoBotaoRegulamentoDaCompeticao() throws InterruptedException {
-
 		Thread.sleep(10000);
 	}
 
@@ -62,7 +61,6 @@ public class DadosGeraisStep {
 	@Quando("eu clicar no botao salvar dados gerais da competicao")
 	public void euClicarNoBotaoSalvarDadosGeraisDaCompeticao() throws InterruptedException {
 		Na(DadosGeraisPage.class).clicarNoBotaoSalvar();
-		Thread.sleep(5000);
 	}
 
 }
