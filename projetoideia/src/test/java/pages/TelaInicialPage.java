@@ -14,13 +14,13 @@ public class TelaInicialPage {
 	@FindBy(xpath = "//*[@id=\"aside-filtragem\"]/div/div[2]/button")
 	private WebElement botaoCriarCompeticao;
 
-	@FindBy(xpath = "/html/body/div/div/div[1]/div/div/ul/li[2]/a/img")
+	@FindBy(id = "op-convites-avaliador-cabecalho")
 	private WebElement botaoConvitesAvaliador;
 	
-	@FindBy(xpath = "/html/body/div/div/div[1]/div/div/ul/li[4]/a/img")
+	@FindBy(id = "op-convites-consultor-cabecalho")
 	private WebElement botaoConvitesConsultor;
 	
-	@FindBy(xpath = "/html/body/div/div/div[1]/div/div/ul/li[1]/a/img")
+	@FindBy(id = "op-trofeu-cabecalho")
 	private WebElement botaoTrofeuCompeticao;
 	
 	
