@@ -9,14 +9,14 @@ public class UsuarioConsultorDto {
 	
 	private Integer id;
 	
-	private String nome_consultor;
+	private String nomeConsultor;
 	
-	private String email_consultor;
+	private String emailConsultor;
 
 	public UsuarioConsultorDto(Usuario usuario) {
 		super();
 		this.id = usuario.getId();
-		this.nome_consultor = usuario.getNomeUsuario();
-		this.email_consultor = usuario.getEmail();
+		this.nomeConsultor = usuario.getNomeUsuario();
+		this.emailConsultor = usuario.getEmail();
 	}
 }
