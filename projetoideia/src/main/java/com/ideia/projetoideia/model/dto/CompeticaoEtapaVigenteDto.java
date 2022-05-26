@@ -64,9 +64,9 @@ public class CompeticaoEtapaVigenteDto {
 				}
 			}
 			
-			if (hoje.isBefore(competicao.getEtapas().get(0).getDataInicio())) {
+			if (hoje.isBefore(competicao.getEtapas().get(0).getDataInicio()) && !competicao.getIsElaboracao()) {
 				this.etapaVigenteStr = "NAO_INICIADA";
-			} else if (!competicao.getIsElaboracao()) {				
+			} else if (!competicao.getIsElaboracao()) {
 				for (Etapa etapa : competicao.getEtapas()) {
 					if (etapa.isVigente()) {
 						this.etapaVigente = etapa;
