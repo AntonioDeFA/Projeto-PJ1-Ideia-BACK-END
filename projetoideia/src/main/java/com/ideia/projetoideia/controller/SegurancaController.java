@@ -68,8 +68,12 @@ public class SegurancaController {
 			Usuario userDetails = (Usuario) authentication.getPrincipal();
 			List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
 					.collect(Collectors.toList());
-			return new JwtRespostaDto(jwt, userDetails.getId(), userDetails.getNomeUsuario(),
+			
+			JwtRespostaDto jwtRespostaDto = new JwtRespostaDto(jwt, userDetails.getId(), userDetails.getNomeUsuario(),
 					userDetails.getUsername(), userDetails.getEmail(), roles);
+			
+			jwtRespostaDto.setIdEquipe(equipe.getId());
+			return jwtRespostaDto;
 
 		}
 		throw new Exception("Esse token não pertence a nenhuma equipe");

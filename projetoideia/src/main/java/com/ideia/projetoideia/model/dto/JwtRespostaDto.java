@@ -18,6 +18,8 @@ public class JwtRespostaDto {
 	private String email;
 
 	private String nome;
+	
+	private Integer idEquipe;
 
 	private List<String> roles;
 
