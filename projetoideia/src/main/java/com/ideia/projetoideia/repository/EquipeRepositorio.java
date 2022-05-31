@@ -40,4 +40,7 @@ public interface EquipeRepositorio extends JpaRepository<Equipe, Integer> {
 	public List<Equipe> findByLider(Usuario lider);
 	
 	public List<Equipe> findByNomeEquipe(String nomeEquipe);
+	
+	@Query(value = "SELECT * from tb_equipe where lider_fk = :id_usuario and competicao_cadastrada_fk= :id_competicao", nativeQuery = true)
+	public int findByCompeticaoCadastradaAndUsuario(@Param("id_usuario") int idUsuario, @Param("id_competicao") int idCompeticao);
 }

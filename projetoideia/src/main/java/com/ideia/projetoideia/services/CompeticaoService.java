@@ -128,9 +128,8 @@ public class CompeticaoService {
 		}
 		competicao.setOrganizador(usuario);
 		Integer idCompeticao = competicaoRepositorio.save(competicao).getId();
-		//aqui tem que converter a string base64 em um arquivo
-		ConversorDeArquivos.converterStringParaArquivo(competicao.getArquivoRegulamentoCompeticao(), idCompeticao);	
-		
+		// aqui tem que converter a string base64 em um arquivo
+		ConversorDeArquivos.converterStringParaArquivo(competicao.getArquivoRegulamentoCompeticao(), idCompeticao);
 
 		for (Etapa etapa : etapas) {
 			etapa.setCompeticao(competicao);
@@ -185,8 +184,9 @@ public class CompeticaoService {
 			etapaRepositorio.save(EtapaCompeticaoVingente);
 		}
 		comp.setArquivoRegulamentoCompeticao(competicaoPutDto.getArquivoRegulamentoCompeticao());
-		//aqui tem que converter a string base64 em um arquivo
-		ConversorDeArquivos.converterStringParaArquivo(competicaoPutDto.getArquivoRegulamentoCompeticao(), idCompeticao);
+		// aqui tem que converter a string base64 em um arquivo
+		ConversorDeArquivos.converterStringParaArquivo(competicaoPutDto.getArquivoRegulamentoCompeticao(),
+				idCompeticao);
 		comp.setDominioCompeticao(competicaoPutDto.getDominioCompeticao());
 		comp.setQntdMaximaMembrosPorEquipe(competicaoPutDto.getQntdMaximaMembrosPorEquipe());
 		comp.setQntdMinimaMembrosPorEquipe(competicaoPutDto.getQntdMinimaMembrosPorEquipe());
@@ -256,10 +256,17 @@ public class CompeticaoService {
 		List<CompeticaoEtapaVigenteDto> competicoesDto = new ArrayList<>();
 		List<Competicao> competicoes = competicaoRepositorioCustom.findByCompeticoesDoUsuario(nomeCompeticao, mes, ano,
 				usuario.getId());
-
 		for (Competicao competicao : competicoes) {
 			CompeticaoEtapaVigenteDto competicaoEtapaVigenteDto = new CompeticaoEtapaVigenteDto(competicao,
 					"COMPETICAO", usuario);
+			PapelUsuarioCompeticao papelUsuarioCompeticao = papelUsuarioCompeticaoRepositorio
+					.findById(papelUsuarioCompeticaoRepositorio.findByCompeticaoCadastradaAndUsuario(usuario.getId(),
+							competicao.getId()))
+					.get();
+			if (papelUsuarioCompeticao.getTipoPapelUsuario().equals(TipoPapelUsuario.COMPETIDOR)) {
+				competicaoEtapaVigenteDto.setIdEquipe(
+						equipeRepositorio.findByCompeticaoCadastradaAndUsuario(usuario.getId(), competicao.getId()));
+			}
 			competicoesDto.add(competicaoEtapaVigenteDto);
 		}
 		return competicoesDto;
@@ -568,7 +575,8 @@ public class CompeticaoService {
 
 		for (Convite convite : convitesRecuperada) {
 
-			if (convite.getTipoConvite().equals(tipoConvite) && convite.getStatusConvite().equals(StatusConvite.ENVIADO)) {
+			if (convite.getTipoConvite().equals(tipoConvite)
+					&& convite.getStatusConvite().equals(StatusConvite.ENVIADO)) {
 				convites.add(new ConviteListaDto(convite));
 			}
 		}
@@ -714,7 +722,8 @@ public class CompeticaoService {
 
 		ConvitesquantidadeDto quantidadeConvites = new ConvitesquantidadeDto(0);
 		for (Convite convite : convitesRecuperados) {
-			if (convite.getTipoConvite().equals(tipoConviteEnum) && convite.getStatusConvite().equals(StatusConvite.ENVIADO)) {
+			if (convite.getTipoConvite().equals(tipoConviteEnum)
+					&& convite.getStatusConvite().equals(StatusConvite.ENVIADO)) {
 				quantidadeConvites.agregar();
 			}
 		}

@@ -7,7 +7,6 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.ideia.projetoideia.model.Competicao;
-import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.Etapa;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
 import com.ideia.projetoideia.model.Usuario;
@@ -29,19 +28,19 @@ public class CompeticaoEtapaVigenteDto {
 	private Usuario organizador;
 
 	private Etapa etapaVigente;
-	
+
 	private String etapaVigenteStr;
 
 	private Integer quantidadeDeEquipes;
 
 	@JsonInclude(value = Include.NON_NULL)
 	private TipoPapelUsuario papelUsuario;
-	
+
 	@JsonInclude(value = Include.NON_NULL)
 	private Integer idEquipe;
 
 	private Boolean isElaboracao;
-	
+
 	private List<Etapa> etapas = new ArrayList<>();
 
 	public CompeticaoEtapaVigenteDto(Competicao competicao, String valid, Usuario usuarioLogado) {
@@ -50,9 +49,9 @@ public class CompeticaoEtapaVigenteDto {
 		this.nomeCompeticao = competicao.getNomeCompeticao();
 		this.dominioCompeticao = competicao.getDominioCompeticao();
 		this.quantidadeDeEquipes = competicao.getEquipesCadastradas().size();
-		
+
 		LocalDate hoje = LocalDate.now();
-		
+
 		if (valid.equals("INSCRICAO")) {
 			for (Etapa etapa : competicao.getEtapas()) {
 				if (etapa.getTipoEtapa().equals(TipoEtapa.INSCRICAO)) {
@@ -65,18 +64,9 @@ public class CompeticaoEtapaVigenteDto {
 				if (papelUsuarioCompeticao.getCompeticaoCadastrada().getId() == competicao.getId()
 						&& papelUsuarioCompeticao.getUsuario().getId() == usuarioLogado.getId()) {
 					this.papelUsuario = papelUsuarioCompeticao.getTipoPapelUsuario();
-					if(papelUsuario.getValue().equals("COMPETIDOR")) {
-						for (Equipe equipe : competicao.getEquipesCadastradas()) {
-							if(equipe.getLider().getId() == usuarioLogado.getId()) {
-								this.idEquipe = equipe.getId();
-								break;
-							}
-						}
-					}
-					
 				}
 			}
-			
+
 			if (hoje.isBefore(competicao.getEtapas().get(0).getDataInicio()) && !competicao.getIsElaboracao()) {
 				this.etapaVigenteStr = "NAO_INICIADA";
 			} else if (!competicao.getIsElaboracao()) {
@@ -91,9 +81,8 @@ public class CompeticaoEtapaVigenteDto {
 				this.etapaVigenteStr = "ELABORACAO";
 			}
 		}
-		
+
 		this.isElaboracao = competicao.getIsElaboracao();
-		
 
 	}
 }
