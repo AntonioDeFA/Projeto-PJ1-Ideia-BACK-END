@@ -7,6 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.ideia.projetoideia.model.Competicao;
+import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.Etapa;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
 import com.ideia.projetoideia.model.Usuario;
@@ -35,6 +36,9 @@ public class CompeticaoEtapaVigenteDto {
 
 	@JsonInclude(value = Include.NON_NULL)
 	private TipoPapelUsuario papelUsuario;
+	
+	@JsonInclude(value = Include.NON_NULL)
+	private Integer idEquipe;
 
 	private Boolean isElaboracao;
 	
@@ -61,6 +65,15 @@ public class CompeticaoEtapaVigenteDto {
 				if (papelUsuarioCompeticao.getCompeticaoCadastrada().getId() == competicao.getId()
 						&& papelUsuarioCompeticao.getUsuario().getId() == usuarioLogado.getId()) {
 					this.papelUsuario = papelUsuarioCompeticao.getTipoPapelUsuario();
+					if(papelUsuario.getValue().equals("COMPETIDOR")) {
+						for (Equipe equipe : competicao.getEquipesCadastradas()) {
+							if(equipe.getLider().getId() == usuarioLogado.getId()) {
+								this.idEquipe = equipe.getId();
+								break;
+							}
+						}
+					}
+					
 				}
 			}
 			
