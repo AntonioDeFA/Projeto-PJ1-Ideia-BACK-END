@@ -288,4 +288,26 @@ public class EquipeService {
 		}
 		return new EquipeComEtapaDTO(equipe, etapaVigenteStr);
 	}
+
+	public void removerMembroEquipe(Integer idEquipe, String email) throws Exception {
+		Equipe equipe = equipeRepositorio.findById(idEquipe).get();
+		List<UsuarioMembroComum> usuariosMembroComum = usuarioMembroComumRepositorio.findByEquipe(equipe);
+		if (usuariosMembroComum.size() == equipe.getCompeticaoCadastrada().getQntdMinimaMembrosPorEquipe()) {
+			throw new NotFoundException("Quantidade minima de membros ja atingida!");
+		}
+		for (UsuarioMembroComum usuarioMembroComum : usuariosMembroComum) {
+			if (usuarioMembroComum.getEmail().equals(email)) {
+				usuarioMembroComumRepositorio.delete(usuarioMembroComum);
+			}
+		}
+	}
+
+	public void patchNomeEquipe(Integer idEquipe, String nome) throws Exception {
+		Equipe equipe = equipeRepositorio.findById(idEquipe).get();
+		if (equipeRepositorio.validarNomeDeEquipe(nome, equipe.getCompeticaoCadastrada().getId()) > 0) {
+			throw new Exception("Ja existe equipe com esse nome!");
+		}
+		equipe.setNomeEquipe(nome);
+		equipeRepositorio.save(equipe);
+	}
 }

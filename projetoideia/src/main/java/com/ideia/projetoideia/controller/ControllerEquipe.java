@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Equipe;
+import com.ideia.projetoideia.model.NomeEquipeDto;
+import com.ideia.projetoideia.model.dto.EmailDto;
 import com.ideia.projetoideia.model.dto.EquipeComEtapaDTO;
 import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
 import com.ideia.projetoideia.model.dto.EquipeNomeDto;
@@ -154,19 +157,43 @@ public class ControllerEquipe {
 		try {
 			equipeService.deletarEquipe(idCompeticao, idEquipe);
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(new IdeiaResponseFile("Quipe removida da competição ", HttpStatus.OK));
+					.body(new IdeiaResponseFile("Equipe removida da competição ", HttpStatus.OK));
 		} catch (NotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}
-	
+
 	@GetMapping("equipe/dados/{idEquipe}")
 	public EquipeComEtapaDTO dadosGeraisEquipe(@PathVariable("idEquipe") Integer idEquipe) {
 		try {
 			return equipeService.dadosGeraisEquipe(idEquipe);
-		}catch (Exception e) {
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	@PostMapping("/equipe/{idEquipe}/remover-membro")
+	public ResponseEntity<?> removerMembroEquipe(@Valid @RequestBody EmailDto email,
+			@PathVariable("idEquipe") Integer idEquipe) {
+		try {
+			equipeService.removerMembroEquipe(idEquipe, email.getEmail());
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("Membro removido com sucesso!", HttpStatus.OK));
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	@PatchMapping("/equipe/{idEquipe}/salvar-nome")
+	public ResponseEntity<?> patchNomeEquipe(@Valid @RequestBody NomeEquipeDto nomeEquipe,
+			@PathVariable("idEquipe") Integer idEquipe) {
+		try {
+			equipeService.patchNomeEquipe(idEquipe, nomeEquipe.getNomeEquipe());
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("Membro removido com sucesso!", HttpStatus.OK));
+		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}

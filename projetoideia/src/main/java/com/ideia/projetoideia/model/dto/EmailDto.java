@@ -7,8 +7,7 @@ public class EmailDto {
 
 	String email;
 
-	public EmailDto(String email) {
-		this.email = email;
+	public EmailDto() {
 	}
 
 }
