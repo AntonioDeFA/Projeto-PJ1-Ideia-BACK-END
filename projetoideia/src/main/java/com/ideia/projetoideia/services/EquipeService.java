@@ -17,12 +17,14 @@ import org.springframework.stereotype.Service;
 import com.ideia.projetoideia.model.AvaliacaoPitch;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Equipe;
+import com.ideia.projetoideia.model.Etapa;
 import com.ideia.projetoideia.model.LeanCanvas;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.UsuarioMembroComum;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
 import com.ideia.projetoideia.model.Pitch;
 import com.ideia.projetoideia.model.QuestaoAvaliativa;
+import com.ideia.projetoideia.model.dto.EquipeComEtapaDTO;
 import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
 import com.ideia.projetoideia.model.dto.EquipeNomeDto;
 import com.ideia.projetoideia.model.dto.EquipeNotaDto;
@@ -254,7 +256,7 @@ public class EquipeService {
 		}
 	}
 
-	public void deletarequipe(Integer idCompeticao, Integer idEquipe) throws Exception {
+	public void deletarEquipe(Integer idCompeticao, Integer idEquipe) throws Exception {
 		Equipe equipe = equipeRepositorio.findById(idEquipe).get();
 		if (equipe.getCompeticaoCadastrada().getId() == idCompeticao) {
 			equipe.setCompeticaoCadastrada(null);
@@ -263,5 +265,27 @@ public class EquipeService {
 		} else {
 			throw new NotFoundException("Equipe não cadastrada nesta competição!");
 		}
+	}
+
+	public EquipeComEtapaDTO dadosGeraisEquipe(Integer idEquipe) {
+		Equipe equipe = equipeRepositorio.findById(idEquipe).get();
+
+		LocalDate hoje = LocalDate.now();
+		Competicao competicao = equipe.getCompeticaoCadastrada();
+		String etapaVigenteStr = "";
+
+		if (hoje.isBefore(competicao.getEtapas().get(0).getDataInicio()) && !competicao.getIsElaboracao()) {
+			etapaVigenteStr = "NAO_INICIADA";
+		} else if (!competicao.getIsElaboracao()) {
+			for (Etapa etapa : competicao.getEtapas()) {
+				if (etapa.isVigente()) {
+					etapaVigenteStr = etapa.getTipoEtapa().getValue();
+					break;
+				}
+			}
+		} else if (competicao.getIsElaboracao()) {
+			etapaVigenteStr = "ELABORACAO";
+		}
+		return new EquipeComEtapaDTO(equipe, etapaVigenteStr);
 	}
 }

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Equipe;
+import com.ideia.projetoideia.model.dto.EquipeComEtapaDTO;
 import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
 import com.ideia.projetoideia.model.dto.EquipeNomeDto;
 import com.ideia.projetoideia.model.dto.EquipeNotaDto;
@@ -151,12 +152,21 @@ public class ControllerEquipe {
 	public ResponseEntity<?> deletarequipe(@PathVariable("idCompeticao") Integer idCompeticao,
 			@PathVariable("idEquipe") Integer idEquipe) throws Exception {
 		try {
-			equipeService.deletarequipe(idCompeticao, idEquipe);
+			equipeService.deletarEquipe(idCompeticao, idEquipe);
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new IdeiaResponseFile("Quipe removida da competição ", HttpStatus.OK));
 		} catch (NotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+	
+	@GetMapping("equipe/dados/{idEquipe}")
+	public EquipeComEtapaDTO dadosGeraisEquipe(@PathVariable("idEquipe") Integer idEquipe) {
+		try {
+			return equipeService.dadosGeraisEquipe(idEquipe);
+		}catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}
