@@ -31,6 +31,7 @@ import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
 import com.ideia.projetoideia.services.CompeticaoService;
 import com.ideia.projetoideia.services.EquipeService;
+import com.ideia.projetoideia.services.UsuarioService;
 import com.ideia.projetoideia.services.utils.GeradorEquipeToken;
 
 import utils.CompeticaoUtils;
@@ -65,6 +66,8 @@ public class TesteCompeticaoService {
 	PapelUsuarioCompeticao papelUsuarioCompeticao = new PapelUsuarioCompeticao();
 
 	Equipe equipe = new Equipe();
+	
+	EmailDto emailDto = new EmailDto();
 
 	PapelUsuarioCompeticao papelUsuarioCompeticaoEquipe = new PapelUsuarioCompeticao();
 
@@ -73,6 +76,9 @@ public class TesteCompeticaoService {
 
 	@Autowired
 	EquipeService equipeService;
+	
+	@Autowired
+	UsuarioService usuarioService;
 
 	@BeforeAll
 	public void setUp() {
@@ -111,6 +117,8 @@ public class TesteCompeticaoService {
 		papelUsuarioCompeticaoEquipe.setUsuario(usuario);
 		papelUsuarioCompeticaoEquipe.setCompeticaoCadastrada(equipe.getCompeticaoCadastrada());
 		papelUsuarioCompeticaoRepositorio.save(papelUsuarioCompeticaoEquipe);
+		
+		emailDto.setEmail("joao123@gmail.com");
 
 	}
 
@@ -132,7 +140,7 @@ public class TesteCompeticaoService {
 		try {
 			competicaoService.removerUsuarioConvidado(
 					competicaoRepositorio.findByNomeCompeticao(competicao.getNomeCompeticao()).get(0).getId(),
-					new EmailDto("joao123@gmail.com"));
+					emailDto);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -141,7 +149,7 @@ public class TesteCompeticaoService {
 	@Test
 	public void removerUsuarioConsultorErrado() {
 		assertThrows(Exception.class, () -> {
-			competicaoService.removerUsuarioConvidado(10000, new EmailDto("joao123@gmail.com"));
+			competicaoService.removerUsuarioConvidado(10000, emailDto);
 		});
 
 	}
@@ -150,7 +158,7 @@ public class TesteCompeticaoService {
 	public void convidarUsuarioCerto() {
 		try {
 
-			competicaoService.convidarUsuario(new ConviteDto("antonio@gmail.com",
+			usuarioService.convidarUsuario(new ConviteDto("antonio@gmail.com",
 					competicaoRepositorio.findByNomeCompeticao(competicao.getNomeCompeticao()).get(0).getId(),
 					TipoConvite.CONSULTOR));
 		} catch (Exception e) {
@@ -161,7 +169,7 @@ public class TesteCompeticaoService {
 	@Test
 	public void convidarUsuarioErrado() {
 		assertThrows(Exception.class, () -> {
-			competicaoService.convidarUsuario(new ConviteDto("antonio@gmail.com",
+			usuarioService.convidarUsuario(new ConviteDto("antonio@gmail.com",
 					competicaoRepositorio.findByNomeCompeticao(competicao.getNomeCompeticao()).get(0).getId(),
 					TipoConvite.CONSULTOR));
 		});
@@ -170,7 +178,7 @@ public class TesteCompeticaoService {
 	@Test
 	public void removerEquipeCerto() {
 		try {
-			competicaoService.deletarequipe(
+			equipeService.deletarEquipe(
 					competicaoRepositorio.findByNomeCompeticao(competicao.getNomeCompeticao()).get(0).getId(),
 					equipeRepositorio.findByNomeEquipe("teste").get(0).getId());
 		} catch (Exception e) {
@@ -181,7 +189,7 @@ public class TesteCompeticaoService {
 	@Test
 	public void removerEquipeErrado() {
 		assertThrows(Exception.class, () -> {
-			competicaoService.deletarequipe(
+			equipeService.deletarEquipe(
 					competicaoRepositorio.findByNomeCompeticao(competicao.getNomeCompeticao()).get(10000).getId(),
 					equipeRepositorio.findByNomeEquipe("teste").get(0).getId());
 		});
