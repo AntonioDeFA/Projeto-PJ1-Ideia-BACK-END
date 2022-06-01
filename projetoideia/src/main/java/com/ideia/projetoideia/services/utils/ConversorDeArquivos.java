@@ -2,7 +2,6 @@ package com.ideia.projetoideia.services.utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.nio.file.Files;
 import java.util.Base64;
 import java.util.List;
 

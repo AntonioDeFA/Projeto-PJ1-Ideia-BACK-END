@@ -26,7 +26,7 @@ import com.ideia.projetoideia.services.utils.GeradorUserToken;
 
 @RestController
 @RequestMapping("/ideia/seguranca")
-public class SegurancaController {
+public class ControllerSeguranca {
 
 	@SuppressWarnings("unused")
 	@Autowired

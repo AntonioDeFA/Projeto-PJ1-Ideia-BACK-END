@@ -1,5 +1,7 @@
 package com.ideia.projetoideia.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
+import com.ideia.projetoideia.model.dto.EquipeNomeDto;
+import com.ideia.projetoideia.model.dto.EquipeNotaDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasDto;
 import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.EquipeService;
@@ -29,6 +33,7 @@ import javassist.NotFoundException;
 @RestController
 @RequestMapping("/ideia")
 public class ControllerEquipe {
+
 	@Autowired
 	EquipeService equipeService;
 
@@ -103,4 +108,56 @@ public class ControllerEquipe {
 		}
 	}
 
+	@GetMapping("/competicao/resultados-gerais/{idCompeticao}")
+	public List<EquipeNotaDto> listarResultadosEquipesCompeticao(@PathVariable("idCompeticao") Integer idCompeticao)
+			throws Exception {
+		try {
+			return equipeService.listarResultadosEquipesCompeticao(idCompeticao);
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	@GetMapping("/competicao/equipes/{idCompeticao}")
+	public List<EquipeNomeDto> listarEquipesCompeticao(@PathVariable("idCompeticao") Integer idCompeticao)
+			throws Exception {
+		try {
+			return equipeService.listarEquipesCompeticao(idCompeticao);
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	@PostMapping("/competicao/adicionar-consultor/{idCompeticao}/{idEquipe}/{idConsultor}")
+	public ResponseEntity<?> adicionarConsultorEquipe(@PathVariable("idCompeticao") Integer idCompeticao,
+			@PathVariable("idEquipe") Integer idEquipe, @PathVariable("idConsultor") Integer idConsultor)
+			throws Exception {
+		try {
+			equipeService.adicionarConsultorEquipe(idCompeticao, idEquipe, idConsultor);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("Consultor adcionado ", HttpStatus.OK));
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	@DeleteMapping("/competicao/deletar-equipe/{idCompeticao}/{idEquipe}")
+	public ResponseEntity<?> deletarequipe(@PathVariable("idCompeticao") Integer idCompeticao,
+			@PathVariable("idEquipe") Integer idEquipe) throws Exception {
+		try {
+			equipeService.deletarequipe(idCompeticao, idEquipe);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("Quipe removida da competição ", HttpStatus.OK));
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
 }

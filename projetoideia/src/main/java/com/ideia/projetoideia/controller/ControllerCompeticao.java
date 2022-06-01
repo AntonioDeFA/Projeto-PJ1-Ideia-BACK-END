@@ -26,13 +26,7 @@ import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPutDto;
 import com.ideia.projetoideia.model.dto.ConsultorEAvaliadorDto;
-import com.ideia.projetoideia.model.dto.ConviteDto;
-import com.ideia.projetoideia.model.dto.ConviteListaDto;
-import com.ideia.projetoideia.model.dto.ConviteRespostaDto;
-import com.ideia.projetoideia.model.dto.ConvitesquantidadeDto;
 import com.ideia.projetoideia.model.dto.EmailDto;
-import com.ideia.projetoideia.model.dto.EquipeNomeDto;
-import com.ideia.projetoideia.model.dto.EquipeNotaDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoDTO;
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
 import com.ideia.projetoideia.model.dto.UsuarioConsultorDto;
@@ -45,6 +39,7 @@ import javassist.NotFoundException;
 @RestController
 @RequestMapping("/ideia")
 public class ControllerCompeticao {
+
 	@Autowired
 	CompeticaoService competicaoService;
 
@@ -88,15 +83,6 @@ public class ControllerCompeticao {
 
 	}
 
-	// Retorna todas as competições relacionadas a um USUÁRIO
-	@GetMapping("/competicoes/usuario-logado")
-	public List<CompeticaoEtapaVigenteDto> consultarMinhasCompeticoes(
-			@RequestParam(value = "nomeCompeticao", required = false) String nomeCompeticao,
-			@RequestParam(value = "mes", required = false) Integer mes,
-			@RequestParam(value = "ano", required = false) Integer ano) throws Exception {
-		return competicaoService.consultarMinhasCompeticoes(nomeCompeticao, mes, ano);
-	}
-
 	@GetMapping("/competicoes")
 	public List<Competicao> consultarCompeticoes() {
 		return competicaoService.consultarCompeticoes();
@@ -105,17 +91,6 @@ public class ControllerCompeticao {
 	@GetMapping("/competicoes/usuario/{usuarioId}")
 	public List<Competicao> consultarCompeticoesDoUsuario(@PathVariable("usuarioId") Integer usuarioId) {
 		return competicaoService.consultarCompeticoesDoUsuario(usuarioId);
-	}
-
-	@GetMapping("/competicao/{idCompeticao}/usuarios-nao-relacionados")
-	public ResponseEntity<?> consultarUsuariosSemCompeticao(@PathVariable("idCompeticao") Integer idCompeticao) {
-		try {
-			return ResponseEntity.status(HttpStatus.CREATED).body(new IdeiaResponseFile("Criada com sucesso",
-					HttpStatus.CREATED, competicaoService.consultarUsuariosSemCompeticao(idCompeticao)));
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-					new IdeiaResponseFile("Nenhum usuario foi encontrado", e.getMessage(), HttpStatus.BAD_REQUEST));
-		}
 	}
 
 	@PutMapping("/competicao/update/{competicaoId}")
@@ -172,23 +147,6 @@ public class ControllerCompeticao {
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
-	}
-
-	@PostMapping("/competicao/convidar-usuario")
-	public ResponseEntity<?> convidarUsuario(@RequestBody ConviteDto conviteDto) {
-
-		try {
-			competicaoService.convidarUsuario(conviteDto);
-			return ResponseEntity.status(HttpStatus.CREATED)
-					.body(new IdeiaResponseFile("Usuario convidado com sucesso", HttpStatus.CREATED));
-		} catch (NotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new IdeiaResponseFile("Não foi possível convidar", e.getMessage(), HttpStatus.NOT_FOUND));
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new IdeiaResponseFile("Não foi possível convidar", e.getMessage(), HttpStatus.BAD_REQUEST));
-		}
-
 	}
 
 	@GetMapping("/competicao/{idCompeticao}/consultores")
@@ -286,68 +244,10 @@ public class ControllerCompeticao {
 		}
 	}
 
-	@GetMapping("/convites-consultor")
-	public List<ConviteListaDto> listarConvitesConsultor() {
-		try {
-			return competicaoService.listarConvites(TipoConvite.CONSULTOR);
-		} catch (NotFoundException e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-		}
-	}
-
-	@GetMapping("/convites-avaliador")
-	public List<ConviteListaDto> listarConvitesAvaliador() {
-		try {
-			return competicaoService.listarConvites(TipoConvite.AVALIADOR);
-		} catch (NotFoundException e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-		}
-	}
-
-	@PostMapping("/responder-convite")
-	public ResponseEntity<?> responderConvite(@RequestBody ConviteRespostaDto conviteRespostaDto) {
-		try {
-			competicaoService.responderConvite(conviteRespostaDto);
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(new IdeiaResponseFile("Convite respondido", HttpStatus.OK));
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new IdeiaResponseFile(
-					"Não foi possível responder convite", e.getMessage(), HttpStatus.BAD_REQUEST));
-		}
-	}
-
 	@GetMapping("/competicao/dados-gerais/{idCompeticao}")
 	public CompeticaoDadosGeraisDto listarDasdosGeraisCompeticao(@PathVariable("idCompeticao") Integer idCompeticao) {
 		try {
 			return competicaoService.listarDasdosGeraisCompeticao(idCompeticao);
-		} catch (NotFoundException e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-		}
-	}
-
-	@GetMapping("/competicao/resultados-gerais/{idCompeticao}")
-	public List<EquipeNotaDto> listarResultadosEquipesCompeticao(@PathVariable("idCompeticao") Integer idCompeticao)
-			throws Exception {
-		try {
-			return competicaoService.listarResultadosEquipesCompeticao(idCompeticao);
-		} catch (NotFoundException e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-		}
-	}
-
-	@GetMapping("/competicao/equipes/{idCompeticao}")
-	public List<EquipeNomeDto> listarEquipesCompeticao(@PathVariable("idCompeticao") Integer idCompeticao)
-			throws Exception {
-		try {
-			return competicaoService.listarEquipesCompeticao(idCompeticao);
 		} catch (NotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		} catch (Exception e) {
@@ -367,44 +267,4 @@ public class ControllerCompeticao {
 		}
 	}
 
-	@DeleteMapping("/competicao/deletar-equipe/{idCompeticao}/{idEquipe}")
-	public ResponseEntity<?> deletarequipe(@PathVariable("idCompeticao") Integer idCompeticao,
-			@PathVariable("idEquipe") Integer idEquipe) throws Exception {
-		try {
-			competicaoService.deletarequipe(idCompeticao, idEquipe);
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(new IdeiaResponseFile("Quipe removida da competição ", HttpStatus.OK));
-		} catch (NotFoundException e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-		}
-	}
-
-	@PostMapping("/competicao/adicionar-consultor/{idCompeticao}/{idEquipe}/{idConsultor}")
-	public ResponseEntity<?> adicionarConsultorEquipe(@PathVariable("idCompeticao") Integer idCompeticao,
-			@PathVariable("idEquipe") Integer idEquipe, @PathVariable("idConsultor") Integer idConsultor)
-			throws Exception {
-		try {
-			competicaoService.adicionarConsultorEquipe(idCompeticao, idEquipe, idConsultor);
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(new IdeiaResponseFile("Consultor adcionado ", HttpStatus.OK));
-		} catch (NotFoundException e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-		}
-	}
-
-	@GetMapping("/convites/{tipoConvite}/quantidade")
-	public ConvitesquantidadeDto listarQuantidadeConvites(@PathVariable("tipoConvite") String tipoConvite)
-			throws Exception {
-		try {
-			return competicaoService.listarQuantidadeConvites(tipoConvite);
-		} catch (NotFoundException e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-		}
-	}
 }

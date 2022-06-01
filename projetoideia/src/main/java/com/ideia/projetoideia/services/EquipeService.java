@@ -14,21 +14,31 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.ideia.projetoideia.model.AvaliacaoPitch;
+import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.LeanCanvas;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.UsuarioMembroComum;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
+import com.ideia.projetoideia.model.Pitch;
+import com.ideia.projetoideia.model.QuestaoAvaliativa;
 import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
+import com.ideia.projetoideia.model.dto.EquipeNomeDto;
+import com.ideia.projetoideia.model.dto.EquipeNotaDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasDto;
 import com.ideia.projetoideia.model.dto.UsuarioDto;
 import com.ideia.projetoideia.model.enums.EtapaArtefatoPitch;
 import com.ideia.projetoideia.model.enums.TipoPapelUsuario;
+import com.ideia.projetoideia.repository.AvaliacaoPitchRpositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.EquipeRepositorio;
 import com.ideia.projetoideia.repository.LeanCanvasRepositorio;
 import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
+import com.ideia.projetoideia.repository.PitchRepositorio;
+import com.ideia.projetoideia.repository.QuestaoAvaliativaRepositorio;
 import com.ideia.projetoideia.repository.UsuarioMembroComumRepositorio;
+import com.ideia.projetoideia.repository.UsuarioRepositorio;
 import com.ideia.projetoideia.services.utils.GeradorEquipeToken;
 
 import javassist.NotFoundException;
@@ -53,6 +63,18 @@ public class EquipeService {
 
 	@Autowired
 	private LeanCanvasRepositorio leanCanvasRepositorio;
+
+	@Autowired
+	private AvaliacaoPitchRpositorio avaliacaoPitchRpositorio;
+
+	@Autowired
+	private PitchRepositorio pitchRepositorio;
+
+	@Autowired
+	private QuestaoAvaliativaRepositorio questaoAvaliativaRepositorio;
+
+	@Autowired
+	private UsuarioRepositorio usuarioRepositorio;
 
 	public void criarEquipe(EquipeDtoCriacao equipeDto) throws Exception {
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
@@ -167,7 +189,7 @@ public class EquipeService {
 
 	public LeanCanvasDto recuperarLeanCanvasElaboracao(Integer idEquipe) throws NotFoundException {
 		this.recuperarEquipe(idEquipe);
-		
+
 		LeanCanvas LeanCanvas = leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe,
 				EtapaArtefatoPitch.EM_ELABORACAO.getValue());
 
@@ -177,5 +199,69 @@ public class EquipeService {
 
 		return new LeanCanvasDto(LeanCanvas);
 
+	}
+
+	public List<EquipeNotaDto> listarResultadosEquipesCompeticao(Integer idCompeticao) throws Exception {
+		List<EquipeNotaDto> equipes = new ArrayList<EquipeNotaDto>();
+		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
+		Float notaCompeticao = 0f;
+
+		for (QuestaoAvaliativa questaoAvaliativa : questaoAvaliativaRepositorio
+				.findByCompeticaoCadastrada(competicao)) {
+			notaCompeticao += questaoAvaliativa.getNotaMax();
+		}
+
+		for (Equipe equipe : equipeRepositorio.findByCompeticaoCadastrada(competicao)) {
+			Float notaEquipe = 0f;
+			for (Pitch pitch : pitchRepositorio.findByEquipe(equipe)) {
+				if (pitch.getEtapaAvaliacaoVideo().equals(EtapaArtefatoPitch.APROVADO)) {
+					for (AvaliacaoPitch avaliacao : avaliacaoPitchRpositorio.findByPitch(pitch)) {
+						notaEquipe += avaliacao.getNotaAtribuida();
+					}
+				}
+			}
+			equipes.add(new EquipeNotaDto(equipe.getNomeEquipe(), notaEquipe, notaCompeticao, equipe.getId()));
+		}
+		return equipes;
+	}
+
+	public List<EquipeNomeDto> listarEquipesCompeticao(Integer idCompeticao) throws Exception {
+		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
+		List<EquipeNomeDto> equipes = new ArrayList<EquipeNomeDto>();
+
+		for (Equipe equipe : equipeRepositorio.findByCompeticaoCadastrada(competicao)) {
+			equipes.add(new EquipeNomeDto(equipe.getId(), equipe.getNomeEquipe()));
+		}
+		return equipes;
+	}
+
+	public void adicionarConsultorEquipe(Integer idCompeticao, Integer idEquipe, Integer idConsultor) throws Exception {
+		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
+		Usuario usuario = usuarioRepositorio.findById(idConsultor).get();
+		Equipe equipe = equipeRepositorio.findById(idEquipe).get();
+
+		if (equipe.getCompeticaoCadastrada().getId() != idCompeticao) {
+			throw new Exception("Equipe não cadastrada nesta competição!");
+		}
+
+		for (PapelUsuarioCompeticao papel : papelUsuarioCompeticaoRepositorio.findByCompeticaoCadastrada(competicao)) {
+			if (papel.getUsuario().getId() == idConsultor
+					&& papel.getTipoPapelUsuario().equals(TipoPapelUsuario.CONSULTOR)) {
+				equipe.setConsultor(usuario);
+				equipeRepositorio.save(equipe);
+				return;
+			}
+		}
+	}
+
+	public void deletarequipe(Integer idCompeticao, Integer idEquipe) throws Exception {
+		Equipe equipe = equipeRepositorio.findById(idEquipe).get();
+		if (equipe.getCompeticaoCadastrada().getId() == idCompeticao) {
+			equipe.setCompeticaoCadastrada(null);
+			equipeRepositorio.save(equipe);
+			return;
+		} else {
+			throw new NotFoundException("Equipe não cadastrada nesta competição!");
+		}
 	}
 }

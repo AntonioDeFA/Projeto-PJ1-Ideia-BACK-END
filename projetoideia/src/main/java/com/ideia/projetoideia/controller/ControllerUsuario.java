@@ -16,11 +16,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Usuario;
+import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
+import com.ideia.projetoideia.model.dto.ConviteDto;
 import com.ideia.projetoideia.model.dto.EmailDto;
 import com.ideia.projetoideia.model.dto.UsuarioDto;
 import com.ideia.projetoideia.model.dto.UsuarioPatchDto;
@@ -115,6 +118,14 @@ public class ControllerUsuario {
 
 	}
 
+	@GetMapping("/competicoes/usuario-logado")
+	public List<CompeticaoEtapaVigenteDto> consultarMinhasCompeticoes(
+			@RequestParam(value = "nomeCompeticao", required = false) String nomeCompeticao,
+			@RequestParam(value = "mes", required = false) Integer mes,
+			@RequestParam(value = "ano", required = false) Integer ano) throws Exception {
+		return usuarioService.consultarMinhasCompeticoes(nomeCompeticao, mes, ano);
+	}
+
 	@PutMapping("/usuario/resetar-senha")
 	public @ResponseBody ResponseEntity<?> resetarSenha(@RequestBody EmailDto emailDto) {
 		System.out.println(emailDto.getEmail());
@@ -134,4 +145,31 @@ public class ControllerUsuario {
 
 	}
 
+	@GetMapping("/competicao/{idCompeticao}/usuarios-nao-relacionados")
+	public ResponseEntity<?> consultarUsuariosSemCompeticao(@PathVariable("idCompeticao") Integer idCompeticao) {
+		try {
+			return ResponseEntity.status(HttpStatus.CREATED).body(new IdeiaResponseFile("Criada com sucesso",
+					HttpStatus.CREATED, usuarioService.consultarUsuariosSemCompeticao(idCompeticao)));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+					new IdeiaResponseFile("Nenhum usuario foi encontrado", e.getMessage(), HttpStatus.BAD_REQUEST));
+		}
+	}
+	
+	@PostMapping("/competicao/convidar-usuario")
+	public ResponseEntity<?> convidarUsuario(@RequestBody ConviteDto conviteDto) {
+
+		try {
+			usuarioService.convidarUsuario(conviteDto);
+			return ResponseEntity.status(HttpStatus.CREATED)
+					.body(new IdeiaResponseFile("Usuario convidado com sucesso", HttpStatus.CREATED));
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new IdeiaResponseFile("Não foi possível convidar", e.getMessage(), HttpStatus.NOT_FOUND));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new IdeiaResponseFile("Não foi possível convidar", e.getMessage(), HttpStatus.BAD_REQUEST));
+		}
+
+	}
 }

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -14,27 +13,19 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.ideia.projetoideia.model.AvaliacaoPitch;
 import com.ideia.projetoideia.model.CategoriaMaterialEstudo;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Convite;
 import com.ideia.projetoideia.model.Etapa;
 import com.ideia.projetoideia.model.MaterialEstudo;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
-import com.ideia.projetoideia.model.Pitch;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.CompeticaoDadosGeraisDto;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPatchDto;
 import com.ideia.projetoideia.model.dto.CompeticaoPutDto;
 import com.ideia.projetoideia.model.dto.ConsultorEAvaliadorDto;
-import com.ideia.projetoideia.model.dto.ConviteDto;
-import com.ideia.projetoideia.model.dto.ConviteListaDto;
-import com.ideia.projetoideia.model.dto.ConviteRespostaDto;
-import com.ideia.projetoideia.model.dto.ConvitesquantidadeDto;
 import com.ideia.projetoideia.model.dto.EmailDto;
-import com.ideia.projetoideia.model.dto.EquipeNomeDto;
-import com.ideia.projetoideia.model.dto.EquipeNotaDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoDTO;
 import com.ideia.projetoideia.repository.AvaliacaoPitchRpositorio;
 import com.ideia.projetoideia.repository.CategoriaMaterialEstudoRepositorio;
@@ -45,9 +36,6 @@ import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.QuestaoAvaliativa;
 import com.ideia.projetoideia.model.dto.QuestoesAvaliativasDto;
 import com.ideia.projetoideia.model.dto.UsuarioConsultorDto;
-import com.ideia.projetoideia.model.dto.UsuarioNaoRelacionadoDTO;
-import com.ideia.projetoideia.model.enums.EtapaArtefatoPitch;
-import com.ideia.projetoideia.model.enums.StatusConvite;
 import com.ideia.projetoideia.model.enums.TipoConvite;
 import com.ideia.projetoideia.model.enums.TipoEtapa;
 import com.ideia.projetoideia.model.enums.TipoPapelUsuario;
@@ -201,6 +189,35 @@ public class CompeticaoService {
 		return competicaoRepositorio.findAll();
 	}
 
+	public List<ConsultorEAvaliadorDto> listarConsultoresEAaliadoresDeUmaCompeticao(Integer idCompeticao,
+			TipoConvite tipoConvite) throws Exception {
+		Competicao competicao = recuperarCompeticaoId(idCompeticao);
+		List<ConsultorEAvaliadorDto> consultoresDto = new ArrayList<ConsultorEAvaliadorDto>();
+
+		List<Convite> convites = conviteRepositorio.findByCompeticao(competicao);
+
+		for (Convite convite : convites) {
+
+			if (convite.getTipoConvite().equals(tipoConvite)) {
+				ConsultorEAvaliadorDto consultorDto = new ConsultorEAvaliadorDto(convite.getUsuario(),
+						convite.getStatusConvite());
+				consultoresDto.add(consultorDto);
+			}
+		}
+		return consultoresDto;
+
+//		List<Usuario> todosOsUsuarios = usuarioRepositorio.findAll();
+//		
+//		for (Usuario usuario : todosOsUsuarios) {
+//			if(usuarioRepositorio.listarSeUsuarioTemConvitesDeUmaCompeticao(idCompeticao, usuario.getId()).isEmpty()) {
+//				if(usuarioRepositorio.listarSeUsuarioTemRelacaoComCompeticao(idCompeticao, usuario.getId()).isEmpty()) {
+//					ConsultorDto consultorDto = new ConsultorDto(usuario,null);
+//					consultoresDto.add(consultorDto);
+//				}	
+//			}
+//		}
+	}
+
 	public Competicao recuperarCompeticaoId(Integer id) throws NotFoundException {
 		Optional<Competicao> comp = competicaoRepositorio.findById(id);
 
@@ -246,58 +263,6 @@ public class CompeticaoService {
 			competicoesDto.add(competicaoEtapaVigenteDto);
 		}
 		return competicoesDto;
-	}
-
-	public List<CompeticaoEtapaVigenteDto> consultarMinhasCompeticoes(String nomeCompeticao, Integer mes, Integer ano)
-			throws Exception {
-
-		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
-		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
-		List<CompeticaoEtapaVigenteDto> competicoesDto = new ArrayList<>();
-		List<Competicao> competicoes = competicaoRepositorioCustom.findByCompeticoesDoUsuario(nomeCompeticao, mes, ano,
-				usuario.getId());
-		for (Competicao competicao : competicoes) {
-			CompeticaoEtapaVigenteDto competicaoEtapaVigenteDto = new CompeticaoEtapaVigenteDto(competicao,
-					"COMPETICAO", usuario);
-			PapelUsuarioCompeticao papelUsuarioCompeticao = papelUsuarioCompeticaoRepositorio
-					.findById(papelUsuarioCompeticaoRepositorio.findByCompeticaoCadastradaAndUsuario(usuario.getId(),
-							competicao.getId()))
-					.get();
-			if (papelUsuarioCompeticao.getTipoPapelUsuario().equals(TipoPapelUsuario.COMPETIDOR)) {
-				competicaoEtapaVigenteDto.setIdEquipe(
-						equipeRepositorio.findByCompeticaoCadastradaAndUsuario(usuario.getId(), competicao.getId()));
-			}
-			competicoesDto.add(competicaoEtapaVigenteDto);
-		}
-		return competicoesDto;
-	}
-
-	public List<UsuarioNaoRelacionadoDTO> consultarUsuariosSemCompeticao(Integer idCompeticao) throws Exception {
-		List<UsuarioNaoRelacionadoDTO> usuarios = new ArrayList<UsuarioNaoRelacionadoDTO>();
-		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
-		List<PapelUsuarioCompeticao> papeis = papelUsuarioCompeticaoRepositorio.findByCompeticaoCadastrada(competicao);
-		for (Usuario usuarioRecuperado : usuarioRepositorio.findAll()) {
-			boolean entrou = false;
-			for (PapelUsuarioCompeticao papelUsuarioCompeticao : papeis) {
-				if (papelUsuarioCompeticao.getUsuario().getId() == usuarioRecuperado.getId()) {
-					entrou = true;
-				}
-			}
-			for (Convite convite : conviteRepositorio.findByUsuario(usuarioRecuperado)) {
-				if (convite.getUsuario().getId() == usuarioRecuperado.getId()
-						&& competicao.getId() == convite.getCompeticao().getId()) {
-					entrou = true;
-				}
-			}
-			if (!entrou) {
-				usuarios.add(new UsuarioNaoRelacionadoDTO(usuarioRecuperado));
-			}
-
-		}
-		if (usuarios.size() == 0) {
-			throw new Exception("Não existe nenhum usuario não cadastrado nessa competição.");
-		}
-		return usuarios;
 	}
 
 	public void deletarCompeticaoPorId(Integer id) throws Exception {
@@ -350,82 +315,6 @@ public class CompeticaoService {
 
 		return questoesAvaliativasDto;
 
-	}
-
-	public void convidarUsuario(ConviteDto conviteDto) throws Exception {
-
-		Competicao competicao = this.recuperarCompeticaoId(conviteDto.getIdCompeticao());
-
-		Usuario usuario = usuarioService.consultarUsuarioPorEmail(conviteDto.getEmailDoUsuario());
-
-		List<Convite> convites = conviteRepositorio.findAll();
-
-		for (Convite convi : convites) {
-			if (convi.getCompeticao().getId() == competicao.getId() && convi.getUsuario().getId() == usuario.getId()) {
-				throw new DuplicateKeyException("Usuário já possui convites para essa competição");
-			}
-		}
-
-		List<PapelUsuarioCompeticao> papeis = papelUsuarioCompeticaoRepositorio.findByCompeticaoCadastrada(competicao);
-
-		for (PapelUsuarioCompeticao papelUsuarioCompeticao : papeis) {
-
-			if (papelUsuarioCompeticao.getUsuario().getId() == usuario.getId()) {
-				throw new DuplicateKeyException("Usuário já possui ligação com essa competição");
-			}
-
-		}
-
-		Convite convite = new Convite();
-
-		competicao.getConvites().add(convite);
-
-		usuario.getConvites().add(convite);
-		convite.setCompeticao(competicao);
-
-		convite.setUsuario(usuario);
-
-		convite.setStatusConvite(StatusConvite.ENVIADO);
-		if (conviteDto.getTipoConvite().equals(TipoConvite.CONSULTOR)) {
-			convite.setTipoConvite(TipoConvite.CONSULTOR);
-		} else {
-			convite.setTipoConvite(TipoConvite.AVALIADOR);
-		}
-		competicaoRepositorio.save(competicao);
-
-		usuarioRepositorio.save(usuario);
-
-		enviarEmail.enviarEmailConviteUsuario(usuario, convite.getTipoConvite(), competicao);
-
-	}
-
-	public List<ConsultorEAvaliadorDto> listarConsultoresEAaliadoresDeUmaCompeticao(Integer idCompeticao,
-			TipoConvite tipoConvite) throws Exception {
-		Competicao competicao = recuperarCompeticaoId(idCompeticao);
-		List<ConsultorEAvaliadorDto> consultoresDto = new ArrayList<ConsultorEAvaliadorDto>();
-
-		List<Convite> convites = conviteRepositorio.findByCompeticao(competicao);
-
-		for (Convite convite : convites) {
-
-			if (convite.getTipoConvite().equals(tipoConvite)) {
-				ConsultorEAvaliadorDto consultorDto = new ConsultorEAvaliadorDto(convite.getUsuario(),
-						convite.getStatusConvite());
-				consultoresDto.add(consultorDto);
-			}
-		}
-		return consultoresDto;
-
-//		List<Usuario> todosOsUsuarios = usuarioRepositorio.findAll();
-//		
-//		for (Usuario usuario : todosOsUsuarios) {
-//			if(usuarioRepositorio.listarSeUsuarioTemConvitesDeUmaCompeticao(idCompeticao, usuario.getId()).isEmpty()) {
-//				if(usuarioRepositorio.listarSeUsuarioTemRelacaoComCompeticao(idCompeticao, usuario.getId()).isEmpty()) {
-//					ConsultorDto consultorDto = new ConsultorDto(usuario,null);
-//					consultoresDto.add(consultorDto);
-//				}	
-//			}
-//		}
 	}
 
 	public String recuperarRegulamentoCompeticao(Integer idCompeticao) throws Exception {
@@ -565,62 +454,6 @@ public class CompeticaoService {
 		return questaoAvaliativas;
 	}
 
-	public List<ConviteListaDto> listarConvites(TipoConvite tipoConvite) throws Exception {
-		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
-		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
-
-		List<Convite> convitesRecuperada = conviteRepositorio.findByUsuario(usuario);
-
-		List<ConviteListaDto> convites = new ArrayList<ConviteListaDto>();
-
-		for (Convite convite : convitesRecuperada) {
-
-			if (convite.getTipoConvite().equals(tipoConvite)
-					&& convite.getStatusConvite().equals(StatusConvite.ENVIADO)) {
-				convites.add(new ConviteListaDto(convite));
-			}
-		}
-		if (convites.size() == 0) {
-			throw new Exception("Não existe nenhum convite para você ser consultor.");
-		}
-
-		return convites;
-	}
-
-	public void responderConvite(ConviteRespostaDto conviteRespostaDto) throws Exception {
-		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
-		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
-
-		List<Convite> convites = conviteRepositorio.findByUsuario(usuario);
-		if (!conviteRespostaDto.isAceito()) {
-			for (Convite convite : convites) {
-				if (convite.getCompeticao().getId() == conviteRespostaDto.getIdCompeticao()) {
-					conviteRepositorio.delete(convite);
-				}
-			}
-		} else {
-			for (Convite convite : convites) {
-				if (convite.getCompeticao().getId() == conviteRespostaDto.getIdCompeticao()) {
-					convite.setStatusConvite(StatusConvite.ACEITO);
-					conviteRepositorio.save(convite);
-
-					TipoPapelUsuario tipoPapelUsuario = TipoPapelUsuario.AVALIADOR;
-					if (convite.getTipoConvite().equals(TipoConvite.CONSULTOR)) {
-						tipoPapelUsuario = TipoPapelUsuario.CONSULTOR;
-					}
-
-					PapelUsuarioCompeticao papelUsuarioCompeticao = new PapelUsuarioCompeticao();
-					papelUsuarioCompeticao.setTipoPapelUsuario(tipoPapelUsuario);
-					papelUsuarioCompeticao.setUsuario(usuario);
-					papelUsuarioCompeticao.setCompeticaoCadastrada(
-							competicaoRepositorio.findById(conviteRespostaDto.getIdCompeticao()).get());
-
-					papelUsuarioCompeticaoRepositorio.save(papelUsuarioCompeticao);
-				}
-			}
-		}
-	}
-
 	public CompeticaoDadosGeraisDto listarDasdosGeraisCompeticao(Integer idCompeticao) throws Exception {
 		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
 		List<Etapa> estapas = etapaRepositorio.findByCompeticao(competicao);
@@ -630,40 +463,6 @@ public class CompeticaoService {
 		}
 
 		return new CompeticaoDadosGeraisDto(competicao, estapas);
-	}
-
-	public List<EquipeNotaDto> listarResultadosEquipesCompeticao(Integer idCompeticao) throws Exception {
-		List<EquipeNotaDto> equipes = new ArrayList<EquipeNotaDto>();
-		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
-		Float notaCompeticao = 0f;
-
-		for (QuestaoAvaliativa questaoAvaliativa : questaoAvaliativaRepositorio
-				.findByCompeticaoCadastrada(competicao)) {
-			notaCompeticao += questaoAvaliativa.getNotaMax();
-		}
-
-		for (Equipe equipe : equipeRepositorio.findByCompeticaoCadastrada(competicao)) {
-			Float notaEquipe = 0f;
-			for (Pitch pitch : pitchRepositorio.findByEquipe(equipe)) {
-				if (pitch.getEtapaAvaliacaoVideo().equals(EtapaArtefatoPitch.APROVADO)) {
-					for (AvaliacaoPitch avaliacao : avaliacaoPitchRpositorio.findByPitch(pitch)) {
-						notaEquipe += avaliacao.getNotaAtribuida();
-					}
-				}
-			}
-			equipes.add(new EquipeNotaDto(equipe.getNomeEquipe(), notaEquipe, notaCompeticao, equipe.getId()));
-		}
-		return equipes;
-	}
-
-	public List<EquipeNomeDto> listarEquipesCompeticao(Integer idCompeticao) throws Exception {
-		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
-		List<EquipeNomeDto> equipes = new ArrayList<EquipeNomeDto>();
-
-		for (Equipe equipe : equipeRepositorio.findByCompeticaoCadastrada(competicao)) {
-			equipes.add(new EquipeNomeDto(equipe.getId(), equipe.getNomeEquipe()));
-		}
-		return equipes;
 	}
 
 	public List<UsuarioConsultorDto> listarConsultoresCompeticao(Integer idCompeticao) throws Exception {
@@ -676,57 +475,5 @@ public class CompeticaoService {
 			}
 		}
 		return usuario;
-	}
-
-	public void deletarequipe(Integer idCompeticao, Integer idEquipe) throws Exception {
-		Equipe equipe = equipeRepositorio.findById(idEquipe).get();
-		if (equipe.getCompeticaoCadastrada().getId() == idCompeticao) {
-			equipe.setCompeticaoCadastrada(null);
-			equipeRepositorio.save(equipe);
-			return;
-		} else {
-			throw new NotFoundException("Equipe não cadastrada nesta competição!");
-		}
-	}
-
-	public void adicionarConsultorEquipe(Integer idCompeticao, Integer idEquipe, Integer idConsultor) throws Exception {
-		Competicao competicao = competicaoRepositorio.findById(idCompeticao).get();
-		Usuario usuario = usuarioRepositorio.findById(idConsultor).get();
-		Equipe equipe = equipeRepositorio.findById(idEquipe).get();
-
-		if (equipe.getCompeticaoCadastrada().getId() != idCompeticao) {
-			throw new Exception("Equipe não cadastrada nesta competição!");
-		}
-
-		for (PapelUsuarioCompeticao papel : papelUsuarioCompeticaoRepositorio.findByCompeticaoCadastrada(competicao)) {
-			if (papel.getUsuario().getId() == idConsultor
-					&& papel.getTipoPapelUsuario().equals(TipoPapelUsuario.CONSULTOR)) {
-				equipe.setConsultor(usuario);
-				equipeRepositorio.save(equipe);
-				return;
-			}
-		}
-	}
-
-	public ConvitesquantidadeDto listarQuantidadeConvites(String tipoConvite) throws Exception {
-		TipoConvite tipoConviteEnum = TipoConvite.CONSULTOR;
-
-		if (tipoConvite.toUpperCase().equals("AVALIADOR")) {
-			tipoConviteEnum = TipoConvite.AVALIADOR;
-		}
-
-		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
-		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
-
-		List<Convite> convitesRecuperados = conviteRepositorio.findByUsuario(usuario);
-
-		ConvitesquantidadeDto quantidadeConvites = new ConvitesquantidadeDto(0);
-		for (Convite convite : convitesRecuperados) {
-			if (convite.getTipoConvite().equals(tipoConviteEnum)
-					&& convite.getStatusConvite().equals(StatusConvite.ENVIADO)) {
-				quantidadeConvites.agregar();
-			}
-		}
-		return quantidadeConvites;
 	}
 }
