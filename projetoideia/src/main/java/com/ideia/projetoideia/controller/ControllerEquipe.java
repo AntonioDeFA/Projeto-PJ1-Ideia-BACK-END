@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
+import com.ideia.projetoideia.model.dto.LeanCanvasDto;
 import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.EquipeService;
 
@@ -88,6 +90,16 @@ public class ControllerEquipe {
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new IdeiaResponseFile("Não foi possível deletar", e.getMessage(), HttpStatus.BAD_REQUEST));
+		}
+	}
+
+	@GetMapping("/equipe/{idEquipe}/lean-canvas/elaboracao")
+	public LeanCanvasDto getLeanCanvasElaboracao(@PathVariable("idEquipe") Integer idEquipe) {
+
+		try {
+			return equipeService.recuperarLeanCanvasElaboracao(idEquipe);
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
 	}
 

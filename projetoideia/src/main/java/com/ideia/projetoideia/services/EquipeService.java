@@ -15,15 +15,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.ideia.projetoideia.model.Equipe;
-
+import com.ideia.projetoideia.model.LeanCanvas;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.UsuarioMembroComum;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
 import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
+import com.ideia.projetoideia.model.dto.LeanCanvasDto;
 import com.ideia.projetoideia.model.dto.UsuarioDto;
+import com.ideia.projetoideia.model.enums.EtapaArtefatoPitch;
 import com.ideia.projetoideia.model.enums.TipoPapelUsuario;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.EquipeRepositorio;
+import com.ideia.projetoideia.repository.LeanCanvasRepositorio;
 import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
 import com.ideia.projetoideia.repository.UsuarioMembroComumRepositorio;
 import com.ideia.projetoideia.services.utils.GeradorEquipeToken;
@@ -48,27 +51,32 @@ public class EquipeService {
 	@Autowired
 	private UsuarioMembroComumRepositorio usuarioMembroComumRepositorio;
 
+	@Autowired
+	private LeanCanvasRepositorio leanCanvasRepositorio;
+
 	public void criarEquipe(EquipeDtoCriacao equipeDto) throws Exception {
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
-		
+
 		List<String> lista = new ArrayList<String>();
-		for(UsuarioDto user: equipeDto.getUsuarios()) {
+		for (UsuarioDto user : equipeDto.getUsuarios()) {
 			lista.add(user.getEmail());
 		}
-		
+
 		StringBuilder erros = new StringBuilder();
-		
-		if(equipeRepositorio.validarUsuarioLiderEOrganizador(usuario.getId(), equipeDto.getIdCompeticao())> 0){
-			erros.append("Observe se você não é o organizador desta competição ou se já não está inscrito nesta competição. ");
+
+		if (equipeRepositorio.validarUsuarioLiderEOrganizador(usuario.getId(), equipeDto.getIdCompeticao()) > 0) {
+			erros.append(
+					"Observe se você não é o organizador desta competição ou se já não está inscrito nesta competição. ");
 		}
-		if(equipeRepositorio.validarNomeDeEquipe(equipeDto.getNomeEquipe(), equipeDto.getIdCompeticao()) > 0) {
-			erros.append("Já existe uma equipe inscrita nesta competição com este nome. Por gentiliza, escolha outro nome para sua equipe. ");
+		if (equipeRepositorio.validarNomeDeEquipe(equipeDto.getNomeEquipe(), equipeDto.getIdCompeticao()) > 0) {
+			erros.append(
+					"Já existe uma equipe inscrita nesta competição com este nome. Por gentiliza, escolha outro nome para sua equipe. ");
 		}
-		if(equipeRepositorio.validarMembrosDeUmaEquipeEmUmaCompeticao(lista, equipeDto.getIdCompeticao())> 0){
+		if (equipeRepositorio.validarMembrosDeUmaEquipeEmUmaCompeticao(lista, equipeDto.getIdCompeticao()) > 0) {
 			erros.append("Algum usuário de sua equipe já está participando dessa competição em outra equipe. ");
 		}
-		
+
 		if (erros.length() != 0) {
 			throw new Exception(erros.toString());
 		}
@@ -155,5 +163,19 @@ public class EquipeService {
 			}
 		}
 		equipeRepositorio.delete(equipe);
+	}
+
+	public LeanCanvasDto recuperarLeanCanvasElaboracao(Integer idEquipe) throws NotFoundException {
+		this.recuperarEquipe(idEquipe);
+		
+		LeanCanvas LeanCanvas = leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe,
+				EtapaArtefatoPitch.EM_ELABORACAO.getValue());
+
+		if (LeanCanvas == null) {
+			throw new NotFoundException("Não existe lean canvas em elaboração para esta equipe");
+		}
+
+		return new LeanCanvasDto(LeanCanvas);
+
 	}
 }
