@@ -1,10 +1,11 @@
 package com.ideia.projetoideia.model.dto;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Equipe;
-import com.ideia.projetoideia.model.Usuario;
+import com.ideia.projetoideia.model.UsuarioMembroComum;
 
 import lombok.Data;
 
@@ -19,22 +20,22 @@ public class EquipeComEtapaDTO {
 
 	private LocalDate dataInscricao;
 
-	private Usuario lider;
+	private Integer idLider;
 
-	private Usuario consultor;
-
-	private Competicao competicaoCadastrada;
+	private Integer idCompeticaoCadastrada;
 	
 	private String etapaVigenteStr;
+	
+	private List<UsuarioMembroComum> usuarios = new ArrayList<>();
 
-	public EquipeComEtapaDTO(Equipe equipe, String etapaVigenteStr) {
+	public EquipeComEtapaDTO(Equipe equipe, String etapaVigenteStr,List<UsuarioMembroComum> usuarios) {
 		this.id = equipe.getId();
 		this.nomeEquipe = equipe.getNomeEquipe();
 		this.token = equipe.getToken();
 		this.dataInscricao = equipe.getDataInscricao();
-		this.lider = equipe.getLider();
-		this.consultor = equipe.getConsultor();
-		this.competicaoCadastrada = equipe.getCompeticaoCadastrada();
+		this.idLider = equipe.getLider().getId();
+		this.idCompeticaoCadastrada = equipe.getCompeticaoCadastrada().getId();
+		this.usuarios = usuarios;
 		this.etapaVigenteStr = etapaVigenteStr;
 	}
 

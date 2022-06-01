@@ -286,7 +286,7 @@ public class EquipeService {
 		} else if (competicao.getIsElaboracao()) {
 			etapaVigenteStr = "ELABORACAO";
 		}
-		return new EquipeComEtapaDTO(equipe, etapaVigenteStr);
+		return new EquipeComEtapaDTO(equipe, etapaVigenteStr,usuarioMembroComumRepositorio.findByEquipe(equipe));
 	}
 
 	public void removerMembroEquipe(Integer idEquipe, String email) throws Exception {
