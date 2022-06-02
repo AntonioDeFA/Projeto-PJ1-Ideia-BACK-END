@@ -293,7 +293,7 @@ public class EquipeService {
 		Equipe equipe = equipeRepositorio.findById(idEquipe).get();
 		List<UsuarioMembroComum> usuariosMembroComum = usuarioMembroComumRepositorio.findByEquipe(equipe);
 		if (usuariosMembroComum.size() == equipe.getCompeticaoCadastrada().getQntdMinimaMembrosPorEquipe()) {
-			throw new NotFoundException("Quantidade minima de membros ja atingida!");
+			throw new NotFoundException("Você não pode ir além do limite mínimo de membros por equipe desta competição.");
 		}
 		for (UsuarioMembroComum usuarioMembroComum : usuariosMembroComum) {
 			if (usuarioMembroComum.getEmail().equals(email)) {
