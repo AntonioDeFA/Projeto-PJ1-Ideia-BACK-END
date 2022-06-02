@@ -310,4 +310,36 @@ public class EquipeService {
 		equipe.setNomeEquipe(nome);
 		equipeRepositorio.save(equipe);
 	}
+
+	public void atualizarLeanCanvas(Integer idEquipe, LeanCanvasDto leanCanvasDto) throws Exception {
+		recuperarEquipe(idEquipe);
+
+		Optional<LeanCanvas> canvas = leanCanvasRepositorio.findById(leanCanvasDto.getId());
+
+		if (canvas.isEmpty()) {
+			throw new Exception("O canvas passado não existe");
+		}
+		LeanCanvas leanCanvas = canvas.get();
+
+		if (leanCanvas.getEquipe().getId() != idEquipe) {
+			throw new Exception("Essa equipe não possuí esse lean canvas ");
+		}
+
+		if (!leanCanvas.getEtapaSolucaoCanvas().equals(EtapaArtefatoPitch.EM_ELABORACAO)) {
+			throw new Exception("O canvas passado não está na etapa de elaboração");
+		}
+
+		leanCanvas.setProblema(leanCanvasDto.getProblema());
+		leanCanvas.setSolucao(leanCanvasDto.getSolucao());
+		leanCanvas.setMetricasChave(leanCanvasDto.getMetricasChave());
+		leanCanvas.setPropostaValor(leanCanvasDto.getPropostaValor());
+		leanCanvas.setVantagemCompetitiva(leanCanvasDto.getVantagemCompetitiva());
+		leanCanvas.setCanais(leanCanvasDto.getCanais());
+		leanCanvas.setSegmentosDeClientes(leanCanvasDto.getSegmentosDeClientes());
+		leanCanvas.setEstruturaDeCusto(leanCanvasDto.getEstruturaDeCusto());
+		leanCanvas.setFontesDeReceita(leanCanvasDto.getFontesDeReceita());
+
+		leanCanvasRepositorio.save(leanCanvas);
+
+	}
 }

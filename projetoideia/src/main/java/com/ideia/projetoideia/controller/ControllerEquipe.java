@@ -1,5 +1,6 @@
 package com.ideia.projetoideia.controller;
 
+
 import java.util.List;
 
 import javax.validation.Valid;
@@ -196,5 +197,19 @@ public class ControllerEquipe {
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
+	}
+	
+	@PutMapping("/equipe/{idEquipe}/lean-canvas")
+	public ResponseEntity<?> putLeanCanvas(@PathVariable("idEquipe")Integer idEquipe, 
+			@RequestBody LeanCanvasDto leanCanvasDto){
+		try {
+			equipeService.atualizarLeanCanvas(idEquipe,leanCanvasDto);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("Lean canvas atualizado com sucesso !", HttpStatus.OK));
+		}catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("ERRO",e.getMessage(), HttpStatus.BAD_REQUEST));
+		}
+		
 	}
 }

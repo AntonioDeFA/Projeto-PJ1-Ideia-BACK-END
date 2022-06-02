@@ -46,4 +46,8 @@ public class LeanCanvasDto {
 		this.etapaSolucaoCanvas = canvas.getEtapaSolucaoCanvas();
 		
 	}
+	
+	public LeanCanvasDto() {
+		
+	}
 }

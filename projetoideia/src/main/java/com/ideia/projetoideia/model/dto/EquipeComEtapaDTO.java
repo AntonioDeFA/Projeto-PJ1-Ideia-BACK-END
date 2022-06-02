@@ -20,23 +20,35 @@ public class EquipeComEtapaDTO {
 
 	private LocalDate dataInscricao;
 
-	private Integer idLider;
-
 	private Integer idCompeticaoCadastrada;
 	
 	private String etapaVigenteStr;
 	
-	private List<UsuarioMembroComum> usuarios = new ArrayList<>();
+	private List<UsuarioDto> usuarios = new ArrayList<>();
 
 	public EquipeComEtapaDTO(Equipe equipe, String etapaVigenteStr,List<UsuarioMembroComum> usuarios) {
 		this.id = equipe.getId();
 		this.nomeEquipe = equipe.getNomeEquipe();
 		this.token = equipe.getToken();
 		this.dataInscricao = equipe.getDataInscricao();
-		this.idLider = equipe.getLider().getId();
 		this.idCompeticaoCadastrada = equipe.getCompeticaoCadastrada().getId();
-		this.usuarios = usuarios;
 		this.etapaVigenteStr = etapaVigenteStr;
+		
+		UsuarioDto u  = new UsuarioDto();
+		u.setEmail(equipe.getLider().getEmail());
+		u.setNomeUsuario(equipe.getLider().getNomeUsuario());
+		u.setId(equipe.getLider().getId());
+		this.usuarios.add(u);
+		
+		for (UsuarioMembroComum usuarioMembroComum : usuarios) {
+			UsuarioDto user = new UsuarioDto();
+			user.setEmail(usuarioMembroComum.getEmail());
+			user.setNomeUsuario(usuarioMembroComum.getNome());
+			user.setId(usuarioMembroComum.getId());
+			this.usuarios.add(user);
+		}
+		
+		
 	}
 
 }
