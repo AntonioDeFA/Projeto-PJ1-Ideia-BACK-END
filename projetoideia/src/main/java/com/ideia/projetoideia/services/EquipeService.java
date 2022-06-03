@@ -305,7 +305,7 @@ public class EquipeService {
 	public void patchNomeEquipe(Integer idEquipe, String nome) throws Exception {
 		Equipe equipe = equipeRepositorio.findById(idEquipe).get();
 		if (equipeRepositorio.validarNomeDeEquipe(nome, equipe.getCompeticaoCadastrada().getId()) > 0) {
-			throw new Exception("Ja existe equipe com esse nome!");
+			throw new Exception("Já existe uma equipe com este nome nesta competição.");
 		}
 		equipe.setNomeEquipe(nome);
 		equipeRepositorio.save(equipe);
