@@ -292,7 +292,7 @@ public class EquipeService {
 	public void removerMembroEquipe(Integer idEquipe, String email) throws Exception {
 		Equipe equipe = equipeRepositorio.findById(idEquipe).get();
 		List<UsuarioMembroComum> usuariosMembroComum = usuarioMembroComumRepositorio.findByEquipe(equipe);
-		if (usuariosMembroComum.size() == equipe.getCompeticaoCadastrada().getQntdMinimaMembrosPorEquipe()) {
+		if (usuariosMembroComum.size() + 1 == equipe.getCompeticaoCadastrada().getQntdMinimaMembrosPorEquipe()) {
 			throw new NotFoundException("Você não pode ir além do limite mínimo de membros por equipe desta competição.");
 		}
 		for (UsuarioMembroComum usuarioMembroComum : usuariosMembroComum) {
