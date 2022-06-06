@@ -51,6 +51,17 @@ public class CompeticaoEtapaVigenteDto {
 		this.quantidadeDeEquipes = competicao.getEquipesCadastradas().size();
 
 		LocalDate hoje = LocalDate.now();
+		
+		Etapa etapaInscricao = null;
+		
+		for (int i = 0; i < competicao.getEtapas().size(); i++) {
+			Etapa etapa = competicao.getEtapas().get(i);
+			if (etapa.getTipoEtapa().equals(TipoEtapa.INSCRICAO)) {
+				etapaInscricao = etapa;
+				break;
+			}
+			
+		}
 
 		if (valid.equals("INSCRICAO")) {
 			for (Etapa etapa : competicao.getEtapas()) {
@@ -67,7 +78,7 @@ public class CompeticaoEtapaVigenteDto {
 				}
 			}
 
-			if (hoje.isBefore(competicao.getEtapas().get(0).getDataInicio()) && !competicao.getIsElaboracao()) {
+			if (hoje.isBefore(etapaInscricao.getDataInicio()) && !competicao.getIsElaboracao()) {
 				this.etapaVigenteStr = "NAO_INICIADA";
 			} else if (!competicao.getIsElaboracao()) {
 				for (Etapa etapa : competicao.getEtapas()) {
