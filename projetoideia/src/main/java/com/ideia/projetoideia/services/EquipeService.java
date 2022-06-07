@@ -286,14 +286,35 @@ public class EquipeService {
 		} else if (competicao.getIsElaboracao()) {
 			etapaVigenteStr = "ELABORACAO";
 		}
-		return new EquipeComEtapaDTO(equipe, etapaVigenteStr,usuarioMembroComumRepositorio.findByEquipe(equipe));
+		return new EquipeComEtapaDTO(equipe, etapaVigenteStr, usuarioMembroComumRepositorio.findByEquipe(equipe));
+	}
+
+	public void criarLeanCanvas(Integer idEquipe) throws Exception {
+
+		Equipe equipe = recuperarEquipe(idEquipe);
+
+		if (leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe, EtapaArtefatoPitch.EM_ELABORACAO.getValue()) != null) {
+			throw new Exception("Já existe um lean canvas na etapa de elaboração para esta equipe");
+		}
+
+		LeanCanvas leanCanvas = new LeanCanvas();
+
+		leanCanvas.setEtapaSolucaoCanvas(EtapaArtefatoPitch.EM_ELABORACAO);
+
+		equipe.getCanvasDaEquipe().add(leanCanvas);
+
+		equipeRepositorio.save(equipe);
+		leanCanvas.setEquipe(equipe);
+
+		leanCanvasRepositorio.save(leanCanvas);
 	}
 
 	public void removerMembroEquipe(Integer idEquipe, String email) throws Exception {
 		Equipe equipe = equipeRepositorio.findById(idEquipe).get();
 		List<UsuarioMembroComum> usuariosMembroComum = usuarioMembroComumRepositorio.findByEquipe(equipe);
 		if (usuariosMembroComum.size() + 1 == equipe.getCompeticaoCadastrada().getQntdMinimaMembrosPorEquipe()) {
-			throw new NotFoundException("Você não pode ir além do limite mínimo de membros por equipe desta competição.");
+			throw new NotFoundException(
+					"Você não pode ir além do limite mínimo de membros por equipe desta competição.");
 		}
 		for (UsuarioMembroComum usuarioMembroComum : usuariosMembroComum) {
 			if (usuarioMembroComum.getEmail().equals(email)) {
@@ -309,6 +330,40 @@ public class EquipeService {
 		}
 		equipe.setNomeEquipe(nome);
 		equipeRepositorio.save(equipe);
+	}
+
+	public LeanCanvasDto enviarLeanCanvasParaConsultoria(Integer idEquipe) throws Exception {
+
+		Equipe equipe = recuperarEquipe(idEquipe);
+
+		if (leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe,
+				EtapaArtefatoPitch.EM_CONSULTORIA.getValue()) != null) {
+			throw new Exception("Essa equipe já possíu um lean canvas que está em consultoria");
+		}
+
+		LeanCanvas leanCanvasConsultoria = leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe,
+				EtapaArtefatoPitch.EM_ELABORACAO.getValue());
+
+		leanCanvasConsultoria.setEtapaSolucaoCanvas(EtapaArtefatoPitch.EM_CONSULTORIA);
+
+		leanCanvasRepositorio.save(leanCanvasConsultoria);
+
+		LeanCanvas leanCanvas = new LeanCanvas(leanCanvasConsultoria);
+
+		leanCanvas.setEtapaSolucaoCanvas(EtapaArtefatoPitch.EM_ELABORACAO);
+
+		equipe.getCanvasDaEquipe().add(leanCanvas);
+
+		equipeRepositorio.save(equipe);
+		leanCanvas.setEquipe(equipe);
+
+		leanCanvasRepositorio.save(leanCanvas);
+
+		LeanCanvasDto leanCanvasDto = new LeanCanvasDto(
+				leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe, EtapaArtefatoPitch.EM_ELABORACAO.getValue()));
+
+		return leanCanvasDto;
+
 	}
 
 	public void atualizarLeanCanvas(Integer idEquipe, LeanCanvasDto leanCanvasDto) throws Exception {

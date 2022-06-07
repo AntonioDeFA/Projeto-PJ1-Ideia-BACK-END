@@ -44,7 +44,6 @@ public class LeanCanvasDto {
 		this.estruturaDeCusto = canvas.getEstruturaDeCusto();
 		this.fontesDeReceita = canvas.getFontesDeReceita();
 		this.etapaSolucaoCanvas = canvas.getEtapaSolucaoCanvas();
-		
 	}
 	
 	public LeanCanvasDto() {

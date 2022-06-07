@@ -1,6 +1,5 @@
 package com.ideia.projetoideia.controller;
 
-
 import java.util.List;
 
 import javax.validation.Valid;
@@ -198,18 +197,47 @@ public class ControllerEquipe {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}
-	
+
 	@PutMapping("/equipe/{idEquipe}/lean-canvas")
-	public ResponseEntity<?> putLeanCanvas(@PathVariable("idEquipe")Integer idEquipe, 
-			@RequestBody LeanCanvasDto leanCanvasDto){
+	public ResponseEntity<?> putLeanCanvas(@PathVariable("idEquipe") Integer idEquipe,
+			@RequestBody LeanCanvasDto leanCanvasDto) {
 		try {
-			equipeService.atualizarLeanCanvas(idEquipe,leanCanvasDto);
+			equipeService.atualizarLeanCanvas(idEquipe, leanCanvasDto);
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new IdeiaResponseFile("Lean canvas atualizado com sucesso !", HttpStatus.OK));
-		}catch (Exception e) {
+		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(new IdeiaResponseFile("ERRO",e.getMessage(), HttpStatus.BAD_REQUEST));
+					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
 		}
-		
+
+	}
+
+	@PostMapping("/equipe/{idEquipe}/lean-canvas")
+	public ResponseEntity<?> criarLeanCanvas(@PathVariable("idEquipe") Integer idEquipe) {
+
+		try {
+			equipeService.criarLeanCanvas(idEquipe);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("Lean canvas criado com sucesso !", HttpStatus.CREATED));
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.NOT_FOUND));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
+		}
+
+	}
+	
+	@PostMapping("/equipe/{idEquipe}/lean-canvas/enviar-consultoria")
+	public LeanCanvasDto enviarLeanCanvasConsultoria(@PathVariable("idEquipe") Integer idEquipe ) {
+		 
+		try {
+			return equipeService.enviarLeanCanvasParaConsultoria(idEquipe);
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		}catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
 	}
 }

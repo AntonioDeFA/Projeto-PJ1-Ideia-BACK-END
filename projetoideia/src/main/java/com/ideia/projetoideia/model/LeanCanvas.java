@@ -64,5 +64,24 @@ public class LeanCanvas {
 	@OneToMany(mappedBy = "leanCanvas", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	private List<FeedbackAvaliativo> feedbackAvaliativos = new ArrayList<>();
+	
+	
+	public LeanCanvas(LeanCanvas canvas) {
+		
+		this.problema = canvas.getProblema();
+		this.solucao = canvas.getSolucao();
+		this.metricasChave = canvas.getMetricasChave();
+		this.propostaValor = canvas.getPropostaValor();
+		this.vantagemCompetitiva =canvas.getVantagemCompetitiva();
+		this.canais = canvas.getCanais();
+		this.segmentosDeClientes = canvas.getSegmentosDeClientes();
+		this.estruturaDeCusto = canvas.getEstruturaDeCusto();
+		this.fontesDeReceita = canvas.getFontesDeReceita();
+		this.etapaSolucaoCanvas = canvas.getEtapaSolucaoCanvas();
+		
+	}
+	
+	public LeanCanvas() {}
+	
 
 }
