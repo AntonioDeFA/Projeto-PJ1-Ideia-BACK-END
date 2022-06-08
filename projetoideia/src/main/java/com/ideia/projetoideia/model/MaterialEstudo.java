@@ -39,6 +39,9 @@ public class MaterialEstudo {
 
 	@Enumerated(EnumType.STRING)
 	private TipoMaterialEstudo tipoMaterialEstudo;
+	
+	@Column(name = "nome")
+	private String nomeMaterial;
 
 	@Lob
 	@Column(name = "arquivo_estudo")
