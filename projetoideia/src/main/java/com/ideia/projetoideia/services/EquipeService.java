@@ -232,7 +232,7 @@ public class EquipeService {
 		List<EquipeNomeDto> equipes = new ArrayList<EquipeNomeDto>();
 
 		for (Equipe equipe : equipeRepositorio.findByCompeticaoCadastrada(competicao)) {
-			equipes.add(new EquipeNomeDto(equipe.getId(), equipe.getNomeEquipe()));
+			equipes.add(new EquipeNomeDto(equipe.getId(), equipe.getNomeEquipe(), equipe.getConsultor()));
 		}
 		return equipes;
 	}
