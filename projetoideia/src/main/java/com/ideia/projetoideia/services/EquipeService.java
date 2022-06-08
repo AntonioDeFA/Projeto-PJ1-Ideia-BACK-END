@@ -321,6 +321,8 @@ public class EquipeService {
 				usuarioMembroComumRepositorio.delete(usuarioMembroComum);
 			}
 		}
+		equipe.setToken(GeradorEquipeToken.gerarTokenEquipe(equipe.getNomeEquipe()));
+		equipeRepositorio.save(equipe);
 	}
 
 	public void patchNomeEquipe(Integer idEquipe, String nome) throws Exception {
