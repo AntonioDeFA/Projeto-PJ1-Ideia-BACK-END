@@ -15,6 +15,8 @@ public class MaterialEstudoDTO {
 	private String link;
 	
 	private String arquivoEstudo;
+	
+	private String nome;
 
 	public MaterialEstudoDTO(MaterialEstudo materialEstudo) {
 		super();
@@ -22,6 +24,7 @@ public class MaterialEstudoDTO {
 		this.tipoMaterialEstudo = materialEstudo.getTipoMaterialEstudo();
 		this.link = materialEstudo.getLink();
 		this.arquivoEstudo = materialEstudo.getArquivoEstudo();
+		this.nome = materialEstudo.getNomeMaterial();
 	}
 	
 }
