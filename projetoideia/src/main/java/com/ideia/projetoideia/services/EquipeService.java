@@ -313,7 +313,7 @@ public class EquipeService {
 		Equipe equipe = equipeRepositorio.findById(idEquipe).get();
 		List<UsuarioMembroComum> usuariosMembroComum = usuarioMembroComumRepositorio.findByEquipe(equipe);
 
-		if (usuariosMembroComum.size() == equipe.getCompeticaoCadastrada().getQntdMinimaMembrosPorEquipe()) {
+		if (usuariosMembroComum.size() + 1 == equipe.getCompeticaoCadastrada().getQntdMinimaMembrosPorEquipe()) {
 			throw new Exception("Você não pode ir além do limite mínimo de membros por equipe desta competição.");
 		}
 		boolean entrou = false;
