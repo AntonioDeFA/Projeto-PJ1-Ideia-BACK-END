@@ -181,8 +181,12 @@ public class ControllerEquipe {
 			equipeService.removerMembroEquipe(idEquipe, email.getEmail());
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new IdeiaResponseFile("Membro removido com sucesso!", HttpStatus.OK));
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(HttpStatus.OK)
+			.body(new IdeiaResponseFile("ERRO ", e.getMessage(), HttpStatus.NOT_FOUND));
 		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
 		}
 	}
 
@@ -194,7 +198,8 @@ public class ControllerEquipe {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new IdeiaResponseFile("Membro removido com sucesso!", HttpStatus.OK));
 		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
 		}
 	}
 
@@ -228,15 +233,15 @@ public class ControllerEquipe {
 		}
 
 	}
-	
+
 	@PostMapping("/equipe/{idEquipe}/lean-canvas/enviar-consultoria")
-	public LeanCanvasDto enviarLeanCanvasConsultoria(@PathVariable("idEquipe") Integer idEquipe ) {
-		 
+	public LeanCanvasDto enviarLeanCanvasConsultoria(@PathVariable("idEquipe") Integer idEquipe) {
+
 		try {
 			return equipeService.enviarLeanCanvasParaConsultoria(idEquipe);
 		} catch (NotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-		}catch (Exception e) {
+		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}

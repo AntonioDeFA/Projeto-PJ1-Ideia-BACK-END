@@ -312,14 +312,19 @@ public class EquipeService {
 	public void removerMembroEquipe(Integer idEquipe, String email) throws Exception {
 		Equipe equipe = equipeRepositorio.findById(idEquipe).get();
 		List<UsuarioMembroComum> usuariosMembroComum = usuarioMembroComumRepositorio.findByEquipe(equipe);
-		if (usuariosMembroComum.size() + 1 == equipe.getCompeticaoCadastrada().getQntdMinimaMembrosPorEquipe()) {
-			throw new NotFoundException(
-					"Você não pode ir além do limite mínimo de membros por equipe desta competição.");
+
+		if (usuariosMembroComum.size() == equipe.getCompeticaoCadastrada().getQntdMinimaMembrosPorEquipe()) {
+			throw new Exception("Você não pode ir além do limite mínimo de membros por equipe desta competição.");
 		}
+		boolean entrou = false;
 		for (UsuarioMembroComum usuarioMembroComum : usuariosMembroComum) {
 			if (usuarioMembroComum.getEmail().equals(email)) {
 				usuarioMembroComumRepositorio.delete(usuarioMembroComum);
+				entrou = true;
 			}
+		}
+		if (!entrou) {
+			throw new NotFoundException("Nenhum membro foi encontrado com este email!");
 		}
 		equipe.setToken(GeradorEquipeToken.gerarTokenEquipe(equipe.getNomeEquipe()));
 		equipeRepositorio.save(equipe);
