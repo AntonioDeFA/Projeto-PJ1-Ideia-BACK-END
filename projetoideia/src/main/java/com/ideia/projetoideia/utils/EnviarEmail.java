@@ -6,6 +6,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
 import com.ideia.projetoideia.model.Competicao;
+import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.enums.TipoConvite;
 
@@ -33,6 +34,15 @@ public class EnviarEmail {
 		email.setSubject(MensagensEmail.CONVITE);
 		email.setText(MensagensEmail.montarCorpoConvidar(user, competicao, tipoConvite));
 
+		javaMailSender.send(email);
+	}
+	
+	public void enviarEmailExigindoConsultorParaEquipe(Equipe equipe) {
+		SimpleMailMessage email = new SimpleMailMessage();
+		email.setTo(equipe.getCompeticaoCadastrada().getOrganizador().getEmail());
+		email.setSubject(MensagensEmail.EXIGIR_CONSULTOR);
+		email.setText(MensagensEmail.montarCorpoExigirConsultor(equipe));
+		
 		javaMailSender.send(email);
 	}
 
