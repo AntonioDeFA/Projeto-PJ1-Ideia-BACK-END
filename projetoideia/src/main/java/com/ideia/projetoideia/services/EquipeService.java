@@ -42,6 +42,7 @@ import com.ideia.projetoideia.repository.QuestaoAvaliativaRepositorio;
 import com.ideia.projetoideia.repository.UsuarioMembroComumRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
 import com.ideia.projetoideia.services.utils.GeradorEquipeToken;
+import com.ideia.projetoideia.utils.EnviarEmail;
 
 import javassist.NotFoundException;
 
@@ -77,6 +78,9 @@ public class EquipeService {
 
 	@Autowired
 	private UsuarioRepositorio usuarioRepositorio;
+
+	@Autowired
+	private EnviarEmail enviarEmail;
 
 	public void criarEquipe(EquipeDtoCriacao equipeDto) throws Exception {
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
@@ -343,9 +347,18 @@ public class EquipeService {
 
 		Equipe equipe = recuperarEquipe(idEquipe);
 
+		
+
 		if (leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe,
 				EtapaArtefatoPitch.EM_CONSULTORIA.getValue()) != null) {
 			throw new Exception("Essa equipe já possíu um lean canvas que está em consultoria");
+		}
+		if (equipe.getConsultor() == null) {
+
+			enviarEmail.enviarEmailExigindoConsultorParaEquipe(equipe);
+
+			throw new Exception("Não foi possível enviar para consultoria, pois esta equipe não possui um consultor. "
+					+ "Já foi requisitado ao organizador um consultor para esta equipe. Por favor, aguarde e tente novamente mais tarde.");
 		}
 
 		LeanCanvas leanCanvasConsultoria = leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe,
