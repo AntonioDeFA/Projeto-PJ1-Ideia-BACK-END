@@ -31,6 +31,7 @@ import com.ideia.projetoideia.model.dto.EquipeNotaDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasDto;
 import com.ideia.projetoideia.model.dto.UsuarioDto;
 import com.ideia.projetoideia.model.enums.EtapaArtefatoPitch;
+import com.ideia.projetoideia.model.enums.TipoEtapa;
 import com.ideia.projetoideia.model.enums.TipoPapelUsuario;
 import com.ideia.projetoideia.repository.AvaliacaoPitchRpositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
@@ -277,8 +278,19 @@ public class EquipeService {
 		LocalDate hoje = LocalDate.now();
 		Competicao competicao = equipe.getCompeticaoCadastrada();
 		String etapaVigenteStr = "";
+		
+		Etapa etapaInscricao = null;
+		
+		for (int i = 0; i < competicao.getEtapas().size(); i++) {
+			Etapa etapa = competicao.getEtapas().get(i);
+			if (etapa.getTipoEtapa().equals(TipoEtapa.INSCRICAO)) {
+				etapaInscricao = etapa;
+				break;
+			}
+			
+		}
 
-		if (hoje.isBefore(competicao.getEtapas().get(0).getDataInicio()) && !competicao.getIsElaboracao()) {
+		if (hoje.isBefore(etapaInscricao.getDataInicio()) && !competicao.getIsElaboracao()) {
 			etapaVigenteStr = "NAO_INICIADA";
 		} else if (!competicao.getIsElaboracao()) {
 			for (Etapa etapa : competicao.getEtapas()) {
@@ -290,6 +302,7 @@ public class EquipeService {
 		} else if (competicao.getIsElaboracao()) {
 			etapaVigenteStr = "ELABORACAO";
 		}
+		
 		return new EquipeComEtapaDTO(equipe, etapaVigenteStr, usuarioMembroComumRepositorio.findByEquipe(equipe));
 	}
 
