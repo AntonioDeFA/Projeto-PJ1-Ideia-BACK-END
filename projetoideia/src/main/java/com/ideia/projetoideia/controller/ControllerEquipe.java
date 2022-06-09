@@ -29,6 +29,7 @@ import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
 import com.ideia.projetoideia.model.dto.EquipeNomeDto;
 import com.ideia.projetoideia.model.dto.EquipeNotaDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasDto;
+import com.ideia.projetoideia.model.dto.MaterialEstudoEnvioDto;
 import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.EquipeService;
 
@@ -244,5 +245,16 @@ public class ControllerEquipe {
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
+	}
+	
+	@GetMapping("/equipe/{idEquipe}/material-estudo")
+	public List<MaterialEstudoEnvioDto> getMateriaisDeEstudoEquipe(@PathVariable("idEquipe") Integer idEquipe){
+		
+		try {
+			return equipeService.getMateriasDeEstudoDeUmaEquipe(idEquipe);
+		}catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+		
 	}
 }

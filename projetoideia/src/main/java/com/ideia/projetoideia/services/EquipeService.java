@@ -19,6 +19,7 @@ import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.Etapa;
 import com.ideia.projetoideia.model.LeanCanvas;
+import com.ideia.projetoideia.model.MaterialEstudo;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.UsuarioMembroComum;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
@@ -29,14 +30,18 @@ import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
 import com.ideia.projetoideia.model.dto.EquipeNomeDto;
 import com.ideia.projetoideia.model.dto.EquipeNotaDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasDto;
+import com.ideia.projetoideia.model.dto.MaterialEstudoEnvioDto;
 import com.ideia.projetoideia.model.dto.UsuarioDto;
 import com.ideia.projetoideia.model.enums.EtapaArtefatoPitch;
 import com.ideia.projetoideia.model.enums.TipoEtapa;
 import com.ideia.projetoideia.model.enums.TipoPapelUsuario;
+import com.ideia.projetoideia.repository.AcessoMaterialEstudoRepositorio;
 import com.ideia.projetoideia.repository.AvaliacaoPitchRpositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.EquipeRepositorio;
+import com.ideia.projetoideia.repository.EtapaRepositorio;
 import com.ideia.projetoideia.repository.LeanCanvasRepositorio;
+import com.ideia.projetoideia.repository.MaterialEstudoRepositorio;
 import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
 import com.ideia.projetoideia.repository.PitchRepositorio;
 import com.ideia.projetoideia.repository.QuestaoAvaliativaRepositorio;
@@ -79,7 +84,15 @@ public class EquipeService {
 
 	@Autowired
 	private UsuarioRepositorio usuarioRepositorio;
-
+	
+	@Autowired
+	private EtapaRepositorio etapaRepositorio;
+	
+	@Autowired
+	private MaterialEstudoRepositorio materialEstudoRepositorio;
+	@Autowired
+	private AcessoMaterialEstudoRepositorio acessoMaterialEstudoRepositorio;
+	
 	@Autowired
 	private EnviarEmail enviarEmail;
 
@@ -430,4 +443,41 @@ public class EquipeService {
 		leanCanvasRepositorio.save(leanCanvas);
 
 	}
+	
+	public List<MaterialEstudoEnvioDto> getMateriasDeEstudoDeUmaEquipe(Integer idEquipe) throws Exception{
+		
+		Equipe equipe  =  recuperarEquipe(idEquipe);
+		
+		Etapa etapa = etapaRepositorio.findEtapaCompeticao(TipoEtapa.AQUECIMENTO.getValue(),equipe.getCompeticaoCadastrada().getId());
+		
+		System.out.println(etapa.getId());
+		
+		List<MaterialEstudo> materiasCompeticao = materialEstudoRepositorio.findByEtapa(etapa);
+		
+		System.out.println(materiasCompeticao.size());
+		
+		List<MaterialEstudoEnvioDto> envio = new ArrayList<>();
+		Boolean isConcluido = true;
+		
+		for (MaterialEstudo material : materiasCompeticao) {
+			
+		
+			if(acessoMaterialEstudoRepositorio.findByEquipeEMaterialEstudo(idEquipe,material.getId()).isPresent()) {
+				isConcluido = true;
+			}
+			
+			else {
+				isConcluido = false;
+			}
+			
+			MaterialEstudoEnvioDto materialEnvio = new MaterialEstudoEnvioDto(material, isConcluido);
+			envio.add(materialEnvio);
+			
+		}
+	
+		return envio;
+		
+		
+	}
+	
 }
