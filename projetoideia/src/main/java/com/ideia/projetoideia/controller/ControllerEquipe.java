@@ -182,10 +182,10 @@ public class ControllerEquipe {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new IdeiaResponseFile("Membro removido com sucesso!", HttpStatus.OK));
 		} catch (NotFoundException e) {
-			return ResponseEntity.status(HttpStatus.OK)
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 			.body(new IdeiaResponseFile("ERRO ", e.getMessage(), HttpStatus.NOT_FOUND));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.OK)
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
 		}
 	}
@@ -198,7 +198,7 @@ public class ControllerEquipe {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new IdeiaResponseFile("Membro removido com sucesso!", HttpStatus.OK));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.OK)
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
 		}
 	}
@@ -211,7 +211,7 @@ public class ControllerEquipe {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new IdeiaResponseFile("Lean canvas atualizado com sucesso !", HttpStatus.OK));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.OK)
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
 		}
 
@@ -225,10 +225,10 @@ public class ControllerEquipe {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new IdeiaResponseFile("Lean canvas criado com sucesso !", HttpStatus.CREATED));
 		} catch (NotFoundException e) {
-			return ResponseEntity.status(HttpStatus.OK)
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.NOT_FOUND));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.OK)
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
 		}
 
