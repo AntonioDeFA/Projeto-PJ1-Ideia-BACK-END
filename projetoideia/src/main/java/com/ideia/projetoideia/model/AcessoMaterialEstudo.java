@@ -1,7 +1,6 @@
 package com.ideia.projetoideia.model;
 
-
-import java.sql.Date;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,7 +23,7 @@ public class AcessoMaterialEstudo {
 	private Integer id;
 	
 	@Column(name = "tb_data_acesso")
-	private Date dataAcesso;
+	private LocalDate dataAcesso;
 	
 	@ManyToOne
 	@JoinColumn(name = "equipe_fk")

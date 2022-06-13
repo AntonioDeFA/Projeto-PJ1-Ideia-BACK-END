@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.ideia.projetoideia.model.AcessoMaterialEstudo;
 import com.ideia.projetoideia.model.AvaliacaoPitch;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Equipe;
@@ -84,15 +85,15 @@ public class EquipeService {
 
 	@Autowired
 	private UsuarioRepositorio usuarioRepositorio;
-	
+
 	@Autowired
 	private EtapaRepositorio etapaRepositorio;
-	
+
 	@Autowired
 	private MaterialEstudoRepositorio materialEstudoRepositorio;
 	@Autowired
 	private AcessoMaterialEstudoRepositorio acessoMaterialEstudoRepositorio;
-	
+
 	@Autowired
 	private EnviarEmail enviarEmail;
 
@@ -291,16 +292,16 @@ public class EquipeService {
 		LocalDate hoje = LocalDate.now();
 		Competicao competicao = equipe.getCompeticaoCadastrada();
 		String etapaVigenteStr = "";
-		
+
 		Etapa etapaInscricao = null;
-		
+
 		for (int i = 0; i < competicao.getEtapas().size(); i++) {
 			Etapa etapa = competicao.getEtapas().get(i);
 			if (etapa.getTipoEtapa().equals(TipoEtapa.INSCRICAO)) {
 				etapaInscricao = etapa;
 				break;
 			}
-			
+
 		}
 
 		if (hoje.isBefore(etapaInscricao.getDataInicio()) && !competicao.getIsElaboracao()) {
@@ -315,7 +316,7 @@ public class EquipeService {
 		} else if (competicao.getIsElaboracao()) {
 			etapaVigenteStr = "ELABORACAO";
 		}
-		
+
 		return new EquipeComEtapaDTO(equipe, etapaVigenteStr, usuarioMembroComumRepositorio.findByEquipe(equipe));
 	}
 
@@ -372,8 +373,6 @@ public class EquipeService {
 	public LeanCanvasDto enviarLeanCanvasParaConsultoria(Integer idEquipe) throws Exception {
 
 		Equipe equipe = recuperarEquipe(idEquipe);
-
-		
 
 		if (leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe,
 				EtapaArtefatoPitch.EM_CONSULTORIA.getValue()) != null) {
@@ -443,41 +442,59 @@ public class EquipeService {
 		leanCanvasRepositorio.save(leanCanvas);
 
 	}
-	
-	public List<MaterialEstudoEnvioDto> getMateriasDeEstudoDeUmaEquipe(Integer idEquipe) throws Exception{
-		
-		Equipe equipe  =  recuperarEquipe(idEquipe);
-		
-		Etapa etapa = etapaRepositorio.findEtapaCompeticao(TipoEtapa.AQUECIMENTO.getValue(),equipe.getCompeticaoCadastrada().getId());
-		
-		System.out.println(etapa.getId());
-		
+
+	public List<MaterialEstudoEnvioDto> getMateriasDeEstudoDeUmaEquipe(Integer idEquipe) throws Exception {
+
+		Equipe equipe = recuperarEquipe(idEquipe);
+
+		Etapa etapa = etapaRepositorio.findEtapaCompeticao(TipoEtapa.AQUECIMENTO.getValue(),
+				equipe.getCompeticaoCadastrada().getId());
+
 		List<MaterialEstudo> materiasCompeticao = materialEstudoRepositorio.findByEtapa(etapa);
-		
-		System.out.println(materiasCompeticao.size());
-		
+
 		List<MaterialEstudoEnvioDto> envio = new ArrayList<>();
+		
 		Boolean isConcluido = true;
-		
+
 		for (MaterialEstudo material : materiasCompeticao) {
-			
-		
-			if(acessoMaterialEstudoRepositorio.findByEquipeEMaterialEstudo(idEquipe,material.getId()).isPresent()) {
+
+			if (acessoMaterialEstudoRepositorio.findByEquipeEMaterialEstudo(idEquipe, material.getId()).isPresent()) {
 				isConcluido = true;
 			}
-			
+
 			else {
 				isConcluido = false;
 			}
-			
+
 			MaterialEstudoEnvioDto materialEnvio = new MaterialEstudoEnvioDto(material, isConcluido);
 			envio.add(materialEnvio);
-			
+
 		}
-	
+
 		return envio;
-		
-		
+
 	}
 	
+	public void marcarMaterialComoConcluido(Integer idEquipe , Integer idMaterialEstudo) throws Exception {
+		
+		Equipe equipe = recuperarEquipe(idEquipe);
+		
+		MaterialEstudo  materialEstudo = materialEstudoRepositorio.findById(idMaterialEstudo).get();
+		
+		AcessoMaterialEstudo acessoMaterialEstudo = new AcessoMaterialEstudo();
+		
+		acessoMaterialEstudo.setDataAcesso(LocalDate.now());
+		
+		acessoMaterialEstudo.setEquipe(equipe);
+		
+		acessoMaterialEstudo.setMaterialEstudo(materialEstudo);
+		
+		equipe.getAcessoMaterialEstudo().add(acessoMaterialEstudo);
+		
+		equipeRepositorio.save(equipe);
+		
+		acessoMaterialEstudoRepositorio.save(acessoMaterialEstudo);
+		
+	}
+
 }

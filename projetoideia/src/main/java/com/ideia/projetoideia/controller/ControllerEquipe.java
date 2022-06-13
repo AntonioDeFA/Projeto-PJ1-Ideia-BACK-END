@@ -223,7 +223,7 @@ public class ControllerEquipe {
 
 		try {
 			equipeService.criarLeanCanvas(idEquipe);
-			return ResponseEntity.status(HttpStatus.OK)
+			return ResponseEntity.status(HttpStatus.CREATED)
 					.body(new IdeiaResponseFile("Lean canvas criado com sucesso !", HttpStatus.CREATED));
 		} catch (NotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -256,5 +256,22 @@ public class ControllerEquipe {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 		
+	}
+	
+	@PostMapping("/equipe/{idEquipe}/material-estudo/{idMaterialEstudo}")
+	public ResponseEntity<?> marcarMaterialConcluido(@PathVariable Integer idEquipe,@PathVariable Integer idMaterialEstudo){
+		
+		try {
+			equipeService.marcarMaterialComoConcluido(idEquipe, idMaterialEstudo);
+			
+			return  ResponseEntity.status(HttpStatus.CREATED)
+					.body(new IdeiaResponseFile("Marcado com sucesso !", HttpStatus.CREATED)); 
+		}catch (NotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+			.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.NOT_FOUND));
+		}catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
+		}
 	}
 }
