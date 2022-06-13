@@ -13,7 +13,7 @@ public class GeradorUserToken {
 	public static Usuario gerarUsuarioToken(String nomeDaEquipe) {
 				
 		String nome = "User_"+System.currentTimeMillis();
-		String email = nomeDaEquipe.replaceAll(" ", "").toLowerCase()+"@gmail.com";
+		String email = nomeDaEquipe.replaceAll(" ", "").toLowerCase()+"_token@gmail.com";
 		
 		//criando lista de perfíss
 		Perfil perfil = new Perfil();
