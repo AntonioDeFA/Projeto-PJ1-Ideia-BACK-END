@@ -28,4 +28,22 @@ public class FeedbacksAvaliativosDto {
 	private String fonteDeReceita;
 	
 	private List<FeedbackAvaliativo> feedbacksAvaliativos;
+
+	public FeedbacksAvaliativosDto(String parceriasPrincipais, String atividadesPrincipais, String recursosPrincipais,
+			String propostaDeValor, String relacionamentoComClientes, String canais, String segmentosClientes,
+			String estruturaDeCustos, String fonteDeReceita, List<FeedbackAvaliativo> feedbacksAvaliativos) {
+		super();
+		this.parceriasPrincipais = parceriasPrincipais;
+		this.atividadesPrincipais = atividadesPrincipais;
+		this.recursosPrincipais = recursosPrincipais;
+		this.propostaDeValor = propostaDeValor;
+		this.relacionamentoComClientes = relacionamentoComClientes;
+		this.canais = canais;
+		this.segmentosClientes = segmentosClientes;
+		this.estruturaDeCustos = estruturaDeCustos;
+		this.fonteDeReceita = fonteDeReceita;
+		this.feedbacksAvaliativos = feedbacksAvaliativos;
+	}
+	
+	
 }

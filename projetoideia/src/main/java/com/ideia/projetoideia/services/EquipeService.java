@@ -508,6 +508,8 @@ public class EquipeService {
 			throws Exception {
 
 		LeanCanvas leanCanvas = leanCanvasRepositorio.findById(idLeanCanvas).get();
-		List<FeedbackAvaliativo> feedbackAvaliativos = feedbackAvaliativoRepositorio.findby
+		List<FeedbackAvaliativo> feedbackAvaliativos = feedbackAvaliativoRepositorio.findByLeanCanvas(leanCanvas);
+		
+		
 	}
 }
