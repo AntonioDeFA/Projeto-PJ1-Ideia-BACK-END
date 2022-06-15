@@ -28,6 +28,7 @@ import com.ideia.projetoideia.model.dto.EquipeComEtapaDTO;
 import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
 import com.ideia.projetoideia.model.dto.EquipeNomeDto;
 import com.ideia.projetoideia.model.dto.EquipeNotaDto;
+import com.ideia.projetoideia.model.dto.FeedbacksAvaliativosDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoEnvioDto;
 import com.ideia.projetoideia.response.IdeiaResponseFile;
@@ -272,6 +273,18 @@ public class ControllerEquipe {
 		}catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
+		}
+	}
+	
+	@GetMapping("/lean-canvas/{idLeanCanvas}/feedbacks-consultoria")
+	public List<FeedbacksAvaliativosDto> listarFeedbacksLeanCanvas(@PathVariable("idLeanCanvas") Integer idLeanCanvas)
+			throws Exception {
+		try {
+			return equipeService.listarFeedbacksLeanCanvas(idLeanCanvas);
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}
 }

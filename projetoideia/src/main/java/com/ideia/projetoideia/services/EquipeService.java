@@ -13,12 +13,14 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.ideia.projetoideia.model.AcessoMaterialEstudo;
 import com.ideia.projetoideia.model.AvaliacaoPitch;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.Etapa;
+import com.ideia.projetoideia.model.FeedbackAvaliativo;
 import com.ideia.projetoideia.model.LeanCanvas;
 import com.ideia.projetoideia.model.MaterialEstudo;
 import com.ideia.projetoideia.model.Usuario;
@@ -30,6 +32,7 @@ import com.ideia.projetoideia.model.dto.EquipeComEtapaDTO;
 import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
 import com.ideia.projetoideia.model.dto.EquipeNomeDto;
 import com.ideia.projetoideia.model.dto.EquipeNotaDto;
+import com.ideia.projetoideia.model.dto.FeedbacksAvaliativosDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoEnvioDto;
 import com.ideia.projetoideia.model.dto.UsuarioDto;
@@ -41,6 +44,7 @@ import com.ideia.projetoideia.repository.AvaliacaoPitchRpositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.EquipeRepositorio;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
+import com.ideia.projetoideia.repository.FeedbackAvaliativoRepositorio;
 import com.ideia.projetoideia.repository.LeanCanvasRepositorio;
 import com.ideia.projetoideia.repository.MaterialEstudoRepositorio;
 import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
@@ -96,6 +100,9 @@ public class EquipeService {
 
 	@Autowired
 	private EnviarEmail enviarEmail;
+	
+	@Autowired
+	private FeedbackAvaliativoRepositorio feedbackAvaliativoRepositorio;
 
 	public void criarEquipe(EquipeDtoCriacao equipeDto) throws Exception {
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
@@ -453,7 +460,7 @@ public class EquipeService {
 		List<MaterialEstudo> materiasCompeticao = materialEstudoRepositorio.findByEtapa(etapa);
 
 		List<MaterialEstudoEnvioDto> envio = new ArrayList<>();
-		
+
 		Boolean isConcluido = true;
 
 		for (MaterialEstudo material : materiasCompeticao) {
@@ -474,27 +481,33 @@ public class EquipeService {
 		return envio;
 
 	}
-	
-	public void marcarMaterialComoConcluido(Integer idEquipe , Integer idMaterialEstudo) throws Exception {
-		
+
+	public void marcarMaterialComoConcluido(Integer idEquipe, Integer idMaterialEstudo) throws Exception {
+
 		Equipe equipe = recuperarEquipe(idEquipe);
-		
-		MaterialEstudo  materialEstudo = materialEstudoRepositorio.findById(idMaterialEstudo).get();
-		
+
+		MaterialEstudo materialEstudo = materialEstudoRepositorio.findById(idMaterialEstudo).get();
+
 		AcessoMaterialEstudo acessoMaterialEstudo = new AcessoMaterialEstudo();
-		
+
 		acessoMaterialEstudo.setDataAcesso(LocalDate.now());
-		
+
 		acessoMaterialEstudo.setEquipe(equipe);
-		
+
 		acessoMaterialEstudo.setMaterialEstudo(materialEstudo);
-		
+
 		equipe.getAcessoMaterialEstudo().add(acessoMaterialEstudo);
-		
+
 		equipeRepositorio.save(equipe);
-		
+
 		acessoMaterialEstudoRepositorio.save(acessoMaterialEstudo);
-		
+
 	}
 
+	public List<FeedbacksAvaliativosDto> listarFeedbacksLeanCanvas(@PathVariable("idLeanCanvas") Integer idLeanCanvas)
+			throws Exception {
+
+		LeanCanvas leanCanvas = leanCanvasRepositorio.findById(idLeanCanvas).get();
+		List<FeedbackAvaliativo> feedbackAvaliativos = feedbackAvaliativoRepositorio.findby
+	}
 }
