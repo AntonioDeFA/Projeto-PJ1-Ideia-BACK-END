@@ -3,22 +3,23 @@ package com.ideia.projetoideia.model.dto;
 import java.util.List;
 
 import com.ideia.projetoideia.model.FeedbackAvaliativo;
+import com.ideia.projetoideia.model.LeanCanvas;
 
 import lombok.Data;
 
 @Data
 public class FeedbacksAvaliativosDto {
+	
+	private String problema;
 
-	private String parceriasPrincipais;
+	private String solucao;
 	
-	private String atividadesPrincipais;
-	
-	private String recursosPrincipais;
-	
+	private String vantagemCompetitiva;
+
+	private String metricasChave;
+
 	private String propostaDeValor;
-	
-	private String relacionamentoComClientes;
-	
+		
 	private String canais;
 	
 	private String segmentosClientes;
@@ -29,21 +30,18 @@ public class FeedbacksAvaliativosDto {
 	
 	private List<FeedbackAvaliativo> feedbacksAvaliativos;
 
-	public FeedbacksAvaliativosDto(String parceriasPrincipais, String atividadesPrincipais, String recursosPrincipais,
-			String propostaDeValor, String relacionamentoComClientes, String canais, String segmentosClientes,
-			String estruturaDeCustos, String fonteDeReceita, List<FeedbackAvaliativo> feedbacksAvaliativos) {
-		super();
-		this.parceriasPrincipais = parceriasPrincipais;
-		this.atividadesPrincipais = atividadesPrincipais;
-		this.recursosPrincipais = recursosPrincipais;
-		this.propostaDeValor = propostaDeValor;
-		this.relacionamentoComClientes = relacionamentoComClientes;
-		this.canais = canais;
-		this.segmentosClientes = segmentosClientes;
-		this.estruturaDeCustos = estruturaDeCustos;
-		this.fonteDeReceita = fonteDeReceita;
+	public FeedbacksAvaliativosDto(LeanCanvas leanCanvas, List<FeedbackAvaliativo> feedbacksAvaliativos) {
+		this.problema = leanCanvas.getProblema();
+		this.solucao = leanCanvas.getSolucao();
+		this.vantagemCompetitiva = leanCanvas.getVantagemCompetitiva();
+		this.metricasChave = leanCanvas.getMetricasChave();
+		this.propostaDeValor = leanCanvas.getPropostaValor();
+		this.canais = leanCanvas.getCanais();
+		this.segmentosClientes = leanCanvas.getSegmentosDeClientes();
+		this.estruturaDeCustos = leanCanvas.getEstruturaDeCusto();
+		this.fonteDeReceita = leanCanvas.getFontesDeReceita();
 		this.feedbacksAvaliativos = feedbacksAvaliativos;
 	}
-	
+
 	
 }

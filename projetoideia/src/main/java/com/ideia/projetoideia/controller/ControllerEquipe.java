@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Equipe;
-import com.ideia.projetoideia.model.NomeEquipeDto;
 import com.ideia.projetoideia.model.dto.EmailDto;
 import com.ideia.projetoideia.model.dto.EquipeComEtapaDTO;
 import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
@@ -31,6 +30,7 @@ import com.ideia.projetoideia.model.dto.EquipeNotaDto;
 import com.ideia.projetoideia.model.dto.FeedbacksAvaliativosDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoEnvioDto;
+import com.ideia.projetoideia.model.dto.NomeEquipeDto;
 import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.EquipeService;
 
@@ -277,7 +277,7 @@ public class ControllerEquipe {
 	}
 	
 	@GetMapping("/lean-canvas/{idLeanCanvas}/feedbacks-consultoria")
-	public List<FeedbacksAvaliativosDto> listarFeedbacksLeanCanvas(@PathVariable("idLeanCanvas") Integer idLeanCanvas)
+	public FeedbacksAvaliativosDto listarFeedbacksLeanCanvas(@PathVariable("idLeanCanvas") Integer idLeanCanvas)
 			throws Exception {
 		try {
 			return equipeService.listarFeedbacksLeanCanvas(idLeanCanvas);

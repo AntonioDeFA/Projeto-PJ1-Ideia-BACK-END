@@ -100,7 +100,7 @@ public class EquipeService {
 
 	@Autowired
 	private EnviarEmail enviarEmail;
-	
+
 	@Autowired
 	private FeedbackAvaliativoRepositorio feedbackAvaliativoRepositorio;
 
@@ -500,16 +500,18 @@ public class EquipeService {
 
 		equipeRepositorio.save(equipe);
 
-		acessoMaterialEstudoRepositorio.save(acessoMaterialEstudo);
-
 	}
 
-	public List<FeedbacksAvaliativosDto> listarFeedbacksLeanCanvas(@PathVariable("idLeanCanvas") Integer idLeanCanvas)
+	public FeedbacksAvaliativosDto listarFeedbacksLeanCanvas(@PathVariable("idLeanCanvas") Integer idLeanCanvas)
 			throws Exception {
 
 		LeanCanvas leanCanvas = leanCanvasRepositorio.findById(idLeanCanvas).get();
 		List<FeedbackAvaliativo> feedbackAvaliativos = feedbackAvaliativoRepositorio.findByLeanCanvas(leanCanvas);
-		
-		
+
+		if (!leanCanvas.getEtapaSolucaoCanvas().equals(EtapaArtefatoPitch.APROVADO)) {
+			throw new Exception("O Lean canvas desta equipe ainda não foi aprovado");
+		}
+
+		return new FeedbacksAvaliativosDto(leanCanvas, feedbackAvaliativos);
 	}
 }
