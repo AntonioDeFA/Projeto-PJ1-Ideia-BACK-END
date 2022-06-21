@@ -499,6 +499,7 @@ public class EquipeService {
 		equipe.getAcessoMaterialEstudo().add(acessoMaterialEstudo);
 
 		equipeRepositorio.save(equipe);
+		acessoMaterialEstudoRepositorio.save(acessoMaterialEstudo);
 
 	}
 
