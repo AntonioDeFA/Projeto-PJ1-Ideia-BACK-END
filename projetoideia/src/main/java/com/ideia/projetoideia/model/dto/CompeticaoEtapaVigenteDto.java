@@ -91,6 +91,21 @@ public class CompeticaoEtapaVigenteDto {
 			} else if (competicao.getIsElaboracao()) {
 				this.etapaVigenteStr = "ELABORACAO";
 			}
+			
+			if (competicao.getIsEncerrada()) {
+				
+				for (Etapa etapa : competicao.getEtapas()) {
+					if(etapa.getTipoEtapa().equals(TipoEtapa.PITCH)) {
+						etapaVigente = new Etapa();
+						etapaVigente.setCompeticao(competicao);
+						etapaVigente.setDataInicio(etapa.getDataTermino());
+						etapaVigente.setId(etapa.getId());
+					}
+				}
+				
+				etapaVigente.setTipoEtapa(TipoEtapa.ENCERRADA);
+				etapaVigenteStr = "ENCERRADA";
+			}
 		}
 
 		this.isElaboracao = competicao.getIsElaboracao();

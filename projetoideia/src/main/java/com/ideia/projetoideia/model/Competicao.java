@@ -80,5 +80,7 @@ public class Competicao {
 	private List<QuestaoAvaliativa> questoesAvaliativas = new ArrayList<>();
 	
 	private Boolean isElaboracao = true;
+	
+	private Boolean isEncerrada = false;
 
 }

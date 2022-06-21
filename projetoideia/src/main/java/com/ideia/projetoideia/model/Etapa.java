@@ -51,6 +51,7 @@ public class Etapa {
 	
 	public boolean isVigente() {
 		LocalDate dataAtual = LocalDate.now();
+	
 
 		return (dataAtual.isAfter(dataInicio) || dataAtual.isEqual(dataInicio) && dataAtual.isBefore(dataTermino)
 				|| dataAtual.isEqual(dataTermino));

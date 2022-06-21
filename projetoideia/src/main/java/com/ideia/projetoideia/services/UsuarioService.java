@@ -184,6 +184,7 @@ public class UsuarioService {
 		List<Competicao> competicoes = competicaoRepositorioCustom.findByCompeticoesDoUsuario(nomeCompeticao, mes, ano,
 				usuario.getId());
 		for (Competicao competicao : competicoes) {
+			competicaoService.verificarSeEstaEncerrada(competicao);
 			CompeticaoEtapaVigenteDto competicaoEtapaVigenteDto = new CompeticaoEtapaVigenteDto(competicao,
 					"COMPETICAO", usuario);
 			PapelUsuarioCompeticao papelUsuarioCompeticao = papelUsuarioCompeticaoRepositorio
@@ -226,6 +227,7 @@ public class UsuarioService {
 		}
 		return usuarios;
 	}
+	
 
 	public void convidarUsuario(ConviteDto conviteDto) throws Exception {
 
