@@ -19,7 +19,6 @@ import com.ideia.projetoideia.model.AvaliacaoPitch;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.Etapa;
-import com.ideia.projetoideia.model.FeedbackAvaliativo;
 import com.ideia.projetoideia.model.LeanCanvas;
 import com.ideia.projetoideia.model.MaterialEstudo;
 import com.ideia.projetoideia.model.Usuario;
@@ -31,6 +30,7 @@ import com.ideia.projetoideia.model.dto.EquipeComEtapaDTO;
 import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
 import com.ideia.projetoideia.model.dto.EquipeNomeDto;
 import com.ideia.projetoideia.model.dto.EquipeNotaDto;
+import com.ideia.projetoideia.model.dto.FeedbackSugestaoDto;
 import com.ideia.projetoideia.model.dto.FeedbacksAvaliativosDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoEnvioDto;
@@ -43,7 +43,7 @@ import com.ideia.projetoideia.repository.AvaliacaoPitchRpositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.EquipeRepositorio;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
-import com.ideia.projetoideia.repository.FeedbackAvaliativoRepositorio;
+import com.ideia.projetoideia.repository.FeedbackRepositorioCustom;
 import com.ideia.projetoideia.repository.LeanCanvasRepositorio;
 import com.ideia.projetoideia.repository.MaterialEstudoRepositorio;
 import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
@@ -100,8 +100,11 @@ public class EquipeService {
 	@Autowired
 	private EnviarEmail enviarEmail;
 
-	@Autowired
-	private FeedbackAvaliativoRepositorio feedbackAvaliativoRepositorio;
+	private final FeedbackRepositorioCustom feedbackRepositorioCustom;
+
+	public EquipeService(FeedbackRepositorioCustom feedbackRepositorioCustom) {
+		this.feedbackRepositorioCustom = feedbackRepositorioCustom;
+	}
 
 	public void criarEquipe(EquipeDtoCriacao equipeDto) throws Exception {
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
@@ -502,18 +505,16 @@ public class EquipeService {
 
 	}
 
-	public FeedbacksAvaliativosDto listarFeedbacksLeanCanvas(Integer idLeanCanvas)
-			throws Exception {
-		
-		List<LeanCanvas> canvas = leanCanvasRepositorio.buscarPorID(idLeanCanvas);
+	public FeedbacksAvaliativosDto listarFeedbacksLeanCanvas(Integer idLeanCanvas) throws Exception {
 
-		if (canvas.size() == 0) {
-			throw new NotFoundException("O canvas passado não existe");
+		Optional<LeanCanvas> canvas = leanCanvasRepositorio.findById(idLeanCanvas);
+
+		if (canvas.isEmpty()) {
+			throw new Exception("O canvas passado não existe");
 		}
-		
-		LeanCanvas leanCanvas = canvas.get(0);
-		System.err.println("-------------------------------------------------------------");
-		List<FeedbackAvaliativo> feedbackAvaliativos = feedbackAvaliativoRepositorio.findByLeanCanvas(idLeanCanvas);
+
+		LeanCanvas leanCanvas = canvas.get();
+		List<FeedbackSugestaoDto> feedbackAvaliativos = feedbackRepositorioCustom.getByLeanCanvas(idLeanCanvas);
 
 		if (!leanCanvas.getEtapaSolucaoCanvas().equals(EtapaArtefatoPitch.APROVADO)) {
 			throw new Exception("O Lean canvas desta equipe ainda não foi aprovado");
@@ -521,4 +522,5 @@ public class EquipeService {
 
 		return new FeedbacksAvaliativosDto(leanCanvas, feedbackAvaliativos);
 	}
+
 }

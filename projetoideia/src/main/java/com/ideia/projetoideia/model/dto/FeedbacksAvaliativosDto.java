@@ -2,7 +2,6 @@ package com.ideia.projetoideia.model.dto;
 
 import java.util.List;
 
-import com.ideia.projetoideia.model.FeedbackAvaliativo;
 import com.ideia.projetoideia.model.LeanCanvas;
 
 import lombok.Data;
@@ -28,9 +27,9 @@ public class FeedbacksAvaliativosDto {
 	
 	private String fonteDeReceita;
 	
-	private List<FeedbackAvaliativo> feedbacksAvaliativos;
+	private List<FeedbackSugestaoDto> feedbacksAvaliativos;
 
-	public FeedbacksAvaliativosDto(LeanCanvas leanCanvas, List<FeedbackAvaliativo> feedbacksAvaliativos) {
+	public FeedbacksAvaliativosDto(LeanCanvas leanCanvas, List<FeedbackSugestaoDto> feedbacksAvaliativos) {
 		this.problema = leanCanvas.getProblema();
 		this.solucao = leanCanvas.getSolucao();
 		this.vantagemCompetitiva = leanCanvas.getVantagemCompetitiva();
