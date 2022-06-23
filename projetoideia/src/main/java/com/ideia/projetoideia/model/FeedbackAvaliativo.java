@@ -1,6 +1,6 @@
 package com.ideia.projetoideia.model;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,7 +12,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -30,7 +29,7 @@ public class FeedbackAvaliativo {
 	private Integer id;
 	
 	@Column(nullable = false)
-	private Date dataCriaca;
+	private LocalDateTime dataCriacao;
 	
 	@Enumerated(EnumType.STRING)
 	private TipoFeedback tipoFeedback;
@@ -39,11 +38,11 @@ public class FeedbackAvaliativo {
 	@NotNull(message = "Você deve escrever qual uam sugestão")
 	private String sugestao;
 	
-	@OneToOne(cascade = CascadeType.MERGE)
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "pitch_fk")
 	private Pitch pitch;
 	
-	@OneToOne(cascade = CascadeType.MERGE)
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "consultor_fk")
 	private Usuario consultor;
 	

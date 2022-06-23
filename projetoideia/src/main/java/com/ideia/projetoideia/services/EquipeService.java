@@ -13,7 +13,6 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import com.ideia.projetoideia.model.AcessoMaterialEstudo;
 import com.ideia.projetoideia.model.AvaliacaoPitch;
@@ -503,11 +502,18 @@ public class EquipeService {
 
 	}
 
-	public FeedbacksAvaliativosDto listarFeedbacksLeanCanvas(@PathVariable("idLeanCanvas") Integer idLeanCanvas)
+	public FeedbacksAvaliativosDto listarFeedbacksLeanCanvas(Integer idLeanCanvas)
 			throws Exception {
+		
+		List<LeanCanvas> canvas = leanCanvasRepositorio.buscarPorID(idLeanCanvas);
 
-		LeanCanvas leanCanvas = leanCanvasRepositorio.findById(idLeanCanvas).get();
-		List<FeedbackAvaliativo> feedbackAvaliativos = feedbackAvaliativoRepositorio.findByLeanCanvas(leanCanvas);
+		if (canvas.size() == 0) {
+			throw new NotFoundException("O canvas passado não existe");
+		}
+		
+		LeanCanvas leanCanvas = canvas.get(0);
+		System.err.println("-------------------------------------------------------------");
+		List<FeedbackAvaliativo> feedbackAvaliativos = feedbackAvaliativoRepositorio.findByLeanCanvas(idLeanCanvas);
 
 		if (!leanCanvas.getEtapaSolucaoCanvas().equals(EtapaArtefatoPitch.APROVADO)) {
 			throw new Exception("O Lean canvas desta equipe ainda não foi aprovado");

@@ -1,6 +1,6 @@
 package com.ideia.projetoideia.repository;
 
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,5 +16,9 @@ public interface LeanCanvasRepositorio extends JpaRepository<LeanCanvas, Integer
 			, nativeQuery = true)
 	public LeanCanvas findByIdEquipeEEtapa(Integer idEquipe , String EtapaSolucaCanvas);
 	
-	public Optional<LeanCanvas> findById(Integer id);
+	@Query(value = "SELECT * FROM db_ideia.tb_lean_canvas as c where c.id = ?1"
+			, nativeQuery = true)
+	public List<LeanCanvas> buscarPorID(Integer id);
+	
+	
 }
