@@ -3,7 +3,7 @@ package com.ideia.projetoideia.model.enums;
 public enum EtapaArtefatoPitch {
 
 	EM_ELABORACAO("EM_ELABORACAO"), EM_CONSULTORIA("EM_CONSULTORIA"), EM_AVALIACAO("EM_AVALIACAO"),
-	APROVADO("APROVADO");
+	AVALIADO_CONSULTOR("AVALIADO_CONSULTOR"),AVALIADO_AVALIADOR("AVALIADO_AVALIADOR");
 
 	private String value;
 

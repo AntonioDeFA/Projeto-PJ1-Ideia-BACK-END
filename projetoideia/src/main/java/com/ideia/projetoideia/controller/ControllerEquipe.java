@@ -28,6 +28,7 @@ import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
 import com.ideia.projetoideia.model.dto.EquipeNomeDto;
 import com.ideia.projetoideia.model.dto.EquipeNotaDto;
 import com.ideia.projetoideia.model.dto.FeedbacksAvaliativosDto;
+import com.ideia.projetoideia.model.dto.LeanCanvasAprovadoConsultoriaDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoEnvioDto;
 import com.ideia.projetoideia.model.dto.NomeEquipeDto;
@@ -284,6 +285,19 @@ public class ControllerEquipe {
 		} catch (NotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+	
+	@GetMapping("/{idEquipe}/lean-canvas/aprovados-consultoria")
+	public List<LeanCanvasAprovadoConsultoriaDto>leanCnvasAprovadosPelaConsultoria(@PathVariable("idEquipe")Integer idEquipe){
+		
+		try {
+			return equipeService.listarLeanCanvasAprovadoPelaConsultoria(idEquipe);
+		}catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+			
+		}catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}

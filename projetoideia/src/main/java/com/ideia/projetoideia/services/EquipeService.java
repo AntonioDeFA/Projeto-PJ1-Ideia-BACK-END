@@ -2,6 +2,8 @@ package com.ideia.projetoideia.services;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +34,7 @@ import com.ideia.projetoideia.model.dto.EquipeNomeDto;
 import com.ideia.projetoideia.model.dto.EquipeNotaDto;
 import com.ideia.projetoideia.model.dto.FeedbackSugestaoDto;
 import com.ideia.projetoideia.model.dto.FeedbacksAvaliativosDto;
+import com.ideia.projetoideia.model.dto.LeanCanvasAprovadoConsultoriaDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoEnvioDto;
 import com.ideia.projetoideia.model.dto.UsuarioDto;
@@ -244,7 +247,7 @@ public class EquipeService {
 		for (Equipe equipe : equipeRepositorio.findByCompeticaoCadastrada(competicao)) {
 			Float notaEquipe = 0f;
 			for (Pitch pitch : pitchRepositorio.findByEquipe(equipe)) {
-				if (pitch.getEtapaAvaliacaoVideo().equals(EtapaArtefatoPitch.APROVADO)) {
+				if (pitch.getEtapaAvaliacaoVideo().equals(EtapaArtefatoPitch.AVALIADO_AVALIADOR)) {
 					for (AvaliacaoPitch avaliacao : avaliacaoPitchRpositorio.findByPitch(pitch)) {
 						notaEquipe += avaliacao.getNotaAtribuida();
 					}
@@ -516,11 +519,42 @@ public class EquipeService {
 		LeanCanvas leanCanvas = canvas.get();
 		List<FeedbackSugestaoDto> feedbackAvaliativos = feedbackRepositorioCustom.getByLeanCanvas(idLeanCanvas);
 
-		if (!leanCanvas.getEtapaSolucaoCanvas().equals(EtapaArtefatoPitch.APROVADO)) {
+		if (!leanCanvas.getEtapaSolucaoCanvas().equals(EtapaArtefatoPitch.AVALIADO_CONSULTOR)) {
 			throw new Exception("O Lean canvas desta equipe ainda não foi aprovado");
 		}
 
 		return new FeedbacksAvaliativosDto(leanCanvas, feedbackAvaliativos);
+	}
+
+	public List<LeanCanvasAprovadoConsultoriaDto> listarLeanCanvasAprovadoPelaConsultoria(Integer idEquipe) throws Exception{
+		recuperarEquipe(idEquipe);	
+		
+		List<LeanCanvas> listCanvasEquipe = leanCanvasRepositorio.findByIdEquipeEEtapaList(idEquipe
+				,EtapaArtefatoPitch.AVALIADO_CONSULTOR.getValue()); 
+		
+		
+		if(listCanvasEquipe == null  || listCanvasEquipe.size() == 0) {
+			throw new Exception("A equipe não possui nenhum lean canvas aprovado por consultoria");
+		}
+		
+		
+		List<LeanCanvasAprovadoConsultoriaDto> listLeanCavasDto = new ArrayList<>();
+		
+		
+		for (LeanCanvas canvas : listCanvasEquipe) {
+			
+			LeanCanvasAprovadoConsultoriaDto canvasDto = new LeanCanvasAprovadoConsultoriaDto(canvas);
+			
+			listLeanCavasDto.add(canvasDto);
+			
+		}
+		
+		
+		Collections.sort(listLeanCavasDto);
+		
+		
+		return listLeanCavasDto;
+		
 	}
 
 }
