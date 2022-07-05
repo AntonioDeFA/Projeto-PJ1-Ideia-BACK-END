@@ -187,16 +187,23 @@ public class UsuarioService {
 			competicaoService.verificarSeEstaEncerrada(competicao);
 			CompeticaoEtapaVigenteDto competicaoEtapaVigenteDto = new CompeticaoEtapaVigenteDto(competicao,
 					"COMPETICAO", usuario);
+			
+			
 			PapelUsuarioCompeticao papelUsuarioCompeticao = papelUsuarioCompeticaoRepositorio
 					.findById(papelUsuarioCompeticaoRepositorio.findByCompeticaoCadastradaAndUsuario(usuario.getId(),
-							competicao.getId()))
-					.get();
+							competicao.getId())).get();
+			
 			if (papelUsuarioCompeticao.getTipoPapelUsuario().equals(TipoPapelUsuario.COMPETIDOR)) {
+				
 				competicaoEtapaVigenteDto.setIdEquipe(
 						equipeRepositorio.findByCompeticaoCadastradaAndUsuario(usuario.getId(), competicao.getId()));
+			
 			}
 			competicoesDto.add(competicaoEtapaVigenteDto);
+			
 		}
+		
+		
 		return competicoesDto;
 	}
 

@@ -27,7 +27,7 @@ import lombok.Data;
 public class Equipe {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
 	@Column(nullable = false, name = "nome_equipe")

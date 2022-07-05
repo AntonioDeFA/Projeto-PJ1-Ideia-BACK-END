@@ -85,7 +85,6 @@ public class CompeticaoEtapaVigenteDto {
 					if (etapa.isVigente()) {
 						this.etapaVigente = etapa;
 						this.etapaVigenteStr = etapa.getTipoEtapa().getValue();
-						break;
 					}
 				}
 			} else if (competicao.getIsElaboracao()) {
@@ -99,6 +98,7 @@ public class CompeticaoEtapaVigenteDto {
 						etapaVigente = new Etapa();
 						etapaVigente.setCompeticao(competicao);
 						etapaVigente.setDataInicio(etapa.getDataTermino());
+						etapaVigente.setDataTermino(etapa.getDataTermino());
 						etapaVigente.setId(etapa.getId());
 					}
 				}

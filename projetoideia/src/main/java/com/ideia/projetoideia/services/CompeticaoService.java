@@ -143,7 +143,6 @@ public class CompeticaoService {
 		
 		LocalDate hoje = LocalDate.now();
 		
-		
 		if(!comp.getIsEncerrada() && !comp.getIsElaboracao()) {
 			
 			for (Etapa etapa :comp.getEtapas()) {

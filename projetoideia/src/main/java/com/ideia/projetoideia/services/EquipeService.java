@@ -135,7 +135,9 @@ public class EquipeService {
 		if (erros.length() != 0) {
 			throw new Exception(erros.toString());
 		}
-
+		
+		
+		
 		Equipe equipe = new Equipe();
 		equipe.setNomeEquipe(equipeDto.getNomeEquipe());
 		equipe.setDataInscricao(LocalDate.now());
@@ -147,10 +149,9 @@ public class EquipeService {
 		papelUsuarioCompeticao.setTipoPapelUsuario(TipoPapelUsuario.COMPETIDOR);
 		papelUsuarioCompeticao.setUsuario(usuario);
 		papelUsuarioCompeticao.setCompeticaoCadastrada(equipe.getCompeticaoCadastrada());
-
-		papelUsuarioCompeticaoRepositorio.save(papelUsuarioCompeticao);
+		
 		equipeRepositorio.save(equipe);
-
+		papelUsuarioCompeticaoRepositorio.save(papelUsuarioCompeticao);
 		for (UsuarioDto usuarioDto : equipeDto.getUsuarios()) {
 			UsuarioMembroComum usuarioComum = new UsuarioMembroComum();
 			usuarioComum.setEmail(usuarioDto.getEmail());
