@@ -2,7 +2,6 @@ package com.ideia.projetoideia.services;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -292,7 +291,7 @@ public class EquipeService {
 		Equipe equipe = equipeRepositorio.findById(idEquipe).get();
 		if (equipe.getCompeticaoCadastrada().getId() == idCompeticao) {
 			equipe.setCompeticaoCadastrada(null);
-			equipeRepositorio.save(equipe);
+			this.deletarEquipe(idEquipe);
 			return;
 		} else {
 			throw new NotFoundException("Equipe não cadastrada nesta competição!");
