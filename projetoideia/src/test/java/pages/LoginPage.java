@@ -11,9 +11,9 @@ public class LoginPage {
 	@FindBy(id = "filled-search")
 	private WebElement campoSenha;
 	
-	
 	@FindBy(id = "botao-login")
 	private WebElement botaoLogin;
+	
 	
 	
 	public void clicarNoBotaoLogin() {

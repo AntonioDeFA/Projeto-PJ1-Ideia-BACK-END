@@ -23,7 +23,20 @@ public class TelaInicialPage {
 	@FindBy(id = "op-trofeu-cabecalho")
 	private WebElement botaoTrofeuCompeticao;
 	
+	@FindBy(xpath = "//*[@id=\"radio-buttons-competicoes\"]/fieldset/div/label[2]")
+	private WebElement botaoMinhasCompeticoes;
 	
+	@FindBy(xpath = "/html/body/div/div/div[2]/div[2]/div/ul/li/div/div/div[2]/div[2]/div/i[1]")
+	private WebElement botaoEntrarCompeticao;
+	
+	
+	public void clicarNoBotaoEntrarNaCompeticao() {
+		botaoEntrarCompeticao.click();
+	}
+	
+	public void clicarNoBotaoMinhasCompeticoes() {
+		botaoMinhasCompeticoes.click();
+	}
 	public void clicarNoBotaoFiltrar() {
 		botaoFiltrar.click();
 	}
