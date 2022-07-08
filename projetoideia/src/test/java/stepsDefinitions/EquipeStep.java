@@ -41,7 +41,7 @@ public class EquipeStep {
 	}
 	@Quando("clicar no botao deletar membro")
 	public void clicarNoBotaoDeletarMembro() {
-	    Na(EquipePage.class).clicarBotaoDeletarMembro();
+	    //Na(EquipePage.class).clicarBotaoDeletarMembro();
 	}
 	
 	@Dado("que eu clique no link logar com token")
