@@ -2,12 +2,14 @@ package com.ideia.projetoideia.unitario;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDate;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -81,16 +83,18 @@ public class TesteLeanCanvas {
 	}
 
 	@Test
+	@Order(2)
 	public void cadastrarLeanCanvas() {
 		leanCanvasRepositorio.save(leanCanvas);
 
 		assertNotNull(leanCanvasRepositorio.findByEquipe(equipe));
 		
-		leanCanvasRepositorio.delete(leanCanvas);
+		leanCanvasRepositorio.delete(leanCanvasRepositorio.findByEquipe(equipe).get(0));
 
 	}
 
 	@Test
+	@Order(1)
 	public void editarLeanCanvas() {
 		leanCanvasRepositorio.save(leanCanvas);
 		leanCanvas.setProblema("Novo problema");
@@ -98,13 +102,21 @@ public class TesteLeanCanvas {
 		leanCanvasRepositorio.save(leanCanvas);
 
 		assertNotNull(leanCanvasRepositorio.findByEquipe(equipe));
-
-		leanCanvasRepositorio.delete(leanCanvas);
+		
+		LeanCanvas leanCanvasEditado =   leanCanvasRepositorio.findByEquipe(equipe).get(0);
+		assertEquals(leanCanvasEditado.getProblema(),"Novo problema");
+		
+		assertEquals(leanCanvasEditado.getProblema(),"Novo problema");
+		
+		assertEquals(leanCanvasEditado.getCanais(),"Novos Canais");
+		
+		leanCanvasRepositorio.delete(leanCanvasEditado);
 	}
 
 	// ------------------------------- Exceptions-------------------------------------------------
 	
 	@Test
+	@Order(3)
 	public void campoNullException() {
 		leanCanvas.setMetricasChave(null);
 		
@@ -114,6 +126,7 @@ public class TesteLeanCanvas {
 	}
 	
 	@Test
+	@Order(4)
 	public void campoValorMinimoInvalido() {
 		
 		leanCanvas.setCanais("me");
@@ -124,6 +137,7 @@ public class TesteLeanCanvas {
 	}
 	
 	@Test
+	@Order(5)
 	public void campoEtapaSolucaoCanvasNull() {
 		leanCanvas.setEtapaSolucaoCanvas(null);
 		assertThrows(Exception.class, () -> {
