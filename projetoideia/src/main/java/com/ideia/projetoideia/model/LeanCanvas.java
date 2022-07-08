@@ -31,8 +31,7 @@ public class LeanCanvas {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Integer id;
 	
-	@Column(nullable = false)
-	@Size(min = 3)
+)
 	private String problema;
 	
 	
@@ -40,36 +39,28 @@ public class LeanCanvas {
 	@Size(min = 3)
 	private String solucao;
 
-	@Column(name = "metricas_chave" , nullable = false)
-	@Size(min = 3)
+	@Column(name = "metricas_chave" )
 	private String metricasChave;
 
-	@Column(name = "proposta_valor" ,nullable = false)
-	@Size(min = 3)
+	@Column(name = "proposta_valor")
 	private String propostaValor;
 
-	@Column(name = "vantagem_competitiva" , nullable = false)
-	@Size(min = 3)
+	@Column(name = "vantagem_competitiva")
 	private String vantagemCompetitiva;
 	
-	@Column(nullable = false)
-	@Size(min = 3)
+
 	private String canais;
 
-	@Column(name = "segmentos_de_clientes" ,nullable = false)
-	@Size(min = 3)
+	@Column(name = "segmentos_de_clientes")
 	private String segmentosDeClientes;
 
-	@Column(name = "estrutura_de_custo",nullable = false)
-	@Size(min = 3)
+	@Column(name = "estrutura_de_custo")
 	private String estruturaDeCusto;
 
-	@Column(name = "fontes_de_receita",nullable = false)
-	@Size(min = 3)
+	@Column(name = "fontes_de_receita")
 	private String fontesDeReceita;
 
 	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
 	private EtapaArtefatoPitch etapaSolucaoCanvas;
 
 	@ManyToOne

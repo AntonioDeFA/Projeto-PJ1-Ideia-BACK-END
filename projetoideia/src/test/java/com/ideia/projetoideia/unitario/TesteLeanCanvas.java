@@ -106,7 +106,6 @@ public class TesteLeanCanvas {
 		LeanCanvas leanCanvasEditado =   leanCanvasRepositorio.findByEquipe(equipe).get(0);
 		assertEquals(leanCanvasEditado.getProblema(),"Novo problema");
 		
-		assertEquals(leanCanvasEditado.getProblema(),"Novo problema");
 		
 		assertEquals(leanCanvasEditado.getCanais(),"Novos Canais");
 		
