@@ -31,7 +31,7 @@ public class LeanCanvas {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Integer id;
 	
-)
+
 	private String problema;
 	
 	
