@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -32,6 +33,7 @@ public class Pitch {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Integer id;
 	
+	@Lob
 	@Column(nullable = false)
 	@NotNull(message = "O arquivo não pode ser nulo.")
 	private File video;
@@ -47,8 +49,9 @@ public class Pitch {
 	@Enumerated(EnumType.STRING)
 	private EtapaArtefatoPitch etapaAvaliacaoVideo;
 	
+	@Lob
 	@Column(nullable = false, name = "pitch_deck")
-	private File pitchDeck;
+	private String pitchDeck;
 	
 	@ManyToOne
 	@JoinColumn(name = "equipe_fk")
@@ -62,4 +65,15 @@ public class Pitch {
 	@JsonIgnore
 	private List<FeedbackAvaliativo> feedbackAvaliativos = new ArrayList<>();
 
+	public Pitch(Pitch pitch) {
+		super();
+		this.video = pitch.getVideo();
+		this.titulo = pitch.getTitulo();
+		this.descricao = pitch.getDescricao();
+		this.etapaAvaliacaoVideo = pitch.getEtapaAvaliacaoVideo();
+		this.pitchDeck = pitch.getPitchDeck();
+		this.equipe = pitch.getEquipe();
+		this.avaliacaoPitch = pitch.getAvaliacaoPitch();
+		this.feedbackAvaliativos = pitch.getFeedbackAvaliativos();
+	}
 }
