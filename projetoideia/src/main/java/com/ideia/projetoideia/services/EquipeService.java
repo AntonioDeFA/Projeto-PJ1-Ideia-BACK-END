@@ -36,7 +36,6 @@ import com.ideia.projetoideia.model.dto.FeedbacksAvaliativosDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasAprovadoConsultoriaDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoEnvioDto;
-import com.ideia.projetoideia.model.dto.PitchArquivoPitchDeckDto;
 import com.ideia.projetoideia.model.dto.UsuarioDto;
 import com.ideia.projetoideia.model.enums.EtapaArtefatoPitch;
 import com.ideia.projetoideia.model.enums.TipoEtapa;
@@ -552,7 +551,7 @@ public class EquipeService {
 
 	}
 
-	public PitchArquivoPitchDeckDto enviarPitchConsultoria(Integer idEquipe)
+	public void enviarPitchConsultoria(Integer idEquipe)
 			throws Exception {
 		Equipe equipe = recuperarEquipe(idEquipe);
 		
@@ -583,8 +582,6 @@ public class EquipeService {
 
 		equipeRepositorio.save(equipe);
 		pitch.setEquipe(equipe);
-
-		return new PitchArquivoPitchDeckDto(pitch.getPitchDeck());
 		
 	}
 

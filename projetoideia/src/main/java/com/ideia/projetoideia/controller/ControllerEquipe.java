@@ -32,7 +32,6 @@ import com.ideia.projetoideia.model.dto.LeanCanvasAprovadoConsultoriaDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoEnvioDto;
 import com.ideia.projetoideia.model.dto.NomeEquipeDto;
-import com.ideia.projetoideia.model.dto.PitchArquivoPitchDeckDto;
 import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.EquipeService;
 
@@ -304,11 +303,11 @@ public class ControllerEquipe {
 	}
 	
 	@GetMapping("/pitch-deck/{idEquipe}/consultoria")
-	public PitchArquivoPitchDeckDto enviarPitchConsultoria(@PathVariable("idEquipe")Integer idEquipe)
+	public void enviarPitchConsultoria(@PathVariable("idEquipe")Integer idEquipe)
 			throws Exception {
 		
 		try {
-			return equipeService.enviarPitchConsultoria(idEquipe);
+			equipeService.enviarPitchConsultoria(idEquipe);
 		} catch (NotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		} catch (Exception e) {
