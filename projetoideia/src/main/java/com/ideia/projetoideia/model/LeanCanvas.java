@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ideia.projetoideia.model.enums.EtapaArtefatoPitch;
@@ -29,12 +30,16 @@ public class LeanCanvas {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Integer id;
+	
 
 	private String problema;
-
+	
+	
+	@Column(nullable = false)
+	@Size(min = 3)
 	private String solucao;
 
-	@Column(name = "metricas_chave")
+	@Column(name = "metricas_chave" )
 	private String metricasChave;
 
 	@Column(name = "proposta_valor")
@@ -42,6 +47,7 @@ public class LeanCanvas {
 
 	@Column(name = "vantagem_competitiva")
 	private String vantagemCompetitiva;
+	
 
 	private String canais;
 
