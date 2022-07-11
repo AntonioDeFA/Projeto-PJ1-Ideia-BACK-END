@@ -388,7 +388,7 @@ public class EquipeService {
 
 		if (leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe,
 				EtapaArtefatoPitch.EM_CONSULTORIA.getValue()) != null) {
-			throw new Exception("Essa equipe já possíu um lean canvas que está em consultoria");
+			throw new Exception("Essa equipe já possuí um Lean Canvas que está em consultoria.");
 		}
 		if (equipe.getConsultor() == null) {
 
