@@ -63,23 +63,6 @@ public class MaterialEstudo {
 	@JoinColumn(name = "categoria_material_estudo_fk")
 	private CategoriaMaterialEstudo categoriaMaterialEstudo;
 
-//	public void setArquivoEstudo(File arquivoEstudo) throws Exception {
-//		if (!isLink()) {
-//			throw new Exception("O tipo é link, então um arquivo não pode ser atribuido!");
-//		}
-//		this.arquivoEstudo = arquivoEstudo;
-//	}
-//
-//	public void setLink(String link) throws Exception {
-//		if (isLink()) {
-//			throw new Exception("O tipo não é link, então um link não pode ser atribuido!");
-//		}
-//		this.link = link;
-//	}
-//
-//	private boolean isLink() {
-//		return (tipoMaterialEstudo == TipoMaterialEstudo.LINK);
-//	}
 
 	public void setEtapa(Etapa etapa) throws Exception {
 		if (etapa.getTipoEtapa() != TipoEtapa.AQUECIMENTO) {

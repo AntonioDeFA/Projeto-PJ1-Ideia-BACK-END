@@ -35,7 +35,7 @@ public class QuestaoAvaliativa {
 	@Column(nullable = false, name = "nota_maxima")
 	@NotNull(message = "Você deve colocar qual a nota máxima")
 	@Min(value = 5, message = "A nota mínima é 5")
-	private Float notaMax;
+	private Integer notaMax;
 	
 	@Column(nullable = false)
 	@NotNull(message = "Você deve escrever qual a questão")

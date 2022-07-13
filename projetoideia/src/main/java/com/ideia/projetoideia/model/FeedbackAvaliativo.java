@@ -35,7 +35,7 @@ public class FeedbackAvaliativo {
 	private TipoFeedback tipoFeedback;
 	
 	@Column(nullable = false)
-	@NotNull(message = "Você deve escrever qual uam sugestão")
+	@NotNull(message = "Você deve escrever qual alguma sugestão")
 	private String sugestao;
 	
 	@ManyToOne(cascade = CascadeType.MERGE)

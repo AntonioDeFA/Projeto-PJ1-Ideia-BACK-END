@@ -1,5 +1,6 @@
 package com.ideia.projetoideia.model;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +48,8 @@ public class Pitch {
 	private EtapaArtefatoPitch etapaAvaliacaoVideo;
 	
 	@Lob
+	@Column(name = "pitch_deck")
+
 	private String pitchDeck;
 	
 	@ManyToOne

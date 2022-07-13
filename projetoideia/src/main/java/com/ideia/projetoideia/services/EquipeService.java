@@ -36,11 +36,17 @@ import com.ideia.projetoideia.model.dto.FeedbacksAvaliativosDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasAprovadoConsultoriaDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoEnvioDto;
+
 import com.ideia.projetoideia.model.dto.PitchDto;
+
+import com.ideia.projetoideia.model.dto.NotaQuestaoDto;
+import com.ideia.projetoideia.model.dto.NotasEquipeDto;
+
 import com.ideia.projetoideia.model.dto.UsuarioDto;
 import com.ideia.projetoideia.model.enums.EtapaArtefatoPitch;
 import com.ideia.projetoideia.model.enums.TipoEtapa;
 import com.ideia.projetoideia.model.enums.TipoPapelUsuario;
+import com.ideia.projetoideia.model.enums.TipoQuestaoAvaliativa;
 import com.ideia.projetoideia.repository.AcessoMaterialEstudoRepositorio;
 import com.ideia.projetoideia.repository.AvaliacaoPitchRpositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
@@ -592,13 +598,81 @@ public class EquipeService {
 		pitch.setTitulo(pitchDto.getTitulo());
 		pitch.setEquipe(equipe);
 		;
-		if(pitchDto.getTipo().equals("VIDEO")) {			
+		if (pitchDto.getTipo().equals("VIDEO")) {
 			pitch.setVideo(pitchDto.getArquivoPitchDeck());
-		}else{
+		} else {
 			pitch.setPitchDeck(pitchDto.getArquivoPitchDeck());
 		}
-		
+
 		pitchRepositorio.save(pitch);
+	}
+
+	public NotasEquipeDto getNotasEquipe(Integer idEquipe) throws Exception {
+		recuperarEquipe(idEquipe);
+
+		Pitch pitch = pitchRepositorio.findByIdEquipeEEtapaList(idEquipe,
+				EtapaArtefatoPitch.AVALIADO_AVALIADOR.getValue());
+
+		if (pitch == null || pitch.getAvaliacaoPitch().size() == 0) {
+			throw new Exception("A equipe não possíu notas no momento");
+		}
+
+		NotasEquipeDto notas = new NotasEquipeDto();
+
+		Integer notaAtribuidaAdaptabilidade = 0;
+		Integer notaMaximaAdaptabilidade = 0;
+		Integer notaAtribuidaInovacao = 0;
+		Integer notaMaximaInovacao = 0;
+		Integer notaAtribuidaUtilidade = 0;
+		Integer notaMaximaUtilidade = 0;
+		Integer notaAtribuidaSustentabilidade = 0;
+		Integer notaMaximaSustentabilidade = 0;
+
+		List<AvaliacaoPitch> avaliacoes = pitch.getAvaliacaoPitch();
+
+		for (AvaliacaoPitch avaliacaoPitch : avaliacoes) {
+			QuestaoAvaliativa questao = avaliacaoPitch.getQuestaoAvaliativa();
+
+			NotaQuestaoDto notaQuestaoDto = new NotaQuestaoDto();
+
+			notaQuestaoDto.setAvaliador(avaliacaoPitch.getAvaliador().getNomeUsuario());
+			notaQuestaoDto.setComentario(avaliacaoPitch.getObservacao());
+			notaQuestaoDto.setQuestao(questao.getQuestao());
+			notaQuestaoDto.setNota(avaliacaoPitch.getNotaAtribuida());
+			notaQuestaoDto.setNotaMax(questao.getNotaMax());
+
+			if (questao.getTipoQuestaoAvaliativa().equals(TipoQuestaoAvaliativa.ADAPTABILIDADE)) {
+				notas.getListaAdaptabilidade().add(notaQuestaoDto);
+				notaAtribuidaAdaptabilidade += notaQuestaoDto.getNota();
+				notaMaximaAdaptabilidade += notaQuestaoDto.getNotaMax();
+			} else if (questao.getTipoQuestaoAvaliativa().equals(TipoQuestaoAvaliativa.INOVACAO)) {
+				notas.getListaInovacao().add(notaQuestaoDto);
+				notaAtribuidaInovacao += notaQuestaoDto.getNota();
+				notaMaximaInovacao += notaQuestaoDto.getNotaMax();
+			} else if (questao.getTipoQuestaoAvaliativa().equals(TipoQuestaoAvaliativa.SUSTENTABILIDADE)) {
+				notas.getListaSustentabilidade().add(notaQuestaoDto);
+				notaAtribuidaSustentabilidade += notaQuestaoDto.getNota();
+				notaMaximaSustentabilidade += notaQuestaoDto.getNotaMax();
+			} else if (questao.getTipoQuestaoAvaliativa().equals(TipoQuestaoAvaliativa.UTILIDADE)) {
+				notas.getListaUtilidade().add(notaQuestaoDto);
+				notaAtribuidaUtilidade += notaQuestaoDto.getNota();
+				notaMaximaUtilidade += notaQuestaoDto.getNotaMax();
+			}
+
+		}
+
+		notas.setNotaAtribuidaAdaptabilidade(notaAtribuidaAdaptabilidade);
+		notas.setNotaAtribuidaInovacao(notaAtribuidaInovacao);
+		notas.setNotaAtribuidaSustentabilidade(notaAtribuidaSustentabilidade);
+		notas.setNotaAtribuidaInovacao(notaAtribuidaInovacao);
+
+		notas.setNotaMaximaAdaptabilidade(notaMaximaAdaptabilidade);
+		notas.setNotaMaximaInovacao(notaMaximaInovacao);
+		notas.setNotaMaximaSustentabilidade(notaMaximaSustentabilidade);
+		notas.setNotaMaximaUtilidade(notaMaximaUtilidade);
+
+		return notas;
+
 	}
 
 }

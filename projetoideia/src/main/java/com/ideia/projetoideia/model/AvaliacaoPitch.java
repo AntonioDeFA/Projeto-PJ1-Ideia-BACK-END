@@ -1,6 +1,6 @@
 package com.ideia.projetoideia.model;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,11 +25,11 @@ public class AvaliacaoPitch {
 	private Integer id;
 	
 	@Column(nullable = false, name = "data_avaliacao")
-	private Date dataAvaliacao;
+	private LocalDate dataAvaliacao;
 	
 	@Column(nullable = false, name = "nota_atribuida")
 	@NotNull(message = "Você deve escrever qual uma nota")
-	private Float notaAtribuida;
+	private Integer notaAtribuida;
 	
 	@Column(nullable = false)
 	@NotNull(message = "Você deve escrever qual uma observação")

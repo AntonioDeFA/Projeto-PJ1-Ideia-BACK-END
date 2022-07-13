@@ -49,7 +49,7 @@ public class TesteQuestoesAvaliativas {
 	
 	@BeforeEach
 	public void inicializar() {
-		questaoAvaliativa.setNotaMax(Float.valueOf(10));
+		questaoAvaliativa.setNotaMax(10);
 		questaoAvaliativa.setQuestao("Questão Teste");
 		questaoAvaliativa.setTipoQuestaoAvaliativa(TipoQuestaoAvaliativa.ADAPTABILIDADE);
 		questaoAvaliativa.setCompeticaoCadastrada(competicao);
@@ -98,7 +98,7 @@ public class TesteQuestoesAvaliativas {
 		
 		questaoAvaliativa.setEnumeracao(2);
 		questaoAvaliativa.setQuestao("QuestaoAtualização");
-		questaoAvaliativa.setNotaMax(Float.valueOf(20));
+		questaoAvaliativa.setNotaMax(20);
 	
 		questaoAvaliativaRepositorio.save(questaoAvaliativa);
 		
@@ -148,7 +148,7 @@ public class TesteQuestoesAvaliativas {
 	
 	@Test
 	public void valorInferiorNotaMaximaException() {
-		questaoAvaliativa.setNotaMax(Float.valueOf(4));;
+		questaoAvaliativa.setNotaMax(4);;
 		assertThrows(Exception.class, () -> {
 			questaoAvaliativaRepositorio.save(questaoAvaliativa);
 		});

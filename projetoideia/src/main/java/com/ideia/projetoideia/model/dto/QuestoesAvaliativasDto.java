@@ -10,7 +10,7 @@ public class QuestoesAvaliativasDto {
 
 	private Integer id;
 
-	private Float notaMax;
+	private Integer notaMax;
 
 	private String questao;
 

@@ -32,7 +32,11 @@ import com.ideia.projetoideia.model.dto.LeanCanvasAprovadoConsultoriaDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoEnvioDto;
 import com.ideia.projetoideia.model.dto.NomeEquipeDto;
+
 import com.ideia.projetoideia.model.dto.PitchDto;
+
+import com.ideia.projetoideia.model.dto.NotasEquipeDto;
+
 import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.EquipeService;
 
@@ -319,17 +323,30 @@ public class ControllerEquipe {
 	}
 
 	@PostMapping("//pitch-deck/{idEquipe}")
-	public ResponseEntity<?> criarPitch(@PathVariable("idEquipe")Integer idEquipe, @Valid @RequestBody PitchDto pitchDto) throws Exception {
+	public ResponseEntity<?> criarPitch(@PathVariable("idEquipe") Integer idEquipe,
+			@Valid @RequestBody PitchDto pitchDto) throws Exception {
 		try {
 			equipeService.criarPitch(idEquipe, pitchDto);
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new IdeiaResponseFile("Membro removido com sucesso!", HttpStatus.OK));
 		} catch (NotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-			.body(new IdeiaResponseFile("ERRO ", e.getMessage(), HttpStatus.NOT_FOUND));
+					.body(new IdeiaResponseFile("ERRO ", e.getMessage(), HttpStatus.NOT_FOUND));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
 		}
 	}
+
+	@GetMapping("/notas-questoes-avaliativas/{idEquipe}")
+	public NotasEquipeDto getNotasEquipe(@PathVariable("idEquipe") Integer idEquipe) {
+
+		try {
+			return equipeService.getNotasEquipe(idEquipe);
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+
+	}
+
 }
