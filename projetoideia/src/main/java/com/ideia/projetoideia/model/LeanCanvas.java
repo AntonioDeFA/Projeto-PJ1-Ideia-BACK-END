@@ -15,7 +15,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ideia.projetoideia.model.enums.EtapaArtefatoPitch;
@@ -31,12 +30,8 @@ public class LeanCanvas {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Integer id;
 	
-
 	private String problema;
-	
-	
-	@Column(nullable = false)
-	@Size(min = 3)
+
 	private String solucao;
 
 	@Column(name = "metricas_chave" )
@@ -48,7 +43,6 @@ public class LeanCanvas {
 	@Column(name = "vantagem_competitiva")
 	private String vantagemCompetitiva;
 	
-
 	private String canais;
 
 	@Column(name = "segmentos_de_clientes")
@@ -71,7 +65,6 @@ public class LeanCanvas {
 	@JsonIgnore
 	private List<FeedbackAvaliativo> feedbackAvaliativos = new ArrayList<>();
 	
-	
 	public LeanCanvas(LeanCanvas canvas) {
 		
 		this.problema = canvas.getProblema();
@@ -84,10 +77,8 @@ public class LeanCanvas {
 		this.estruturaDeCusto = canvas.getEstruturaDeCusto();
 		this.fontesDeReceita = canvas.getFontesDeReceita();
 		this.etapaSolucaoCanvas = canvas.getEtapaSolucaoCanvas();
-		
 	}
 	
 	public LeanCanvas() {}
 	
-
 }
