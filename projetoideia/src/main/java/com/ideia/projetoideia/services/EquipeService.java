@@ -36,6 +36,7 @@ import com.ideia.projetoideia.model.dto.FeedbacksAvaliativosDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasAprovadoConsultoriaDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoEnvioDto;
+import com.ideia.projetoideia.model.dto.PitchDto;
 import com.ideia.projetoideia.model.dto.UsuarioDto;
 import com.ideia.projetoideia.model.enums.EtapaArtefatoPitch;
 import com.ideia.projetoideia.model.enums.TipoEtapa;
@@ -551,12 +552,10 @@ public class EquipeService {
 
 	}
 
-	public void enviarPitchConsultoria(Integer idEquipe)
-			throws Exception {
+	public void enviarPitchConsultoria(Integer idEquipe) throws Exception {
 		Equipe equipe = recuperarEquipe(idEquipe);
-		
-		if (pitchRepositorio.findByIdEquipeEEtapaList(idEquipe,
-				EtapaArtefatoPitch.EM_CONSULTORIA.getValue()) != null) {
+
+		if (pitchRepositorio.findByIdEquipeEEtapaList(idEquipe, EtapaArtefatoPitch.EM_CONSULTORIA.getValue()) != null) {
 			throw new Exception("Essa equipe já possuí um pitch que está em consultoria.");
 		}
 		if (equipe.getConsultor() == null) {
@@ -582,7 +581,24 @@ public class EquipeService {
 
 		equipeRepositorio.save(equipe);
 		pitch.setEquipe(equipe);
+
+	}
+
+	public void criarPitch(Integer idEquipe, PitchDto pitchDto) throws Exception {
+		Equipe equipe = recuperarEquipe(idEquipe);
+
+		Pitch pitch = new Pitch();
+		pitch.setDescricao(pitchDto.getDescricao());
+		pitch.setTitulo(pitchDto.getTitulo());
+		pitch.setEquipe(equipe);
+		;
+		if(pitchDto.getTipo().equals("VIDEO")) {			
+			pitch.setVideo(pitchDto.getArquivoPitchDeck());
+		}else{
+			pitch.setPitchDeck(pitchDto.getArquivoPitchDeck());
+		}
 		
+		pitchRepositorio.save(pitch);
 	}
 
 }

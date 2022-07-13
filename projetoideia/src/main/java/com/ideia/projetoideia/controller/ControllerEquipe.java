@@ -32,6 +32,7 @@ import com.ideia.projetoideia.model.dto.LeanCanvasAprovadoConsultoriaDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoEnvioDto;
 import com.ideia.projetoideia.model.dto.NomeEquipeDto;
+import com.ideia.projetoideia.model.dto.PitchDto;
 import com.ideia.projetoideia.response.IdeiaResponseFile;
 import com.ideia.projetoideia.services.EquipeService;
 
@@ -186,7 +187,7 @@ public class ControllerEquipe {
 					.body(new IdeiaResponseFile("Membro removido com sucesso!", HttpStatus.OK));
 		} catch (NotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-			.body(new IdeiaResponseFile("ERRO ", e.getMessage(), HttpStatus.NOT_FOUND));
+					.body(new IdeiaResponseFile("ERRO ", e.getMessage(), HttpStatus.NOT_FOUND));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
@@ -248,35 +249,36 @@ public class ControllerEquipe {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}
-	
+
 	@GetMapping("/equipe/{idEquipe}/material-estudo")
-	public List<MaterialEstudoEnvioDto> getMateriaisDeEstudoEquipe(@PathVariable("idEquipe") Integer idEquipe){
-		
+	public List<MaterialEstudoEnvioDto> getMateriaisDeEstudoEquipe(@PathVariable("idEquipe") Integer idEquipe) {
+
 		try {
 			return equipeService.getMateriasDeEstudoDeUmaEquipe(idEquipe);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
-		
+
 	}
-	
+
 	@PostMapping("/equipe/{idEquipe}/material-estudo/{idMaterialEstudo}")
-	public ResponseEntity<?> marcarMaterialConcluido(@PathVariable Integer idEquipe,@PathVariable Integer idMaterialEstudo){
-		
+	public ResponseEntity<?> marcarMaterialConcluido(@PathVariable Integer idEquipe,
+			@PathVariable Integer idMaterialEstudo) {
+
 		try {
 			equipeService.marcarMaterialComoConcluido(idEquipe, idMaterialEstudo);
-			
-			return  ResponseEntity.status(HttpStatus.CREATED)
-					.body(new IdeiaResponseFile("Marcado com sucesso !", HttpStatus.CREATED)); 
-		}catch (NotFoundException e) {
+
+			return ResponseEntity.status(HttpStatus.CREATED)
+					.body(new IdeiaResponseFile("Marcado com sucesso !", HttpStatus.CREATED));
+		} catch (NotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-			.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.NOT_FOUND));
-		}catch (Exception e) {
+					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.NOT_FOUND));
+		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
 		}
 	}
-	
+
 	@GetMapping("/lean-canvas/{idLeanCanvas}/feedbacks-consultoria")
 	public FeedbacksAvaliativosDto listarFeedbacksLeanCanvas(@PathVariable("idLeanCanvas") Integer idLeanCanvas)
 			throws Exception {
@@ -288,24 +290,24 @@ public class ControllerEquipe {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}
-	
+
 	@GetMapping("/{idEquipe}/lean-canvas/aprovados-consultoria")
-	public List<LeanCanvasAprovadoConsultoriaDto>leanCnvasAprovadosPelaConsultoria(@PathVariable("idEquipe")Integer idEquipe){
-		
+	public List<LeanCanvasAprovadoConsultoriaDto> leanCnvasAprovadosPelaConsultoria(
+			@PathVariable("idEquipe") Integer idEquipe) {
+
 		try {
 			return equipeService.listarLeanCanvasAprovadoPelaConsultoria(idEquipe);
-		}catch (NotFoundException e) {
+		} catch (NotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-			
-		}catch (Exception e) {
+
+		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}
-	
+
 	@GetMapping("/pitch-deck/{idEquipe}/consultoria")
-	public void enviarPitchConsultoria(@PathVariable("idEquipe")Integer idEquipe)
-			throws Exception {
-		
+	public void enviarPitchConsultoria(@PathVariable("idEquipe") Integer idEquipe) throws Exception {
+
 		try {
 			equipeService.enviarPitchConsultoria(idEquipe);
 		} catch (NotFoundException e) {
@@ -313,6 +315,21 @@ public class ControllerEquipe {
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
-	
+
+	}
+
+	@PostMapping("//pitch-deck/{idEquipe}")
+	public ResponseEntity<?> criarPitch(@PathVariable("idEquipe")Integer idEquipe, @Valid @RequestBody PitchDto pitchDto) throws Exception {
+		try {
+			equipeService.criarPitch(idEquipe, pitchDto);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("Membro removido com sucesso!", HttpStatus.OK));
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+			.body(new IdeiaResponseFile("ERRO ", e.getMessage(), HttpStatus.NOT_FOUND));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
+		}
 	}
 }

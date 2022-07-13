@@ -1,6 +1,5 @@
 package com.ideia.projetoideia.model;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,9 +33,7 @@ public class Pitch {
 	private Integer id;
 	
 	@Lob
-	@Column(nullable = false)
-	@NotNull(message = "O arquivo não pode ser nulo.")
-	private File video;
+	private String video;
 	
 	@Column(nullable = false)
 	@NotNull(message = "Você deve escrever qual um titulo")
@@ -50,7 +47,6 @@ public class Pitch {
 	private EtapaArtefatoPitch etapaAvaliacaoVideo;
 	
 	@Lob
-	@Column(nullable = false, name = "pitch_deck")
 	private String pitchDeck;
 	
 	@ManyToOne
@@ -65,6 +61,9 @@ public class Pitch {
 	@JsonIgnore
 	private List<FeedbackAvaliativo> feedbackAvaliativos = new ArrayList<>();
 
+	public Pitch() {
+	}
+
 	public Pitch(Pitch pitch) {
 		super();
 		this.video = pitch.getVideo();
@@ -76,4 +75,5 @@ public class Pitch {
 		this.avaliacaoPitch = pitch.getAvaliacaoPitch();
 		this.feedbackAvaliativos = pitch.getFeedbackAvaliativos();
 	}
+
 }
