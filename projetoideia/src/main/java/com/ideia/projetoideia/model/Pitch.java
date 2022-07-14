@@ -1,6 +1,8 @@
 package com.ideia.projetoideia.model;
 
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +45,9 @@ public class Pitch {
 	@Column(nullable = false)
 	@NotNull(message = "Você deve escrever qual uma descrição")
 	private String descricao;
+	
+	@Column(name = "data", nullable = false)
+	private LocalDateTime dataCriacao;
 	
 	@Enumerated(EnumType.STRING)
 	private EtapaArtefatoPitch etapaAvaliacaoVideo;
