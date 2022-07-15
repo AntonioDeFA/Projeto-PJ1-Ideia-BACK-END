@@ -63,6 +63,7 @@ import com.ideia.projetoideia.repository.QuestaoAvaliativaRepositorio;
 import com.ideia.projetoideia.repository.UsuarioMembroComumRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
 import com.ideia.projetoideia.services.utils.GeradorEquipeToken;
+import com.ideia.projetoideia.services.utils.Validador;
 import com.ideia.projetoideia.utils.EnviarEmail;
 
 import javassist.NotFoundException;
@@ -595,6 +596,10 @@ public class EquipeService {
 	public void criarPitch(Integer idEquipe, PitchDto pitchDto) throws Exception {
 		Equipe equipe = recuperarEquipe(idEquipe);
 		
+		if(pitchDto.getTipo().equals("VIDEO")) {
+			Validador.validarDuracaoVideoPitch(pitchDto.getArquivoPitchDeck());
+		}
+		
 		Pitch pitch = pitchRepositorio.findByIdEquipeEEtapaList(idEquipe, EtapaArtefatoPitch.EM_ELABORACAO.getValue());
 		
 		if(pitch == null) {
@@ -625,7 +630,7 @@ public class EquipeService {
 				EtapaArtefatoPitch.AVALIADO_AVALIADOR.getValue());
 
 		if (pitch == null || pitch.getAvaliacaoPitch().size() == 0) {
-			throw new Exception("A equipe não possíu notas no momento");
+			throw new Exception("A sua equipe não possui notas no momento");
 		}
 
 		NotasEquipeDto notas = new NotasEquipeDto();
@@ -730,12 +735,8 @@ public class EquipeService {
 			throw new Exception("Essa equipe já possuí um lean canvas e um pitch em avaliação.");
 		}
 		
-		if(leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe, EtapaArtefatoPitch.AVALIADO_CONSULTOR.getValue()) == null) {
-			throw new Exception("Não existe nenhum Lean Canvas avaliado pelo consultor.");
-		}
-		
-		LeanCanvas canvas = leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe, EtapaArtefatoPitch.AVALIADO_CONSULTOR.getValue());
-		Pitch pitch = pitchRepositorio.findByIdEquipe(idEquipe).orElse(null);
+		LeanCanvas canvas = leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe, EtapaArtefatoPitch.EM_ELABORACAO.getValue());
+		Pitch pitch = pitchRepositorio.findByIdEquipeEEtapaList(idEquipe, EtapaArtefatoPitch.EM_ELABORACAO.getValue());
 
 		canvas.setEtapaSolucaoCanvas(EtapaArtefatoPitch.EM_AVALIACAO);
 		pitch.setEtapaAvaliacaoVideo(EtapaArtefatoPitch.EM_AVALIACAO);
