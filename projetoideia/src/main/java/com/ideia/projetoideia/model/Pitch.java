@@ -1,7 +1,5 @@
 package com.ideia.projetoideia.model;
 
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,41 +28,40 @@ import lombok.Data;
 @Table(name = "tb_pitch")
 @Data
 public class Pitch {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Integer id;
-	
+
 	@Lob
 	private String video;
-	
+
 	@Column(nullable = false)
 	@NotNull(message = "Você deve escrever qual um titulo")
 	private String titulo;
-	
+
 	@Column(nullable = false)
 	@NotNull(message = "Você deve escrever qual uma descrição")
 	private String descricao;
-	
+
 	@Column(name = "data", nullable = false)
 	private LocalDateTime dataCriacao;
-	
+
 	@Enumerated(EnumType.STRING)
 	private EtapaArtefatoPitch etapaAvaliacaoVideo;
-	
+
 	@Lob
 	@Column(name = "pitch_deck")
-
 	private String pitchDeck;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "equipe_fk")
 	private Equipe equipe;
-	
+
 	@OneToMany(mappedBy = "pitch", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	private List<AvaliacaoPitch> avaliacaoPitch = new ArrayList<>();
-	
+
 	@OneToMany(mappedBy = "pitch", cascade = CascadeType.REMOVE)
 	@JsonIgnore
 	private List<FeedbackAvaliativo> feedbackAvaliativos = new ArrayList<>();

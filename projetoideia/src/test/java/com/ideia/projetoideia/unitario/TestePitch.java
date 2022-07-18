@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,13 +21,13 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import com.ideia.projetoideia.ProjetoideiaApplication;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Equipe;
-import com.ideia.projetoideia.model.LeanCanvas;
+import com.ideia.projetoideia.model.Pitch;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.UsuarioMembroComum;
 import com.ideia.projetoideia.model.enums.EtapaArtefatoPitch;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.EquipeRepositorio;
-import com.ideia.projetoideia.repository.LeanCanvasRepositorio;
+import com.ideia.projetoideia.repository.PitchRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
 import com.ideia.projetoideia.services.EquipeService;
 
@@ -34,10 +35,10 @@ import com.ideia.projetoideia.services.EquipeService;
 @WebAppConfiguration
 @ContextConfiguration
 @SpringBootTest(classes = ProjetoideiaApplication.class)
-public class TesteLeanCanvas {
+public class TestePitch {
 
 	@Autowired
-	private LeanCanvasRepositorio leanCanvasRepositorio;
+	private PitchRepositorio pitchRepositorio;
 
 	@Autowired
 	private UsuarioRepositorio usuarioRepositorio;
@@ -51,7 +52,7 @@ public class TesteLeanCanvas {
 	@Autowired
 	private EquipeService equipeService;
 
-	private LeanCanvas canvas;
+	private Pitch pitch;
 
 	private Usuario usuario = new Usuario();
 
@@ -97,102 +98,102 @@ public class TesteLeanCanvas {
 		equipe.setUsuarios(usuarios);
 		equipe = equipeRepositorio.findById(equipeRepositorio.save(equipe).getId()).get();
 
-		canvas = new LeanCanvas();
-		canvas.setEtapaSolucaoCanvas(EtapaArtefatoPitch.EM_ELABORACAO);
-		canvas.setEquipe(equipe);
+		pitch = new Pitch();
+		pitch.setEtapaAvaliacaoVideo(EtapaArtefatoPitch.AVALIADO_AVALIADOR);
+		pitch.setTitulo("Titulo");
+		pitch.setDescricao("Descrição");
+		pitch.setDataCriacao(LocalDateTime.now());
+		pitch.setPitchDeck("Pitch deck");
+		pitch.setEquipe(equipe);
 	}
 
 //												Caminho Feliz 	
 //---------------------------------------------------------------------------------------------------------------------------
 
 	@Test
-	public void testeCriarLeanCanvasCorreto() {
+	public void testeCriarPitchCorreto() {
 
-		Integer idCanvas = leanCanvasRepositorio.save(canvas).getId();
+		Integer idPitch = pitchRepositorio.save(pitch).getId();
 
-		LeanCanvas canvasRetorno = leanCanvasRepositorio.findById(idCanvas).get();
+		Pitch pitchRetorno = pitchRepositorio.findById(idPitch).get();
 
-		assertNotNull(canvasRetorno);
+		assertNotNull(pitchRetorno);
 
-		leanCanvasRepositorio.delete(canvasRetorno);
+		pitchRepositorio.delete(pitchRetorno);
 	}
 
 	@Test
-	public void testeAtualizarLeanCanvasCorreto() {
+	public void testeAtualizarPitchCorreto() {
 
-		Integer idCanvas = leanCanvasRepositorio.save(canvas).getId();
+		Integer idPitch = pitchRepositorio.save(pitch).getId();
 
-		LeanCanvas canvasRetorno = leanCanvasRepositorio.findById(idCanvas).get();
+		Pitch pitchRetorno = pitchRepositorio.findById(idPitch).get();
 
-		canvasRetorno.setProblema("Problema");
-		canvasRetorno.setSolucao("Solucao");
-		canvasRetorno.setMetricasChave("MetricasChave");
-		canvasRetorno.setPropostaValor("PropostaValor");
-		canvasRetorno.setVantagemCompetitiva("VantagemCompetitiva");
-		canvasRetorno.setCanais("Canais");
-		canvasRetorno.setSegmentosDeClientes("SegmentosDeClientes");
-		canvasRetorno.setEstruturaDeCusto("EstruturaDeCusto");
-		canvasRetorno.setFontesDeReceita("FontesDeReceita");
+		pitch.setEtapaAvaliacaoVideo(EtapaArtefatoPitch.AVALIADO_AVALIADOR);
+		pitch.setTitulo("Titulo");
+		pitch.setDescricao("Descrição");
+		pitch.setEquipe(equipe);
+		pitch.setDataCriacao(LocalDateTime.now());
+		pitch.setPitchDeck("Pitch deck");
 
-		Integer idCanvasAtualizado = leanCanvasRepositorio.save(canvasRetorno).getId();
+		Integer idPitchAtualizado = pitchRepositorio.save(pitchRetorno).getId();
 
-		LeanCanvas canvasAtualizado = leanCanvasRepositorio.findById(idCanvasAtualizado).get();
+		Pitch pitchAtualizado = pitchRepositorio.findById(idPitchAtualizado).get();
 
-		assertNotNull(canvasAtualizado);
+		assertNotNull(idPitchAtualizado);
 
-		leanCanvasRepositorio.delete(canvasAtualizado);
+		pitchRepositorio.delete(pitchAtualizado);
 
 	}
 
 	@Test
-	public void testeDeletarLeanCanvasCorreto() {
+	public void testeDeletarPitchCorreto() {
 
-		Integer idCanvas = leanCanvasRepositorio.save(canvas).getId();
+		Integer idPitch = pitchRepositorio.save(pitch).getId();
 
-		LeanCanvas canvasRetorno = leanCanvasRepositorio.findById(idCanvas).get();
+		Pitch pitchRetorno = pitchRepositorio.findById(idPitch).get();
 
-		assertNotNull(canvasRetorno);
+		assertNotNull(pitchRetorno);
 
-		leanCanvasRepositorio.delete(canvasRetorno);
+		pitchRepositorio.delete(pitchRetorno);
 
-		LeanCanvas canvasDeletada = leanCanvasRepositorio.findById(idCanvas).orElse(null);
+		Pitch pitchDeletada = pitchRepositorio.findById(idPitch).orElse(null);
 
-		assertNull(canvasDeletada);
+		assertNull(pitchDeletada);
 
 	}
 
-//  														Exceptions 	
+//										Exceptions 	
 //---------------------------------------------------------------------------------------------------------------------------
 
 	@Test
-	public void testeEnviarLeanCanvasSemConsultorException() {
+	public void testeTituloNuloErrado() {
 
-		Integer idEquipe = equipe.getId();
+		pitch.setTitulo(null);
 
 		assertThrows(Exception.class, () -> {
-			equipeService.enviarLeanCanvasParaConsultoria(idEquipe);
+			pitchRepositorio.save(pitch);
+		});
+	}
+
+	@Test
+	public void testeDescricaoNuloErrado() {
+
+		pitch.setDescricao(null);
+
+		assertThrows(Exception.class, () -> {
+			pitchRepositorio.save(pitch);
 		});
 
 	}
-//
-//	@Test
-//	public void testeCadastroEquipeComTokenEmBrancoException() {
-//		equipe.setToken(null);
-//
-//		assertThrows(DataIntegrityViolationException.class, () -> {
-//			equipeRepositorio.save(equipe);
-//		});
-//
-//	}
-//
-//	@Test
-//	public void testeCadastroEquipeSemDataException() {
-//		equipe.setDataInscricao(null);
-//
-//		assertThrows(DataIntegrityViolationException.class, () -> {
-//			equipeRepositorio.save(equipe);
-//		});
-//
-//	}
+	
+	@Test
+	public void testeDataErrada() {
 
+		assertThrows(Exception.class, () -> {
+			pitch.setDataCriacao(null);
+			pitchRepositorio.save(pitch);
+		});
+
+	}
 }
