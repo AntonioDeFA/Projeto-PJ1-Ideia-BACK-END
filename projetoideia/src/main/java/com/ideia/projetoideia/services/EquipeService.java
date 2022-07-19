@@ -410,6 +410,17 @@ public class EquipeService {
 				EtapaArtefatoPitch.EM_ELABORACAO.getValue());
 
 		leanCanvasConsultoria.setEtapaSolucaoCanvas(EtapaArtefatoPitch.EM_CONSULTORIA);
+		if(leanCanvasConsultoria.getProblema() == null ||
+				leanCanvasConsultoria.getSolucao() == null ||
+				leanCanvasConsultoria.getCanais() == null ||
+				leanCanvasConsultoria.getEstruturaDeCusto() == null ||
+				leanCanvasConsultoria.getFontesDeReceita() == null ||
+				leanCanvasConsultoria.getPropostaValor() == null ||
+				leanCanvasConsultoria.getMetricasChave() == null ||
+				leanCanvasConsultoria.getSegmentosDeClientes() == null ||
+				leanCanvasConsultoria.getVantagemCompetitiva() == null) {
+			throw new Exception("Não é permitido enviar um Lean Canvas para consultoria com os campos vazios");
+		}
 
 		leanCanvasRepositorio.save(leanCanvasConsultoria);
 
