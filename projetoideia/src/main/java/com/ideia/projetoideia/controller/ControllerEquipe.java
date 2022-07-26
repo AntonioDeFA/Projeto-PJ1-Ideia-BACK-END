@@ -391,6 +391,10 @@ public class ControllerEquipe {
 	
 	@GetMapping("/{idCompeticao}/equipes/para-consultoria")
 	public List<EquipeConsultoriaDto>getEquipesParaConsultoria(@PathVariable("idCompeticao") Integer idCompeticao) throws Exception{
+		try {
 		return equipeService.getEquipesQuePrecisamDeConsultoria(idCompeticao);
+		}catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
 	}
 }
