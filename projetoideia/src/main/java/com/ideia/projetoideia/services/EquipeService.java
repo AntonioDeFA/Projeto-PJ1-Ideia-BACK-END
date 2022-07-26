@@ -306,6 +306,7 @@ public class EquipeService {
 	public EquipeComEtapaDTO dadosGeraisEquipe(Integer idEquipe) {
 		Equipe equipe = equipeRepositorio.findById(idEquipe).get();
 
+		String nomeConsultor = equipe.getConsultor().getNomeUsuario();
 		LocalDate hoje = LocalDate.now();
 		Competicao competicao = equipe.getCompeticaoCadastrada();
 		String etapaVigenteStr = "";
@@ -333,8 +334,9 @@ public class EquipeService {
 		} else if (competicao.getIsElaboracao()) {
 			etapaVigenteStr = "ELABORACAO";
 		}
-
-		return new EquipeComEtapaDTO(equipe, etapaVigenteStr, usuarioMembroComumRepositorio.findByEquipe(equipe));
+		
+		etapaVigenteStr = "IMERSAO";
+		return new EquipeComEtapaDTO(equipe, etapaVigenteStr, usuarioMembroComumRepositorio.findByEquipe(equipe), nomeConsultor);
 	}
 
 	public void criarLeanCanvas(Integer idEquipe) throws Exception {

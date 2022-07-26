@@ -24,15 +24,18 @@ public class EquipeComEtapaDTO {
 	
 	private String etapaVigenteStr;
 	
+	private String nomeConsultor;
+	
 	private List<UsuarioDto> usuarios = new ArrayList<>();
 
-	public EquipeComEtapaDTO(Equipe equipe, String etapaVigenteStr,List<UsuarioMembroComum> usuarios) {
+	public EquipeComEtapaDTO(Equipe equipe, String etapaVigenteStr,List<UsuarioMembroComum> usuarios, String nomeConsultor) {
 		this.id = equipe.getId();
 		this.nomeEquipe = equipe.getNomeEquipe();
 		this.token = equipe.getToken();
 		this.dataInscricao = equipe.getDataInscricao();
 		this.idCompeticaoCadastrada = equipe.getCompeticaoCadastrada().getId();
 		this.etapaVigenteStr = etapaVigenteStr;
+		this.nomeConsultor = nomeConsultor;
 		
 		UsuarioDto u  = new UsuarioDto();
 		u.setEmail(equipe.getLider().getEmail());
