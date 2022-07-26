@@ -30,4 +30,7 @@ public interface CompeticaoRepositorio extends JpaRepository<Competicao, Integer
 
 	public List<Competicao> findByNomeCompeticao(String nomeCompeticao);
 	
+	@Query(value = "SELECT * FROM db_ideia.tb_papel_usuario_competicao papel join db_ideia.tb_competicao c on c.id = papel.competicao_fk\r\n"
+			+ "where papel.tipo_papel_usuario = ?1 and papel.usuario_fk = ?2",nativeQuery = true)
+	public List<Competicao> findByTipoPapelUsuarioEIdUsuario(String tipoPapelUsuario , Integer idUsuario);
 }

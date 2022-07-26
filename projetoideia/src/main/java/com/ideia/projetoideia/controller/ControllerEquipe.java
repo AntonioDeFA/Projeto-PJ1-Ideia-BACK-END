@@ -24,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.dto.EmailDto;
 import com.ideia.projetoideia.model.dto.EquipeComEtapaDTO;
+import com.ideia.projetoideia.model.dto.EquipeConsultoriaDto;
 import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
 import com.ideia.projetoideia.model.dto.EquipeNomeDto;
 import com.ideia.projetoideia.model.dto.EquipeNotaDto;
@@ -387,5 +388,9 @@ public class ControllerEquipe {
 					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
 		}
 	}
-
+	
+	@GetMapping("/{idCompeticao}/equipes/para-consultoria")
+	public List<EquipeConsultoriaDto>getEquipesParaConsultoria(@PathVariable("idCompeticao") Integer idCompeticao) throws Exception{
+		return equipeService.getEquipesQuePrecisamDeConsultoria(idCompeticao);
+	}
 }

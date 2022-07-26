@@ -58,8 +58,6 @@ public class LeanCanvasPage {
 	public void enviarTextoParaOsCampos(String texto) {
 		campoProblema.sendKeys(texto);
 		
-		campoSolucao.click();
-		
 		campoSolucao.sendKeys(texto);
 		
 		campoMetricasChave.sendKeys(texto);

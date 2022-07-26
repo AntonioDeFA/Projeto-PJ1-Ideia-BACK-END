@@ -82,5 +82,17 @@ public class Competicao {
 	private Boolean isElaboracao = true;
 	
 	private Boolean isEncerrada = false;
+	
+	
+	public Etapa getEtapaVigente() {
+		
+		for (Etapa etapa : this.etapas) {
+			if (etapa.isVigente()) {
+				return etapa;
+			}
+		}
+		
+		return null;
+	}
 
 }
