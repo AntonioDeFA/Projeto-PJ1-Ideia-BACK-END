@@ -807,19 +807,42 @@ public class EquipeService {
 
 				}
 			}
-			return equipes;
-
 		}
 
 		else {
-			List<Competicao> competicoesDoConsultor = competicaoRepositorio.findByTipoPapelUsuarioEIdUsuario(TipoPapelUsuario.CONSULTOR.getValue()
-					, idCompeticao);
-			
-			for (Competicao competicao : competicoesDoConsultor) {
+			List<Competicao> competicoesDoConsultor = competicaoRepositorio
+					.findByTipoPapelUsuarioEIdUsuario(TipoPapelUsuario.CONSULTOR.getValue(), consultor.getId());
+
+			for (Competicao comp : competicoesDoConsultor) {
 				
+				Competicao competicao = competicaoRepositorio.getById(comp.getId());
+				
+				Etapa etapaVigente = competicao.getEtapaVigente();
+				
+				if (etapaVigente != null && etapaVigente.getTipoEtapa().equals(TipoEtapa.IMERSAO)) {
+					for (Equipe equipe : competicao.getEquipesCadastradas()) {
+						if (equipe.getConsultor().getId() == consultor.getId()) {
+
+							LeanCanvas leanCanvasEmConsultoria = leanCanvasRepositorio
+									.findByIdEquipeEEtapa(equipe.getId(), EtapaArtefatoPitch.EM_CONSULTORIA.getValue());
+
+							Pitch pitchEmConsultoria = pitchRepositorio.findByIdEquipeEEtapaList(equipe.getId(),
+									EtapaArtefatoPitch.EM_CONSULTORIA.getValue());
+
+							if (pitchEmConsultoria != null || leanCanvasEmConsultoria != null) {
+								EquipeConsultoriaDto equipeConsultoriaDto = new EquipeConsultoriaDto(equipe,
+										leanCanvasEmConsultoria, pitchEmConsultoria);
+								equipes.add(equipeConsultoriaDto);
+							}
+
+						}
+
+					}
+				}
 			}
-			return equipes;
+			
 		}
+		return equipes;
 	}
 
 }
