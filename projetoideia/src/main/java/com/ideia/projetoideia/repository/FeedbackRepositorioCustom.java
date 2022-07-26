@@ -20,7 +20,7 @@ public class FeedbackRepositorioCustom {
 	public List<FeedbackSugestaoDto> getByLeanCanvas(Integer id) {
 
 		StringBuffer jpql = new StringBuffer().append(
-				"SELECT new com.ideia.projetoideia.model.dto.FeedbackSugestaoDto(feed.tipoFeedback, feed.sugestao) FROM FeedbackAvaliativo AS feed WHERE feed.leanCanvas.id =:id");
+				"SELECT new com.ideia.projetoideia.model.dto.FeedbackSugestaoDto(feed.tipoFeedback, feed.sugestao, feed.dataCriacao) FROM FeedbackAvaliativo AS feed WHERE feed.leanCanvas.id =:id");
 		TypedQuery<FeedbackSugestaoDto> query = entityManager.createQuery(jpql.toString(), FeedbackSugestaoDto.class);
 		query.setParameter("id", id);
 
