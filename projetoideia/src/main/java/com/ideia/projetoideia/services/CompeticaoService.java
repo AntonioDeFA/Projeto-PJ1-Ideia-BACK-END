@@ -498,16 +498,11 @@ public class CompeticaoService {
 		return usuario;
 	}
 
-	public List<CompeticaoPitchImersaoDto> listarCompeticaoPitchImersao(Integer etapaSelecionada, String nomeCompeticaoInformado) throws Exception {
-		List<Competicao> competicoes = null;
+	public List<CompeticaoPitchImersaoDto> listarCompeticaoPitchImersao(Integer etapaSelecionada,
+			String nomeCompeticaoInformado) throws Exception {
+		List<Competicao> competicoes = competicaoRepositorio.findAll();
 		List<CompeticaoPitchImersaoDto> competicoesDto = new ArrayList<CompeticaoPitchImersaoDto>();
-		
-		if(nomeCompeticaoInformado.equals("ALL")) {
-			competicoes = competicaoRepositorio.findAll();
-		}else {
-			competicoes = competicaoRepositorio.findByNomeCompeticao(nomeCompeticaoInformado);
-		}
-		
+
 		TipoPapelUsuario papel = TipoPapelUsuario.CONSULTOR;
 		TipoEtapa etapa = TipoEtapa.IMERSAO;
 
@@ -519,13 +514,20 @@ public class CompeticaoService {
 			etapa = TipoEtapa.PITCH;
 		}
 		for (Competicao competicao : competicoes) {
-			for (PapelUsuarioCompeticao papelUsuario : papelUsuarioCompeticaoRepositorio
-					.findByCompeticaoCadastrada(competicao)) {
-				if (papelUsuario.getTipoPapelUsuario().equals(papel) && papelUsuario.getId() == usuario.getId()) {
-					for (Etapa etapaRecuperada : etapaRepositorio.findByCompeticao(competicao)) {
-						if (etapaRecuperada.getTipoEtapa().equals(etapa)) {
-							if (etapaRecuperada.isVigente()) {
-								competicoesDto.add(new CompeticaoPitchImersaoDto(competicao));
+			boolean continuar = true;
+			if (!nomeCompeticaoInformado.equals("ALL")
+					&& !competicao.getNomeCompeticao().contains(nomeCompeticaoInformado)) {
+				continuar = false;
+			}
+			if (continuar) {
+				for (PapelUsuarioCompeticao papelUsuario : papelUsuarioCompeticaoRepositorio
+						.findByCompeticaoCadastrada(competicao)) {
+					if (papelUsuario.getTipoPapelUsuario().equals(papel) && papelUsuario.getId() == usuario.getId()) {
+						for (Etapa etapaRecuperada : etapaRepositorio.findByCompeticao(competicao)) {
+							if (etapaRecuperada.getTipoEtapa().equals(etapa)) {
+								if (etapaRecuperada.isVigente()) {
+									competicoesDto.add(new CompeticaoPitchImersaoDto(competicao));
+								}
 							}
 						}
 					}
