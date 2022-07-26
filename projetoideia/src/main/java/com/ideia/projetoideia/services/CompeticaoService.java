@@ -498,10 +498,16 @@ public class CompeticaoService {
 		return usuario;
 	}
 
-	public List<CompeticaoPitchImersaoDto> listarCompeticaoPitchImersao(Integer etapaSelecionada) throws Exception {
-		List<Competicao> competicoes = competicaoRepositorio.findAll();
+	public List<CompeticaoPitchImersaoDto> listarCompeticaoPitchImersao(Integer etapaSelecionada, String nomeCompeticaoInformado) throws Exception {
+		List<Competicao> competicoes = null;
 		List<CompeticaoPitchImersaoDto> competicoesDto = new ArrayList<CompeticaoPitchImersaoDto>();
-
+		
+		if(nomeCompeticaoInformado.equals("ALL")) {
+			competicoes = competicaoRepositorio.findAll();
+		}else {
+			competicoes = competicaoRepositorio.findByNomeCompeticao(nomeCompeticaoInformado);
+		}
+		
 		TipoPapelUsuario papel = TipoPapelUsuario.CONSULTOR;
 		TipoEtapa etapa = TipoEtapa.IMERSAO;
 
@@ -515,7 +521,7 @@ public class CompeticaoService {
 		for (Competicao competicao : competicoes) {
 			for (PapelUsuarioCompeticao papelUsuario : papelUsuarioCompeticaoRepositorio
 					.findByCompeticaoCadastrada(competicao)) {
-				if (papelUsuario.getTipoPapelUsuario().equals(papel)) {
+				if (papelUsuario.getTipoPapelUsuario().equals(papel) && papelUsuario.getId() == usuario.getId()) {
 					for (Etapa etapaRecuperada : etapaRepositorio.findByCompeticao(competicao)) {
 						if (etapaRecuperada.getTipoEtapa().equals(etapa)) {
 							if (etapaRecuperada.isVigente()) {

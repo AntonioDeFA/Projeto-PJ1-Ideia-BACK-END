@@ -266,11 +266,11 @@ public class ControllerCompeticao {
 		}
 	}
 
-	@GetMapping(" /competicoes/usuario-logado/{etapaSelecionada}")
+	@GetMapping("/competicoes/usuario-logado/{nomeCompeticaoInformado}/{etapaSelecionada}")
 	public List<CompeticaoPitchImersaoDto> listarCompeticaoPitchImersao(
-			@PathVariable("etapaSelecionada") Integer etapaSelecionada){
+			@PathVariable("etapaSelecionada") Integer etapaSelecionada,@PathVariable("nomeCompeticaoInformado") String nomeCompeticaoInformado){
 		try {
-			return competicaoService.listarCompeticaoPitchImersao(etapaSelecionada);
+			return competicaoService.listarCompeticaoPitchImersao(etapaSelecionada, nomeCompeticaoInformado);
 		} catch (NotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		} catch (Exception e) {
