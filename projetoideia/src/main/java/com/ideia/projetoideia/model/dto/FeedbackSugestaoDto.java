@@ -21,4 +21,10 @@ public class FeedbackSugestaoDto {
 		this.sugestao = sugestao;
 		this.dataCriacao = dataCriacao;
 	}
+
+	public FeedbackSugestaoDto(TipoFeedback tipoFeedback, String sugestao) {
+		super();
+		this.tipoFeedback = tipoFeedback;
+		this.sugestao = sugestao;
+	}
 }

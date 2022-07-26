@@ -34,7 +34,7 @@ public class VersaoPitchDeckDto {
 		this.tipo = tipo;
 		
 		for(FeedbackAvaliativo feedback: feedbacksAvaliativos) {
-			this.feedbacksAvaliativos.add(new FeedbackSugestaoDto( feedback.getTipoFeedback(), feedback.getSugestao()));
+			this.feedbacksAvaliativos.add(new FeedbackSugestaoDto(feedback.getTipoFeedback(), feedback.getSugestao()));
 		}
 	}
 

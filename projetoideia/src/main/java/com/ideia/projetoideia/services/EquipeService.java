@@ -21,7 +21,6 @@ import com.ideia.projetoideia.model.AvaliacaoPitch;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.Etapa;
-import com.ideia.projetoideia.model.FeedbackAvaliativo;
 import com.ideia.projetoideia.model.LeanCanvas;
 import com.ideia.projetoideia.model.MaterialEstudo;
 import com.ideia.projetoideia.model.Usuario;
@@ -116,8 +115,6 @@ public class EquipeService {
 	private EnviarEmail enviarEmail;
 
 	private final FeedbackRepositorioCustom feedbackRepositorioCustom;
-
-	private FeedbackAvaliativoRepositorio feedbackAvaliativoRepositorio;
 
 	public EquipeService(FeedbackRepositorioCustom feedbackRepositorioCustom) {
 		this.feedbackRepositorioCustom = feedbackRepositorioCustom;
