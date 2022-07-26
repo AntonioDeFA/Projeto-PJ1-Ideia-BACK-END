@@ -21,6 +21,7 @@ import com.ideia.projetoideia.model.AvaliacaoPitch;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.Etapa;
+import com.ideia.projetoideia.model.FeedbackAvaliativo;
 import com.ideia.projetoideia.model.LeanCanvas;
 import com.ideia.projetoideia.model.MaterialEstudo;
 import com.ideia.projetoideia.model.Usuario;
@@ -55,6 +56,7 @@ import com.ideia.projetoideia.repository.AvaliacaoPitchRpositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.EquipeRepositorio;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
+import com.ideia.projetoideia.repository.FeedbackAvaliativoRepositorio;
 import com.ideia.projetoideia.repository.FeedbackRepositorioCustom;
 import com.ideia.projetoideia.repository.LeanCanvasRepositorio;
 import com.ideia.projetoideia.repository.MaterialEstudoRepositorio;
@@ -114,6 +116,8 @@ public class EquipeService {
 	private EnviarEmail enviarEmail;
 
 	private final FeedbackRepositorioCustom feedbackRepositorioCustom;
+
+	private FeedbackAvaliativoRepositorio feedbackAvaliativoRepositorio;
 
 	public EquipeService(FeedbackRepositorioCustom feedbackRepositorioCustom) {
 		this.feedbackRepositorioCustom = feedbackRepositorioCustom;
@@ -538,12 +542,19 @@ public class EquipeService {
 
 		LeanCanvas leanCanvas = canvas.get();
 		List<FeedbackSugestaoDto> feedbackAvaliativos = feedbackRepositorioCustom.getByLeanCanvas(idLeanCanvas);
+		LocalDateTime hora = feedbackAvaliativos.get(0).getDataCriacao();
+
+		for (FeedbackSugestaoDto feedback : feedbackAvaliativos) {
+			if (hora.isBefore(feedback.getDataCriacao())) {
+				hora = feedback.getDataCriacao();
+			}
+		}
 
 		if (!leanCanvas.getEtapaSolucaoCanvas().equals(EtapaArtefatoPitch.AVALIADO_CONSULTOR)) {
 			throw new Exception("O Lean canvas desta equipe ainda não foi aprovado");
 		}
 
-		return new FeedbacksAvaliativosDto(leanCanvas, feedbackAvaliativos);
+		return new FeedbacksAvaliativosDto(leanCanvas, feedbackAvaliativos, hora);
 	}
 
 	public List<LeanCanvasAprovadoConsultoriaDto> listarLeanCanvasAprovadoPelaConsultoria(Integer idEquipe)
