@@ -256,8 +256,7 @@ public class ControllerCompeticao {
 	}
 
 	@GetMapping("/competicao/consultores/{idCompeticao}")
-	public List<UsuarioConsultorDto> listarConsultoresCompeticao(@PathVariable("idCompeticao") Integer idCompeticao)
-			throws Exception {
+	public List<UsuarioConsultorDto> listarConsultoresCompeticao(@PathVariable("idCompeticao") Integer idCompeticao) {
 		try {
 			return competicaoService.listarConsultoresCompeticao(idCompeticao);
 		} catch (NotFoundException e) {
@@ -267,4 +266,15 @@ public class ControllerCompeticao {
 		}
 	}
 
+	@GetMapping(" /competicoes/usuario-logado/{etapaSelecionada}")
+	public List<CompeticaoPitchImersaoDto> listarCompeticaoPitchImersao(
+			@PathVariable("etapaSelecionada") Integer etapaSelecionada){
+		try {
+			return competicaoService.listarCompeticaoPitchImersao(etapaSelecionada);
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
 }

@@ -29,7 +29,6 @@ import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.EquipeRepositorio;
 import com.ideia.projetoideia.repository.PitchRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
-import com.ideia.projetoideia.services.EquipeService;
 
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
@@ -48,9 +47,6 @@ public class TestePitch {
 
 	@Autowired
 	private EquipeRepositorio equipeRepositorio;
-
-	@Autowired
-	private EquipeService equipeService;
 
 	private Pitch pitch;
 

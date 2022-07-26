@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.ideia.projetoideia.controller.CompeticaoPitchImersaoDto;
 import com.ideia.projetoideia.model.CategoriaMaterialEstudo;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Convite;
@@ -138,24 +139,24 @@ public class CompeticaoService {
 		}
 		return idCompeticao;
 	}
-	
+
 	public void verificarSeEstaEncerrada(Competicao comp) {
-		
+
 		LocalDate hoje = LocalDate.now();
-		
-		if(!comp.getIsEncerrada() && !comp.getIsElaboracao()) {
-			
-			for (Etapa etapa :comp.getEtapas()) {
-				
+
+		if (!comp.getIsEncerrada() && !comp.getIsElaboracao()) {
+
+			for (Etapa etapa : comp.getEtapas()) {
+
 				if (hoje.isAfter(etapa.getDataTermino()) && etapa.getTipoEtapa().equals(TipoEtapa.PITCH)) {
 					comp.setIsEncerrada(true);
 					competicaoRepositorio.save(comp);
 				}
-				
-			} 
-			
+
+			}
+
 		}
-		
+
 	}
 
 	public void atualizarCompeticao(Integer idCompeticao, CompeticaoPutDto competicaoPutDto)
@@ -496,5 +497,36 @@ public class CompeticaoService {
 		}
 		return usuario;
 	}
-	
+
+	public List<CompeticaoPitchImersaoDto> listarCompeticaoPitchImersao(Integer etapaSelecionada) throws Exception {
+		List<Competicao> competicoes = competicaoRepositorio.findAll();
+		List<CompeticaoPitchImersaoDto> competicoesDto = new ArrayList<CompeticaoPitchImersaoDto>();
+
+		TipoPapelUsuario papel = TipoPapelUsuario.CONSULTOR;
+		TipoEtapa etapa = TipoEtapa.IMERSAO;
+
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
+
+		if (etapaSelecionada.equals("PITCH")) {
+			papel = TipoPapelUsuario.AVALIADOR;
+			etapa = TipoEtapa.PITCH;
+		}
+		for (Competicao competicao : competicoes) {
+			for (PapelUsuarioCompeticao papelUsuario : papelUsuarioCompeticaoRepositorio
+					.findByCompeticaoCadastrada(competicao)) {
+				if (papelUsuario.getTipoPapelUsuario().equals(papel)) {
+					for (Etapa etapaRecuperada : etapaRepositorio.findByCompeticao(competicao)) {
+						if (etapaRecuperada.getTipoEtapa().equals(etapa)) {
+							if (etapaRecuperada.isVigente()) {
+								competicoesDto.add(new CompeticaoPitchImersaoDto(competicao));
+							}
+						}
+					}
+				}
+			}
+		}
+		return competicoesDto;
+	}
+
 }
