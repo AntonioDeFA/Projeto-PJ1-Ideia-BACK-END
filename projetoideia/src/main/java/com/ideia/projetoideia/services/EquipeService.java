@@ -29,6 +29,7 @@ import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
 import com.ideia.projetoideia.model.Pitch;
 import com.ideia.projetoideia.model.QuestaoAvaliativa;
 import com.ideia.projetoideia.model.dto.EquipeComEtapaDTO;
+import com.ideia.projetoideia.model.dto.EquipeConsultoriaDto;
 import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
 import com.ideia.projetoideia.model.dto.EquipeNomeDto;
 import com.ideia.projetoideia.model.dto.EquipeNotaDto;
@@ -337,9 +338,10 @@ public class EquipeService {
 		} else if (competicao.getIsElaboracao()) {
 			etapaVigenteStr = "ELABORACAO";
 		}
-		
+
 		etapaVigenteStr = "IMERSAO";
-		return new EquipeComEtapaDTO(equipe, etapaVigenteStr, usuarioMembroComumRepositorio.findByEquipe(equipe), nomeConsultor);
+		return new EquipeComEtapaDTO(equipe, etapaVigenteStr, usuarioMembroComumRepositorio.findByEquipe(equipe),
+				nomeConsultor);
 	}
 
 	public void criarLeanCanvas(Integer idEquipe) throws Exception {
@@ -412,15 +414,12 @@ public class EquipeService {
 				EtapaArtefatoPitch.EM_ELABORACAO.getValue());
 
 		leanCanvasConsultoria.setEtapaSolucaoCanvas(EtapaArtefatoPitch.EM_CONSULTORIA);
-		if(leanCanvasConsultoria.getProblema() == null ||
-				leanCanvasConsultoria.getSolucao() == null ||
-				leanCanvasConsultoria.getCanais() == null ||
-				leanCanvasConsultoria.getEstruturaDeCusto() == null ||
-				leanCanvasConsultoria.getFontesDeReceita() == null ||
-				leanCanvasConsultoria.getPropostaValor() == null ||
-				leanCanvasConsultoria.getMetricasChave() == null ||
-				leanCanvasConsultoria.getSegmentosDeClientes() == null ||
-				leanCanvasConsultoria.getVantagemCompetitiva() == null) {
+		if (leanCanvasConsultoria.getProblema() == null || leanCanvasConsultoria.getSolucao() == null
+				|| leanCanvasConsultoria.getCanais() == null || leanCanvasConsultoria.getEstruturaDeCusto() == null
+				|| leanCanvasConsultoria.getFontesDeReceita() == null
+				|| leanCanvasConsultoria.getPropostaValor() == null || leanCanvasConsultoria.getMetricasChave() == null
+				|| leanCanvasConsultoria.getSegmentosDeClientes() == null
+				|| leanCanvasConsultoria.getVantagemCompetitiva() == null) {
 			throw new Exception("Não é permitido enviar um Lean Canvas para consultoria com os campos vazios");
 		}
 
@@ -596,33 +595,35 @@ public class EquipeService {
 		pitchRepositorio.save(pitchConsultoria);
 
 		PitchDto pitch = new PitchDto();
-		
-		pitch.setArquivoPitchDeck(pitchConsultoria.getPitchDeck() == null ? pitchConsultoria.getVideo() : pitchConsultoria.getPitchDeck());;
+
+		pitch.setArquivoPitchDeck(pitchConsultoria.getPitchDeck() == null ? pitchConsultoria.getVideo()
+				: pitchConsultoria.getPitchDeck());
+		;
 		pitch.setTipo(pitchConsultoria.getPitchDeck() == null ? "VIDEO" : "ARQUIVO");
 		pitch.setTitulo(pitchConsultoria.getTitulo());
 		pitch.setDescricao(pitchConsultoria.getDescricao());
-		
+
 		criarPitch(idEquipe, pitch);
 
 	}
 
 	public void criarPitch(Integer idEquipe, PitchDto pitchDto) throws Exception {
 		Equipe equipe = recuperarEquipe(idEquipe);
-		
-		if(pitchDto.getTipo().equals("VIDEO")) {
+
+		if (pitchDto.getTipo().equals("VIDEO")) {
 			Validador.validarDuracaoVideoPitch(pitchDto.getArquivoPitchDeck());
 		}
-		
+
 		Pitch pitch = pitchRepositorio.findByIdEquipeEEtapaList(idEquipe, EtapaArtefatoPitch.EM_ELABORACAO.getValue());
-		
-		if(pitch == null) {
+
+		if (pitch == null) {
 			pitch = new Pitch();
 		}
-		
+
 		pitch.setDescricao(pitchDto.getDescricao());
 		pitch.setTitulo(pitchDto.getTitulo());
 		pitch.setDataCriacao(LocalDateTime.now());
-		pitch.setEtapaAvaliacaoVideo(EtapaArtefatoPitch.EM_ELABORACAO);	
+		pitch.setEtapaAvaliacaoVideo(EtapaArtefatoPitch.EM_ELABORACAO);
 		pitch.setEquipe(equipe);
 		;
 		if (pitchDto.getTipo().equals("VIDEO")) {
@@ -703,32 +704,32 @@ public class EquipeService {
 		return notas;
 
 	}
-	
+
 	public PitchDto getArquivoPitch(Integer idEquipe) throws Exception {
-		
+
 		Pitch pitch = pitchRepositorio.findByIdEquipe(idEquipe).orElse(null);
-		
-		if(pitch == null) {
+
+		if (pitch == null) {
 			throw new Exception("Não existe nenhum pitch para essa equipe no momento");
 		}
-		
+
 		String tipo = "ARQUIVO";
 		String pitchDeck = pitch.getPitchDeck();
-		
-		if(pitch.getPitchDeck() == null) {
+
+		if (pitch.getPitchDeck() == null) {
 			tipo = "VIDEO";
 			pitchDeck = pitch.getVideo();
 		}
-		
+
 		PitchDto dto = new PitchDto();
 		dto.setArquivoPitchDeck(pitchDeck);
 		dto.setTipo(tipo);
 		dto.setDescricao(pitch.getDescricao());
 		dto.setTitulo(pitch.getTitulo());
-		
+
 		return dto;
 	}
-	
+
 	public FeedbacksAvaliativosPitchDto listarFeedbacksPitchDecks(Integer idEquipe) throws Exception {
 
 		List<Pitch> feedbacksPitch = pitchRepositorio.findByIdEquipeFeedbacksPitch(idEquipe);
@@ -739,16 +740,17 @@ public class EquipeService {
 
 		return new FeedbacksAvaliativosPitchDto(feedbacksPitch);
 	}
-	
-	public void enviarParaAvaliacao(Integer idEquipe) throws Exception {
-		
 
-		if (pitchRepositorio.findByIdEquipeEEtapaList(idEquipe, EtapaArtefatoPitch.EM_AVALIACAO.getValue()) != null ||
-				leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe, EtapaArtefatoPitch.EM_AVALIACAO.getValue()) != null) {
+	public void enviarParaAvaliacao(Integer idEquipe) throws Exception {
+
+		if (pitchRepositorio.findByIdEquipeEEtapaList(idEquipe, EtapaArtefatoPitch.EM_AVALIACAO.getValue()) != null
+				|| leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe,
+						EtapaArtefatoPitch.EM_AVALIACAO.getValue()) != null) {
 			throw new Exception("Essa equipe já possuí um lean canvas e um pitch em avaliação.");
 		}
-		
-		LeanCanvas canvas = leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe, EtapaArtefatoPitch.EM_ELABORACAO.getValue());
+
+		LeanCanvas canvas = leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe,
+				EtapaArtefatoPitch.EM_ELABORACAO.getValue());
 		Pitch pitch = pitchRepositorio.findByIdEquipeEEtapaList(idEquipe, EtapaArtefatoPitch.EM_ELABORACAO.getValue());
 
 		canvas.setEtapaSolucaoCanvas(EtapaArtefatoPitch.EM_AVALIACAO);
@@ -757,6 +759,56 @@ public class EquipeService {
 		leanCanvasRepositorio.save(canvas);
 		pitchRepositorio.save(pitch);
 
+	}
+
+	public List<EquipeConsultoriaDto> getEquipesQuePrecisamDeConsultoria(Integer idCompeticao) throws Exception {
+		List<EquipeConsultoriaDto> equipes = new ArrayList<EquipeConsultoriaDto>();
+
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+
+		Usuario consultor = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
+
+		if (idCompeticao != 0) {
+
+			Competicao competicao = competicaoRepositorio.getById(idCompeticao);
+
+			Etapa etapaVigente = competicao.getEtapaVigente();
+
+			if (etapaVigente == null || !etapaVigente.getTipoEtapa().equals(TipoEtapa.IMERSAO)) {
+				throw new Exception("A Competição não está na etapa de Imersão");
+			}
+
+			for (Equipe equipe : competicao.getEquipesCadastradas()) {
+
+				if (equipe.getConsultor().getId() == consultor.getId()) {
+
+					LeanCanvas leanCanvasEmConsultoria = leanCanvasRepositorio.findByIdEquipeEEtapa(equipe.getId(),
+							EtapaArtefatoPitch.EM_CONSULTORIA.getValue());
+
+					Pitch pitchEmConsultoria = pitchRepositorio.findByIdEquipeEEtapaList(equipe.getId(),
+							EtapaArtefatoPitch.EM_CONSULTORIA.getValue());
+
+					if (pitchEmConsultoria != null || leanCanvasEmConsultoria != null) {
+						EquipeConsultoriaDto equipeConsultoriaDto = new EquipeConsultoriaDto(equipe,
+								leanCanvasEmConsultoria, pitchEmConsultoria);
+						equipes.add(equipeConsultoriaDto);
+					}
+
+				}
+			}
+			return equipes;
+
+		}
+
+		else {
+			List<Competicao> competicoesDoConsultor = competicaoRepositorio.findByTipoPapelUsuarioEIdUsuario(TipoPapelUsuario.CONSULTOR.getValue()
+					, idCompeticao);
+			
+			for (Competicao competicao : competicoesDoConsultor) {
+				
+			}
+			return equipes;
+		}
 	}
 
 }
