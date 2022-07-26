@@ -28,6 +28,7 @@ import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
 import com.ideia.projetoideia.model.dto.EquipeNomeDto;
 import com.ideia.projetoideia.model.dto.EquipeNotaDto;
 import com.ideia.projetoideia.model.dto.FeedbacksAvaliativosDto;
+import com.ideia.projetoideia.model.dto.FeedbacksAvaliativosPitchDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasAprovadoConsultoriaDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoEnvioDto;
@@ -322,13 +323,13 @@ public class ControllerEquipe {
 
 	}
 
-	@PostMapping("//pitch-deck/{idEquipe}")
+	@PostMapping("/pitch-deck/{idEquipe}")
 	public ResponseEntity<?> criarPitch(@PathVariable("idEquipe") Integer idEquipe,
 			@Valid @RequestBody PitchDto pitchDto) throws Exception {
 		try {
 			equipeService.criarPitch(idEquipe, pitchDto);
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(new IdeiaResponseFile("Membro removido com sucesso!", HttpStatus.OK));
+					.body(new IdeiaResponseFile("Pitch criado com sucesso!", HttpStatus.OK));
 		} catch (NotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(new IdeiaResponseFile("ERRO ", e.getMessage(), HttpStatus.NOT_FOUND));
@@ -347,6 +348,44 @@ public class ControllerEquipe {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 
+	}
+	
+	@GetMapping("/arquivo-pitch-deck/{idEquipe}")
+	public PitchDto getArquivoPitch(@PathVariable("idEquipe") Integer idEquipe) {
+
+		try {
+			return equipeService.getArquivoPitch(idEquipe);
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+
+	}
+	
+	@GetMapping("/pitch-deck/{idEquipe}/feedbacks-de-versoes-consultoria")
+	public FeedbacksAvaliativosPitchDto listarFeedbacksPitchDecks(@PathVariable("idEquipe") Integer idEquipe)
+			throws Exception {
+		try {
+			return equipeService.listarFeedbacksPitchDecks(idEquipe);
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+	
+	@PostMapping("/pitch/{idEquipe}/enviar-para-avaliacao")
+	public ResponseEntity<?> enviarParaAvaliacao(@PathVariable("idEquipe") Integer idEquipe) throws Exception {
+		try {
+			equipeService.enviarParaAvaliacao(idEquipe);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("Enviado para avaliação!", HttpStatus.OK));
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new IdeiaResponseFile("ERRO ", e.getMessage(), HttpStatus.NOT_FOUND));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
+		}
 	}
 
 }

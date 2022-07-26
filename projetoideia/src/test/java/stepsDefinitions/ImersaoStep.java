@@ -3,7 +3,6 @@ package stepsDefinitions;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import static org.mockito.ArgumentMatchers.longThat;
 import static utils.Utils.*;
 import io.cucumber.java.pt.Quando;
 import pages.EtapaImersaoPage;

@@ -1,6 +1,7 @@
 package com.ideia.projetoideia.services;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +34,7 @@ import com.ideia.projetoideia.model.dto.EquipeNomeDto;
 import com.ideia.projetoideia.model.dto.EquipeNotaDto;
 import com.ideia.projetoideia.model.dto.FeedbackSugestaoDto;
 import com.ideia.projetoideia.model.dto.FeedbacksAvaliativosDto;
+import com.ideia.projetoideia.model.dto.FeedbacksAvaliativosPitchDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasAprovadoConsultoriaDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasDto;
 import com.ideia.projetoideia.model.dto.MaterialEstudoEnvioDto;
@@ -61,6 +63,7 @@ import com.ideia.projetoideia.repository.QuestaoAvaliativaRepositorio;
 import com.ideia.projetoideia.repository.UsuarioMembroComumRepositorio;
 import com.ideia.projetoideia.repository.UsuarioRepositorio;
 import com.ideia.projetoideia.services.utils.GeradorEquipeToken;
+import com.ideia.projetoideia.services.utils.Validador;
 import com.ideia.projetoideia.utils.EnviarEmail;
 
 import javassist.NotFoundException;
@@ -409,6 +412,17 @@ public class EquipeService {
 				EtapaArtefatoPitch.EM_ELABORACAO.getValue());
 
 		leanCanvasConsultoria.setEtapaSolucaoCanvas(EtapaArtefatoPitch.EM_CONSULTORIA);
+		if(leanCanvasConsultoria.getProblema() == null ||
+				leanCanvasConsultoria.getSolucao() == null ||
+				leanCanvasConsultoria.getCanais() == null ||
+				leanCanvasConsultoria.getEstruturaDeCusto() == null ||
+				leanCanvasConsultoria.getFontesDeReceita() == null ||
+				leanCanvasConsultoria.getPropostaValor() == null ||
+				leanCanvasConsultoria.getMetricasChave() == null ||
+				leanCanvasConsultoria.getSegmentosDeClientes() == null ||
+				leanCanvasConsultoria.getVantagemCompetitiva() == null) {
+			throw new Exception("Não é permitido enviar um Lean Canvas para consultoria com os campos vazios");
+		}
 
 		leanCanvasRepositorio.save(leanCanvasConsultoria);
 
@@ -581,28 +595,41 @@ public class EquipeService {
 
 		pitchRepositorio.save(pitchConsultoria);
 
-		Pitch pitch = new Pitch(pitchConsultoria);
-
-		pitch.setEtapaAvaliacaoVideo(EtapaArtefatoPitch.EM_ELABORACAO);
-
-		equipe.getPitchDaEquipe().add(pitch);
-
-		equipeRepositorio.save(equipe);
-		pitch.setEquipe(equipe);
+		PitchDto pitch = new PitchDto();
+		
+		pitch.setArquivoPitchDeck(pitchConsultoria.getPitchDeck() == null ? pitchConsultoria.getVideo() : pitchConsultoria.getPitchDeck());;
+		pitch.setTipo(pitchConsultoria.getPitchDeck() == null ? "VIDEO" : "ARQUIVO");
+		pitch.setTitulo(pitchConsultoria.getTitulo());
+		pitch.setDescricao(pitchConsultoria.getDescricao());
+		
+		criarPitch(idEquipe, pitch);
 
 	}
 
 	public void criarPitch(Integer idEquipe, PitchDto pitchDto) throws Exception {
 		Equipe equipe = recuperarEquipe(idEquipe);
-
-		Pitch pitch = new Pitch();
+		
+		if(pitchDto.getTipo().equals("VIDEO")) {
+			Validador.validarDuracaoVideoPitch(pitchDto.getArquivoPitchDeck());
+		}
+		
+		Pitch pitch = pitchRepositorio.findByIdEquipeEEtapaList(idEquipe, EtapaArtefatoPitch.EM_ELABORACAO.getValue());
+		
+		if(pitch == null) {
+			pitch = new Pitch();
+		}
+		
 		pitch.setDescricao(pitchDto.getDescricao());
 		pitch.setTitulo(pitchDto.getTitulo());
+		pitch.setDataCriacao(LocalDateTime.now());
+		pitch.setEtapaAvaliacaoVideo(EtapaArtefatoPitch.EM_ELABORACAO);	
 		pitch.setEquipe(equipe);
 		;
 		if (pitchDto.getTipo().equals("VIDEO")) {
+			pitch.setPitchDeck(null);
 			pitch.setVideo(pitchDto.getArquivoPitchDeck());
 		} else {
+			pitch.setVideo(null);
 			pitch.setPitchDeck(pitchDto.getArquivoPitchDeck());
 		}
 
@@ -616,7 +643,7 @@ public class EquipeService {
 				EtapaArtefatoPitch.AVALIADO_AVALIADOR.getValue());
 
 		if (pitch == null || pitch.getAvaliacaoPitch().size() == 0) {
-			throw new Exception("A equipe não possíu notas no momento");
+			throw new Exception("A sua equipe não possui notas no momento");
 		}
 
 		NotasEquipeDto notas = new NotasEquipeDto();
@@ -666,7 +693,7 @@ public class EquipeService {
 		notas.setNotaAtribuidaAdaptabilidade(notaAtribuidaAdaptabilidade);
 		notas.setNotaAtribuidaInovacao(notaAtribuidaInovacao);
 		notas.setNotaAtribuidaSustentabilidade(notaAtribuidaSustentabilidade);
-		notas.setNotaAtribuidaInovacao(notaAtribuidaInovacao);
+		notas.setNotaAtribuidaUtilidade(notaAtribuidaUtilidade);
 
 		notas.setNotaMaximaAdaptabilidade(notaMaximaAdaptabilidade);
 		notas.setNotaMaximaInovacao(notaMaximaInovacao);
@@ -674,6 +701,61 @@ public class EquipeService {
 		notas.setNotaMaximaUtilidade(notaMaximaUtilidade);
 
 		return notas;
+
+	}
+	
+	public PitchDto getArquivoPitch(Integer idEquipe) throws Exception {
+		
+		Pitch pitch = pitchRepositorio.findByIdEquipe(idEquipe).orElse(null);
+		
+		if(pitch == null) {
+			throw new Exception("Não existe nenhum pitch para essa equipe no momento");
+		}
+		
+		String tipo = "ARQUIVO";
+		String pitchDeck = pitch.getPitchDeck();
+		
+		if(pitch.getPitchDeck() == null) {
+			tipo = "VIDEO";
+			pitchDeck = pitch.getVideo();
+		}
+		
+		PitchDto dto = new PitchDto();
+		dto.setArquivoPitchDeck(pitchDeck);
+		dto.setTipo(tipo);
+		dto.setDescricao(pitch.getDescricao());
+		dto.setTitulo(pitch.getTitulo());
+		
+		return dto;
+	}
+	
+	public FeedbacksAvaliativosPitchDto listarFeedbacksPitchDecks(Integer idEquipe) throws Exception {
+
+		List<Pitch> feedbacksPitch = pitchRepositorio.findByIdEquipeFeedbacksPitch(idEquipe);
+
+		if (feedbacksPitch.size() == 0) {
+			throw new Exception("Não existe nenhuma versão com feedback");
+		}
+
+		return new FeedbacksAvaliativosPitchDto(feedbacksPitch);
+	}
+	
+	public void enviarParaAvaliacao(Integer idEquipe) throws Exception {
+		
+
+		if (pitchRepositorio.findByIdEquipeEEtapaList(idEquipe, EtapaArtefatoPitch.EM_AVALIACAO.getValue()) != null ||
+				leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe, EtapaArtefatoPitch.EM_AVALIACAO.getValue()) != null) {
+			throw new Exception("Essa equipe já possuí um lean canvas e um pitch em avaliação.");
+		}
+		
+		LeanCanvas canvas = leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe, EtapaArtefatoPitch.EM_ELABORACAO.getValue());
+		Pitch pitch = pitchRepositorio.findByIdEquipeEEtapaList(idEquipe, EtapaArtefatoPitch.EM_ELABORACAO.getValue());
+
+		canvas.setEtapaSolucaoCanvas(EtapaArtefatoPitch.EM_AVALIACAO);
+		pitch.setEtapaAvaliacaoVideo(EtapaArtefatoPitch.EM_AVALIACAO);
+
+		leanCanvasRepositorio.save(canvas);
+		pitchRepositorio.save(pitch);
 
 	}
 
