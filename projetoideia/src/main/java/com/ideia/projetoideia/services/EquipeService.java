@@ -28,6 +28,7 @@ import com.ideia.projetoideia.model.UsuarioMembroComum;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
 import com.ideia.projetoideia.model.Pitch;
 import com.ideia.projetoideia.model.QuestaoAvaliativa;
+import com.ideia.projetoideia.model.dto.EquipeAvaliacaoDto;
 import com.ideia.projetoideia.model.dto.EquipeComEtapaDTO;
 import com.ideia.projetoideia.model.dto.EquipeConsultoriaDto;
 import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
@@ -55,7 +56,6 @@ import com.ideia.projetoideia.repository.AvaliacaoPitchRpositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.EquipeRepositorio;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
-import com.ideia.projetoideia.repository.FeedbackAvaliativoRepositorio;
 import com.ideia.projetoideia.repository.FeedbackRepositorioCustom;
 import com.ideia.projetoideia.repository.LeanCanvasRepositorio;
 import com.ideia.projetoideia.repository.MaterialEstudoRepositorio;
@@ -801,7 +801,6 @@ public class EquipeService {
 								leanCanvasEmConsultoria, pitchEmConsultoria);
 						equipes.add(equipeConsultoriaDto);
 					}
-
 				}
 			}
 		}
@@ -811,11 +810,11 @@ public class EquipeService {
 					.findByTipoPapelUsuarioEIdUsuario(TipoPapelUsuario.CONSULTOR.getValue(), consultor.getId());
 
 			for (Competicao comp : competicoesDoConsultor) {
-				
+
 				Competicao competicao = competicaoRepositorio.getById(comp.getId());
-				
+
 				Etapa etapaVigente = competicao.getEtapaVigente();
-				
+
 				if (etapaVigente != null && etapaVigente.getTipoEtapa().equals(TipoEtapa.IMERSAO)) {
 					for (Equipe equipe : competicao.getEquipesCadastradas()) {
 						if (equipe.getConsultor().getId() == consultor.getId()) {
@@ -831,13 +830,57 @@ public class EquipeService {
 										leanCanvasEmConsultoria, pitchEmConsultoria);
 								equipes.add(equipeConsultoriaDto);
 							}
-
 						}
-
 					}
 				}
 			}
-			
+		}
+		return equipes;
+	}
+
+	public List<EquipeAvaliacaoDto> getEquipesParaAvaliacao(Integer idCompeticao) throws Exception {
+
+		List<EquipeAvaliacaoDto> equipes = new ArrayList<EquipeAvaliacaoDto>();
+
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+
+		Usuario avaliador = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
+
+		List<Competicao> competicoesDoConsultor = new ArrayList<Competicao>();
+
+		if (idCompeticao != 0) {
+
+			competicoesDoConsultor.add(competicaoRepositorio.getById(idCompeticao));
+
+		} else {
+			competicoesDoConsultor = competicaoRepositorio
+					.findByTipoPapelUsuarioEIdUsuario(TipoPapelUsuario.AVALIADOR.getValue(), avaliador.getId());
+
+		}
+		for (Competicao competicao : competicoesDoConsultor) {
+
+			Etapa etapaVigente = competicao.getEtapaVigente();
+
+			if (etapaVigente == null || !etapaVigente.getTipoEtapa().equals(TipoEtapa.PITCH)) {
+				throw new Exception("A Competição não está na etapa de Imersão");
+			}
+
+			for (Equipe equipe : competicao.getEquipesCadastradas()) {
+
+				if (equipe.getConsultor().getId() == avaliador.getId()) {
+
+					LeanCanvas leanCanvasEmConsultoria = leanCanvasRepositorio.findByIdEquipeEEtapa(equipe.getId(),
+							EtapaArtefatoPitch.AVALIADO_AVALIADOR.getValue());
+
+					Pitch pitchEmConsultoria = pitchRepositorio.findByIdEquipeEEtapaList(equipe.getId(),
+							EtapaArtefatoPitch.AVALIADO_AVALIADOR.getValue());
+
+					if (pitchEmConsultoria != null || leanCanvasEmConsultoria != null) {
+						EquipeAvaliacaoDto equipeConsultoriaDto = new EquipeAvaliacaoDto(equipe);
+						equipes.add(equipeConsultoriaDto);
+					}
+				}
+			}
 		}
 		return equipes;
 	}

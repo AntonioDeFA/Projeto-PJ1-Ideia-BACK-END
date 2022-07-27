@@ -23,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.dto.EmailDto;
+import com.ideia.projetoideia.model.dto.EquipeAvaliacaoDto;
 import com.ideia.projetoideia.model.dto.EquipeComEtapaDTO;
 import com.ideia.projetoideia.model.dto.EquipeConsultoriaDto;
 import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
@@ -350,7 +351,7 @@ public class ControllerEquipe {
 		}
 
 	}
-	
+
 	@GetMapping("/arquivo-pitch-deck/{idEquipe}")
 	public PitchDto getArquivoPitch(@PathVariable("idEquipe") Integer idEquipe) {
 
@@ -361,7 +362,7 @@ public class ControllerEquipe {
 		}
 
 	}
-	
+
 	@GetMapping("/pitch-deck/{idEquipe}/feedbacks-de-versoes-consultoria")
 	public FeedbacksAvaliativosPitchDto listarFeedbacksPitchDecks(@PathVariable("idEquipe") Integer idEquipe)
 			throws Exception {
@@ -373,7 +374,7 @@ public class ControllerEquipe {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}
-	
+
 	@PostMapping("/pitch/{idEquipe}/enviar-para-avaliacao")
 	public ResponseEntity<?> enviarParaAvaliacao(@PathVariable("idEquipe") Integer idEquipe) throws Exception {
 		try {
@@ -388,12 +389,23 @@ public class ControllerEquipe {
 					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
 		}
 	}
-	
+
 	@GetMapping("/{idCompeticao}/equipes/para-consultoria")
-	public List<EquipeConsultoriaDto>getEquipesParaConsultoria(@PathVariable("idCompeticao") Integer idCompeticao) throws Exception{
+	public List<EquipeConsultoriaDto> getEquipesParaConsultoria(@PathVariable("idCompeticao") Integer idCompeticao)
+			throws Exception {
 		try {
-		return equipeService.getEquipesQuePrecisamDeConsultoria(idCompeticao);
-		}catch (Exception e) {
+			return equipeService.getEquipesQuePrecisamDeConsultoria(idCompeticao);
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+
+	@GetMapping("/{idCompeticao}/equipes/para-avaliacao")
+	public List<EquipeAvaliacaoDto> getEquipesParaAvaliacao(@PathVariable("idCompeticao") Integer idCompeticao)
+			throws Exception {
+		try {
+			return equipeService.getEquipesParaAvaliacao(idCompeticao);
+		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}
