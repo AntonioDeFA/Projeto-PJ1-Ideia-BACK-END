@@ -850,8 +850,7 @@ public class EquipeService {
 
 		if (idCompeticao != 0) {
 
-			Competicao comp = competicaoRepositorio.getById(idCompeticao);
-			System.err.println(comp);
+			Competicao comp = competicaoRepositorio.findById(idCompeticao).get();
 			competicoesDoAvaliador.add(comp);
 
 		} else {
@@ -864,7 +863,7 @@ public class EquipeService {
 			Etapa etapaVigente = competicao.getEtapaVigente();
 
 			if (etapaVigente == null || !etapaVigente.getTipoEtapa().equals(TipoEtapa.PITCH)) {
-				throw new Exception("A Competição não está na etapa de Imersão");
+				throw new Exception("A Competição não está na etapa de Pitch");
 			}
 
 			for (Equipe equipe : competicao.getEquipesCadastradas()) {
@@ -873,13 +872,13 @@ public class EquipeService {
 						.findByCompeticaoCadastradaAndUsuario(avaliador.getId(), competicao.getId());
 				if (papelUsuarioCompeticaoRepositorio.findById(idPapel).get().getTipoPapelUsuario()
 						.equals(TipoPapelUsuario.AVALIADOR)) {
-					LeanCanvas leanCanvasEmConsultoria = leanCanvasRepositorio.findByIdEquipeEEtapa(equipe.getId(),
-							EtapaArtefatoPitch.AVALIADO_AVALIADOR.getValue());
+					LeanCanvas leanCanvasEmAvaliacao = leanCanvasRepositorio.findByIdEquipeEEtapa(equipe.getId(),
+							EtapaArtefatoPitch.EM_AVALIACAO.getValue());
 
-					Pitch pitchEmConsultoria = pitchRepositorio.findByIdEquipeEEtapaList(equipe.getId(),
-							EtapaArtefatoPitch.AVALIADO_AVALIADOR.getValue());
+					Pitch pitchEmAvaliacao = pitchRepositorio.findByIdEquipeEEtapaList(equipe.getId(),
+							EtapaArtefatoPitch.EM_AVALIACAO.getValue());
 
-					if (pitchEmConsultoria != null || leanCanvasEmConsultoria != null) {
+					if (pitchEmAvaliacao != null || leanCanvasEmAvaliacao != null) {
 						EquipeAvaliacaoDto equipeConsultoriaDto = new EquipeAvaliacaoDto(equipe);
 						equipes.add(equipeConsultoriaDto);
 					}
