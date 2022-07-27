@@ -847,20 +847,20 @@ public class EquipeService {
 
 		Usuario avaliador = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
 
-		List<Competicao> competicoesDoConsultor = new ArrayList<Competicao>();
+		List<Competicao> competicoesDoAvaliador = new ArrayList<Competicao>();
 
 		if (idCompeticao != 0) {
 
 			Competicao comp = competicaoRepositorio.getById(idCompeticao);
 			System.err.println(comp);
-			competicoesDoConsultor.add(comp);
+			competicoesDoAvaliador.add(comp);
 
 		} else {
-			competicoesDoConsultor = competicaoRepositorio
+			competicoesDoAvaliador = competicaoRepositorio
 					.findByTipoPapelUsuarioEIdUsuario(TipoPapelUsuario.AVALIADOR.getValue(), avaliador.getId());
 
 		}
-		for (Competicao competicao : competicoesDoConsultor) {
+		for (Competicao competicao : competicoesDoAvaliador) {
 
 			Etapa etapaVigente = competicao.getEtapaVigente();
 
@@ -870,8 +870,10 @@ public class EquipeService {
 
 			for (Equipe equipe : competicao.getEquipesCadastradas()) {
 
-				if (equipe.getConsultor().getId() == avaliador.getId()) {
-
+				Integer idPapel = papelUsuarioCompeticaoRepositorio
+						.findByCompeticaoCadastradaAndUsuario(avaliador.getId(), competicao.getId());
+				if (papelUsuarioCompeticaoRepositorio.findById(idPapel).get().getTipoPapelUsuario()
+						.equals(TipoPapelUsuario.AVALIADOR)) {
 					LeanCanvas leanCanvasEmConsultoria = leanCanvasRepositorio.findByIdEquipeEEtapa(equipe.getId(),
 							EtapaArtefatoPitch.AVALIADO_AVALIADOR.getValue());
 
@@ -887,5 +889,4 @@ public class EquipeService {
 		}
 		return equipes;
 	}
-
 }
