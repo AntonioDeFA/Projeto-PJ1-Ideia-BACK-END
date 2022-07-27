@@ -91,23 +91,24 @@ public class CompeticaoEtapaVigenteDto {
 				this.etapaVigenteStr = "ELABORACAO";
 			}
 			
-			if (competicao.getIsEncerrada()) {
-				
-				for (Etapa etapa : competicao.getEtapas()) {
-					if(etapa.getTipoEtapa().equals(TipoEtapa.PITCH)) {
-						etapaVigente = new Etapa();
-						etapaVigente.setCompeticao(competicao);
-						etapaVigente.setDataInicio(etapa.getDataTermino());
-						etapaVigente.setDataTermino(etapa.getDataTermino());
-						etapaVigente.setId(etapa.getId());
-					}
-				}
-				
-				etapaVigente.setTipoEtapa(TipoEtapa.ENCERRADA);
-				etapaVigenteStr = "ENCERRADA";
-			}
+//			if (competicao.getIsEncerrada()) {
+//				
+//				for (Etapa etapa : competicao.getEtapas()) {
+//					if(etapa.getTipoEtapa().equals(TipoEtapa.PITCH)) {
+//						etapaVigente = new Etapa();
+//						etapaVigente.setCompeticao(competicao);
+//						etapaVigente.setDataInicio(etapa.getDataTermino());
+//						etapaVigente.setDataTermino(etapa.getDataTermino());
+//						etapaVigente.setId(etapa.getId());
+//					}
+//				}
+//				
+//				etapaVigente.setTipoEtapa(TipoEtapa.ENCERRADA);
+//				etapaVigenteStr = "ENCERRADA";
+//			}
 		}
-
+		
+		etapaVigenteStr = "PITCH";
 		this.isElaboracao = competicao.getIsElaboracao();
 
 	}

@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.hibernate.internal.build.AllowSysOut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -850,7 +851,9 @@ public class EquipeService {
 
 		if (idCompeticao != 0) {
 
-			competicoesDoConsultor.add(competicaoRepositorio.getById(idCompeticao));
+			Competicao comp = competicaoRepositorio.getById(idCompeticao);
+			System.err.println(comp);
+			competicoesDoConsultor.add(comp);
 
 		} else {
 			competicoesDoConsultor = competicaoRepositorio

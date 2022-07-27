@@ -144,18 +144,18 @@ public class CompeticaoService {
 
 		LocalDate hoje = LocalDate.now();
 
-		if (!comp.getIsEncerrada() && !comp.getIsElaboracao()) {
-
-			for (Etapa etapa : comp.getEtapas()) {
-
-				if (hoje.isAfter(etapa.getDataTermino()) && etapa.getTipoEtapa().equals(TipoEtapa.PITCH)) {
-					comp.setIsEncerrada(true);
-					competicaoRepositorio.save(comp);
-				}
-
-			}
-
-		}
+//		if (!comp.getIsEncerrada() && !comp.getIsElaboracao()) {
+//
+//			for (Etapa etapa : comp.getEtapas()) {
+//
+//				if (hoje.isAfter(etapa.getDataTermino()) && etapa.getTipoEtapa().equals(TipoEtapa.PITCH)) {
+//					comp.setIsEncerrada(true);
+//					competicaoRepositorio.save(comp);
+//				}
+//
+//			}
+//
+//		}
 
 	}
 
