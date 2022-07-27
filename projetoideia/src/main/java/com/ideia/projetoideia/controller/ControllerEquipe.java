@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Equipe;
+import com.ideia.projetoideia.model.dto.DadosEquipeAvaliacaoDto;
 import com.ideia.projetoideia.model.dto.EmailDto;
 import com.ideia.projetoideia.model.dto.EquipeAvaliacaoDto;
 import com.ideia.projetoideia.model.dto.EquipeComEtapaDTO;
@@ -408,5 +409,16 @@ public class ControllerEquipe {
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
+	}
+	
+	@GetMapping("/equipe/{idEquipe}/dados-avaliacao")
+	public DadosEquipeAvaliacaoDto getDadosDaEquipeAvalicao(@PathVariable Integer idEquipe){
+		
+		try {
+			return equipeService.getDadosEquipeAvaliacao(idEquipe);
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+		
 	}
 }

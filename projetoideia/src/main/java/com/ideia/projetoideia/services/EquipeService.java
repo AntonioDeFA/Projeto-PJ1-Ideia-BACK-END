@@ -28,6 +28,7 @@ import com.ideia.projetoideia.model.UsuarioMembroComum;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
 import com.ideia.projetoideia.model.Pitch;
 import com.ideia.projetoideia.model.QuestaoAvaliativa;
+import com.ideia.projetoideia.model.dto.DadosEquipeAvaliacaoDto;
 import com.ideia.projetoideia.model.dto.EquipeAvaliacaoDto;
 import com.ideia.projetoideia.model.dto.EquipeComEtapaDTO;
 import com.ideia.projetoideia.model.dto.EquipeConsultoriaDto;
@@ -886,5 +887,30 @@ public class EquipeService {
 			}
 		}
 		return equipes;
+	}
+	
+	public DadosEquipeAvaliacaoDto getDadosEquipeAvaliacao(Integer idEquipe) throws Exception{
+		
+		Equipe equipe  = recuperarEquipe(idEquipe);
+		
+		
+		LeanCanvas leanCanvas = leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe,EtapaArtefatoPitch.EM_AVALIACAO.getValue());		
+		
+		Pitch pitch = pitchRepositorio.findByIdEquipeEEtapaList(idEquipe, EtapaArtefatoPitch.EM_AVALIACAO.getValue());
+		
+		
+		if(pitch ==null || leanCanvas == null) {
+			throw new Exception("A equipe não possui pitch ou lean canvas em condições de ser avaliado ");
+		}
+		
+		
+		Competicao competicao = equipe.getCompeticaoCadastrada();
+		
+		
+		DadosEquipeAvaliacaoDto dados = new DadosEquipeAvaliacaoDto(equipe, leanCanvas, pitch, competicao.getQuestoesAvaliativas());
+		
+		return dados;
+		
+		
 	}
 }
