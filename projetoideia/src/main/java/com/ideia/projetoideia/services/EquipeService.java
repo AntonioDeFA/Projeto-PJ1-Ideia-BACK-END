@@ -28,6 +28,7 @@ import com.ideia.projetoideia.model.UsuarioMembroComum;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
 import com.ideia.projetoideia.model.Pitch;
 import com.ideia.projetoideia.model.QuestaoAvaliativa;
+import com.ideia.projetoideia.model.dto.AvaliacaoDto;
 import com.ideia.projetoideia.model.dto.DadosEquipeAvaliacaoDto;
 import com.ideia.projetoideia.model.dto.EquipeAvaliacaoDto;
 import com.ideia.projetoideia.model.dto.EquipeComEtapaDTO;
@@ -888,29 +889,58 @@ public class EquipeService {
 		}
 		return equipes;
 	}
-	
-	public DadosEquipeAvaliacaoDto getDadosEquipeAvaliacao(Integer idEquipe) throws Exception{
-		
-		Equipe equipe  = recuperarEquipe(idEquipe);
-		
-		
-		LeanCanvas leanCanvas = leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe,EtapaArtefatoPitch.EM_AVALIACAO.getValue());		
-		
+
+	public DadosEquipeAvaliacaoDto getDadosEquipeAvaliacao(Integer idEquipe) throws Exception {
+
+		Equipe equipe = recuperarEquipe(idEquipe);
+
+		LeanCanvas leanCanvas = leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe,
+				EtapaArtefatoPitch.EM_AVALIACAO.getValue());
+
 		Pitch pitch = pitchRepositorio.findByIdEquipeEEtapaList(idEquipe, EtapaArtefatoPitch.EM_AVALIACAO.getValue());
-		
-		
-		if(pitch ==null || leanCanvas == null) {
+
+		if (pitch == null || leanCanvas == null) {
 			throw new Exception("A equipe não possui pitch ou lean canvas em condições de ser avaliado ");
 		}
-		
-		
+
 		Competicao competicao = equipe.getCompeticaoCadastrada();
-		
-		
-		DadosEquipeAvaliacaoDto dados = new DadosEquipeAvaliacaoDto(equipe, leanCanvas, pitch, competicao.getQuestoesAvaliativas());
-		
+
+		DadosEquipeAvaliacaoDto dados = new DadosEquipeAvaliacaoDto(equipe, leanCanvas, pitch,
+				competicao.getQuestoesAvaliativas());
+
 		return dados;
-		
-		
+
+	}
+
+	public void registarNota(Integer idEquipe, AvaliacaoDto avaliacaoDto) throws Exception {
+
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+
+		Usuario avaliador = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
+
+		QuestaoAvaliativa questaoAvaliativa = questaoAvaliativaRepositorio.findById(avaliacaoDto.getIdQuestao()).get();
+
+		if (questaoAvaliativa == null) {
+			throw new Exception("A questão avaliativa não existe!");
+		}
+		if (questaoAvaliativa.getNotaMax() < avaliacaoDto.getNotaAtribuida()) {
+			throw new Exception("A não pode ser maior que a nota máxima!");
+		}
+
+		LeanCanvas leanCanvasEmAvaliacao = leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe,
+				EtapaArtefatoPitch.EM_AVALIACAO.getValue());
+
+		Pitch pitchEmAvaliacao = pitchRepositorio.findByIdEquipeEEtapaList(idEquipe,
+				EtapaArtefatoPitch.EM_AVALIACAO.getValue());
+
+		if (leanCanvasEmAvaliacao == null || pitchEmAvaliacao == null) {
+			throw new Exception("A equipe não possui pitch ou lean canvas ja avaliada ");
+		}
+
+		AvaliacaoPitch avaliacaoPitch = new AvaliacaoPitch(LocalDate.now(), avaliacaoDto.getNotaAtribuida(),
+				avaliacaoDto.getObservacao(), pitchEmAvaliacao, questaoAvaliativa, avaliador);
+
+		avaliacaoPitchRpositorio.save(avaliacaoPitch);
+
 	}
 }

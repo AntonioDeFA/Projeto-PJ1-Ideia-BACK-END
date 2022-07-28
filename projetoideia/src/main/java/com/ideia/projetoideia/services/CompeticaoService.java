@@ -1,6 +1,5 @@
 package com.ideia.projetoideia.services;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -142,8 +141,8 @@ public class CompeticaoService {
 
 	public void verificarSeEstaEncerrada(Competicao comp) {
 
-		LocalDate hoje = LocalDate.now();
-
+//		LocalDate hoje = LocalDate.now();
+//
 //		if (!comp.getIsEncerrada() && !comp.getIsElaboracao()) {
 //
 //			for (Etapa etapa : comp.getEtapas()) {
