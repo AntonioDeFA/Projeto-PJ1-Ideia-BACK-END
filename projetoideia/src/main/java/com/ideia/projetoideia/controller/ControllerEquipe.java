@@ -288,11 +288,11 @@ public class ControllerEquipe {
 		}
 	}
 
-	@GetMapping("/lean-canvas/{idLeanCanvas}/feedbacks-consultoria")
-	public FeedbacksAvaliativosDto listarFeedbacksLeanCanvas(@PathVariable("idLeanCanvas") Integer idLeanCanvas)
+	@GetMapping("/lean-canvas/{idLeanCanvas}/{statusLeanCanvas}/feedbacks-consultoria.")
+	public FeedbacksAvaliativosDto listarFeedbacksLeanCanvas(@PathVariable("idLeanCanvas") Integer idLeanCanvas,@PathVariable("statusLeanCanvas") String status)
 			throws Exception {
 		try {
-			return equipeService.listarFeedbacksLeanCanvas(idLeanCanvas);
+			return equipeService.listarFeedbacksLeanCanvas(idLeanCanvas, status);
 		} catch (NotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		} catch (Exception e) {

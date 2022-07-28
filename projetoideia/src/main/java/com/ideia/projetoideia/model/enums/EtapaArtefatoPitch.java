@@ -14,5 +14,6 @@ public enum EtapaArtefatoPitch {
 	public String getValue() {
 		return this.value;
 	}
-
+	
+	
 }

@@ -536,7 +536,7 @@ public class EquipeService {
 
 	}
 
-	public FeedbacksAvaliativosDto listarFeedbacksLeanCanvas(Integer idLeanCanvas) throws Exception {
+	public FeedbacksAvaliativosDto listarFeedbacksLeanCanvas(Integer idLeanCanvas, String status) throws Exception {
 
 		Optional<LeanCanvas> canvas = leanCanvasRepositorio.findById(idLeanCanvas);
 
@@ -554,8 +554,8 @@ public class EquipeService {
 			}
 		}
 
-		if (!leanCanvas.getEtapaSolucaoCanvas().equals(EtapaArtefatoPitch.AVALIADO_CONSULTOR)) {
-			throw new Exception("O Lean canvas desta equipe ainda não foi aprovado");
+		if (!leanCanvas.getEtapaSolucaoCanvas().getValue().equals(status)) {
+			throw new Exception("O Lean canvas desta equipe ainda não está no status de " + status);
 		}
 
 		return new FeedbacksAvaliativosDto(leanCanvas, feedbackAvaliativos, hora);
