@@ -288,7 +288,7 @@ public class ControllerEquipe {
 		}
 	}
 
-	@GetMapping("/lean-canvas/{idLeanCanvas}/{statusLeanCanvas}/feedbacks-consultoria.")
+	@GetMapping("/lean-canvas/{idLeanCanvas}/{statusLeanCanvas}/feedbacks-consultoria")
 	public FeedbacksAvaliativosDto listarFeedbacksLeanCanvas(@PathVariable("idLeanCanvas") Integer idLeanCanvas,@PathVariable("statusLeanCanvas") String status)
 			throws Exception {
 		try {

@@ -545,20 +545,23 @@ public class EquipeService {
 		}
 
 		LeanCanvas leanCanvas = canvas.get();
-		List<FeedbackSugestaoDto> feedbackAvaliativos = feedbackRepositorioCustom.getByLeanCanvas(idLeanCanvas);
-		LocalDateTime hora = feedbackAvaliativos.get(0).getDataCriacao();
-
-		for (FeedbackSugestaoDto feedback : feedbackAvaliativos) {
-			if (hora.isBefore(feedback.getDataCriacao())) {
-				hora = feedback.getDataCriacao();
-			}
-		}
-
 		if (!leanCanvas.getEtapaSolucaoCanvas().getValue().equals(status)) {
 			throw new Exception("O Lean canvas desta equipe ainda não está no status de " + status);
 		}
-
-		return new FeedbacksAvaliativosDto(leanCanvas, feedbackAvaliativos, hora);
+		
+		List<FeedbackSugestaoDto> feedbackAvaliativos = feedbackRepositorioCustom.getByLeanCanvas(idLeanCanvas);
+		if (feedbackAvaliativos.size() > 0) {			
+			LocalDateTime hora = feedbackAvaliativos.get(0).getDataCriacao();
+			
+			for (FeedbackSugestaoDto feedback : feedbackAvaliativos) {
+				if (hora.isBefore(feedback.getDataCriacao())) {
+					hora = feedback.getDataCriacao();
+				}
+			}
+			return new FeedbacksAvaliativosDto(leanCanvas, feedbackAvaliativos, hora);
+		}
+		
+		return new FeedbacksAvaliativosDto(leanCanvas, feedbackAvaliativos);
 	}
 
 	public List<LeanCanvasAprovadoConsultoriaDto> listarLeanCanvasAprovadoPelaConsultoria(Integer idEquipe)
