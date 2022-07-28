@@ -37,6 +37,7 @@ import com.ideia.projetoideia.model.dto.EquipeConsultoriaDto;
 import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
 import com.ideia.projetoideia.model.dto.EquipeNomeDto;
 import com.ideia.projetoideia.model.dto.EquipeNotaDto;
+import com.ideia.projetoideia.model.dto.FeedBackDto;
 import com.ideia.projetoideia.model.dto.FeedbackSugestaoDto;
 import com.ideia.projetoideia.model.dto.FeedbacksAvaliativosDto;
 import com.ideia.projetoideia.model.dto.FeedbacksAvaliativosPitchDto;
@@ -115,14 +116,15 @@ public class EquipeService {
 	@Autowired
 	private AcessoMaterialEstudoRepositorio acessoMaterialEstudoRepositorio;
 
+	
 	@Autowired
 	private EnviarEmail enviarEmail;
 
 	private final FeedbackRepositorioCustom feedbackRepositorioCustom;
-	
+
 	@Autowired
 	private FeedbackAvaliativoRepositorio feedbackAvaliativoRepositorio;
-	
+
 	public EquipeService(FeedbackRepositorioCustom feedbackRepositorioCustom) {
 		this.feedbackRepositorioCustom = feedbackRepositorioCustom;
 	}
@@ -548,11 +550,11 @@ public class EquipeService {
 		if (!leanCanvas.getEtapaSolucaoCanvas().getValue().equals(status)) {
 			throw new Exception("O Lean canvas desta equipe ainda não está no status de " + status);
 		}
-		
+
 		List<FeedbackSugestaoDto> feedbackAvaliativos = feedbackRepositorioCustom.getByLeanCanvas(idLeanCanvas);
-		if (feedbackAvaliativos.size() > 0) {			
+		if (feedbackAvaliativos.size() > 0) {
 			LocalDateTime hora = feedbackAvaliativos.get(0).getDataCriacao();
-			
+
 			for (FeedbackSugestaoDto feedback : feedbackAvaliativos) {
 				if (hora.isBefore(feedback.getDataCriacao())) {
 					hora = feedback.getDataCriacao();
@@ -560,7 +562,7 @@ public class EquipeService {
 			}
 			return new FeedbacksAvaliativosDto(leanCanvas, feedbackAvaliativos, hora);
 		}
-		
+
 		return new FeedbacksAvaliativosDto(leanCanvas, feedbackAvaliativos);
 	}
 
@@ -951,14 +953,45 @@ public class EquipeService {
 		avaliacaoPitchRpositorio.save(avaliacaoPitch);
 
 	}
-	
+
 	public void removerFeedback(Integer idFeedbackAvaliativo) {
 		FeedbackAvaliativo feedbackAvaliativo = feedbackAvaliativoRepositorio.findById(idFeedbackAvaliativo).get();
-		
-		if(feedbackAvaliativo == null) {
+		if (feedbackAvaliativo == null) {
 			return;
 		}
-		
 		feedbackAvaliativoRepositorio.delete(feedbackAvaliativo);
 	}
+
+	public void registrarFeedbackConsultor(Integer idEquipe, FeedBackDto feedBackDto) throws Exception {
+
+		Equipe equipe =  recuperarEquipe(idEquipe);
+		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
+		Usuario consultor = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
+		LeanCanvas leanCanvas;
+		Pitch pitch;
+		
+		if(equipe.getConsultor().getId()!= consultor.getId()){
+			throw new Exception("Usuário inválido , não é o consultor dessa equipe");			
+		}
+		
+		FeedbackAvaliativo feedbackAvaliativo = new FeedbackAvaliativo();
+		feedbackAvaliativo.setConsultor(consultor);
+		feedbackAvaliativo.setDataCriacao(LocalDateTime.now());
+		feedbackAvaliativo.setTipoFeedback(feedBackDto.getTipoFeedback());
+		feedbackAvaliativo.setSugestao(feedBackDto.getSugestao());
+
+		if (feedBackDto.getTipoArtefato().equals("LEAN_CANVAS")) {
+			leanCanvas = leanCanvasRepositorio.findById(feedBackDto.getIdArtefato()).get();
+			feedbackAvaliativo.setLeanCanvas(leanCanvas);
+			
+		} else if (feedBackDto.getTipoArtefato().equals("PITCH_DECK")) {
+			pitch = pitchRepositorio.findById(feedBackDto.getIdArtefato()).get();
+			feedbackAvaliativo.setPitch(pitch);
+			
+		}
+		
+		feedbackAvaliativoRepositorio.save(feedbackAvaliativo);	
+		
+	}
+
 }

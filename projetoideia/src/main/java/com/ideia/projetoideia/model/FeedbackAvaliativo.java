@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import com.ideia.projetoideia.model.enums.TipoFeedback;
 
@@ -25,7 +26,7 @@ import lombok.Data;
 public class FeedbackAvaliativo {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
 	@Column(nullable = false)
@@ -36,6 +37,7 @@ public class FeedbackAvaliativo {
 	
 	@Column(nullable = false)
 	@NotNull(message = "Você deve escrever qual alguma sugestão")
+	@Size(min = 5,message = "Deve ter no mínimo 5 caracteres")
 	private String sugestao;
 	
 	@ManyToOne(cascade = CascadeType.MERGE)

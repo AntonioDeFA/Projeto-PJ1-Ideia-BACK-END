@@ -31,6 +31,7 @@ import com.ideia.projetoideia.model.dto.EquipeConsultoriaDto;
 import com.ideia.projetoideia.model.dto.EquipeDtoCriacao;
 import com.ideia.projetoideia.model.dto.EquipeNomeDto;
 import com.ideia.projetoideia.model.dto.EquipeNotaDto;
+import com.ideia.projetoideia.model.dto.FeedBackDto;
 import com.ideia.projetoideia.model.dto.FeedbacksAvaliativosDto;
 import com.ideia.projetoideia.model.dto.FeedbacksAvaliativosPitchDto;
 import com.ideia.projetoideia.model.dto.LeanCanvasAprovadoConsultoriaDto;
@@ -383,6 +384,21 @@ public class ControllerEquipe {
 			equipeService.enviarParaAvaliacao(idEquipe);
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new IdeiaResponseFile("Enviado para avaliação!", HttpStatus.OK));
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new IdeiaResponseFile("ERRO ", e.getMessage(), HttpStatus.NOT_FOUND));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
+		}
+	}
+	
+	@PostMapping("/criar-feedback/{idEquipe}")
+	public  ResponseEntity<?> criarFeedbackPitch(@PathVariable Integer idEquipe,@RequestBody FeedBackDto feedBackDto ){
+		try {
+			equipeService.registrarFeedbackConsultor(idEquipe, feedBackDto);
+			return ResponseEntity.status(HttpStatus.CREATED)
+					.body(new IdeiaResponseFile("Feedback cadastrado com sucesso", HttpStatus.CREATED));
 		} catch (NotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(new IdeiaResponseFile("ERRO ", e.getMessage(), HttpStatus.NOT_FOUND));
