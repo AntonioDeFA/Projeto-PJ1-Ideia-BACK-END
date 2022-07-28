@@ -21,6 +21,7 @@ import com.ideia.projetoideia.model.AvaliacaoPitch;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Equipe;
 import com.ideia.projetoideia.model.Etapa;
+import com.ideia.projetoideia.model.FeedbackAvaliativo;
 import com.ideia.projetoideia.model.LeanCanvas;
 import com.ideia.projetoideia.model.MaterialEstudo;
 import com.ideia.projetoideia.model.Usuario;
@@ -58,6 +59,7 @@ import com.ideia.projetoideia.repository.AvaliacaoPitchRpositorio;
 import com.ideia.projetoideia.repository.CompeticaoRepositorio;
 import com.ideia.projetoideia.repository.EquipeRepositorio;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
+import com.ideia.projetoideia.repository.FeedbackAvaliativoRepositorio;
 import com.ideia.projetoideia.repository.FeedbackRepositorioCustom;
 import com.ideia.projetoideia.repository.LeanCanvasRepositorio;
 import com.ideia.projetoideia.repository.MaterialEstudoRepositorio;
@@ -117,7 +119,10 @@ public class EquipeService {
 	private EnviarEmail enviarEmail;
 
 	private final FeedbackRepositorioCustom feedbackRepositorioCustom;
-
+	
+	@Autowired
+	private FeedbackAvaliativoRepositorio feedbackAvaliativoRepositorio;
+	
 	public EquipeService(FeedbackRepositorioCustom feedbackRepositorioCustom) {
 		this.feedbackRepositorioCustom = feedbackRepositorioCustom;
 	}
@@ -942,5 +947,15 @@ public class EquipeService {
 
 		avaliacaoPitchRpositorio.save(avaliacaoPitch);
 
+	}
+	
+	public void removerFeedback(Integer idFeedbackAvaliativo) {
+		FeedbackAvaliativo feedbackAvaliativo = feedbackAvaliativoRepositorio.findById(idFeedbackAvaliativo).get();
+		
+		if(feedbackAvaliativo == null) {
+			return;
+		}
+		
+		feedbackAvaliativoRepositorio.delete(feedbackAvaliativo);
 	}
 }

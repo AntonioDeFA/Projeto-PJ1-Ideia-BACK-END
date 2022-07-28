@@ -411,25 +411,31 @@ public class ControllerEquipe {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}
-	
+
 	@GetMapping("/equipe/{idEquipe}/dados-avaliacao")
-	public DadosEquipeAvaliacaoDto getDadosDaEquipeAvalicao(@PathVariable Integer idEquipe){
-		
+	public DadosEquipeAvaliacaoDto getDadosDaEquipeAvalicao(@PathVariable("idEquipe") Integer idEquipe) {
+
 		try {
 			return equipeService.getDadosEquipeAvaliacao(idEquipe);
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}
-	
+
 	@PostMapping("/criar-avaliacao/{idEquipe}")
-	public void registarNota(@PathVariable Integer idEquipe, @Valid @RequestBody AvaliacaoDto avaliacaoDto){
-		
+	public void registarNota(@PathVariable("idEquipe") Integer idEquipe,
+			@Valid @RequestBody AvaliacaoDto avaliacaoDto) {
+
 		try {
 			equipeService.registarNota(idEquipe, avaliacaoDto);
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
-		
+
+	}
+
+	@DeleteMapping("/deletar-feedback-avaliativo/{idFeedbackAvaliativo}")
+	public void removerFeedback(@PathVariable("idFeedbackAvaliativo") Integer idFeedbackAvaliativo) {
+		equipeService.removerFeedback(idFeedbackAvaliativo);
 	}
 }
