@@ -14,12 +14,15 @@ public class FeedbackSugestaoDto {
 	private String sugestao;
 
 	private LocalDateTime dataCriacao;
+	
+	private Integer idFeedback;
 
-	public FeedbackSugestaoDto(TipoFeedback tipoFeedback, String sugestao, LocalDateTime dataCriacao) {
+	public FeedbackSugestaoDto(TipoFeedback tipoFeedback, String sugestao, LocalDateTime dataCriacao, Integer idFeedback) {
 		super();
 		this.tipoFeedback = tipoFeedback;
 		this.sugestao = sugestao;
 		this.dataCriacao = dataCriacao;
+		this.idFeedback = idFeedback;
 	}
 
 	public FeedbackSugestaoDto(TipoFeedback tipoFeedback, String sugestao) {
