@@ -268,7 +268,7 @@ public class ControllerCompeticao {
 
 	@GetMapping("/competicoes/usuario-logado/{nomeCompeticaoInformado}/{etapaSelecionada}")
 	public List<CompeticaoPitchImersaoDto> listarCompeticaoPitchImersao(
-			@PathVariable("etapaSelecionada") Integer etapaSelecionada,@PathVariable("nomeCompeticaoInformado") String nomeCompeticaoInformado){
+			@PathVariable("etapaSelecionada") String etapaSelecionada,@PathVariable("nomeCompeticaoInformado") String nomeCompeticaoInformado){
 		try {
 			return competicaoService.listarCompeticaoPitchImersao(etapaSelecionada, nomeCompeticaoInformado);
 		} catch (NotFoundException e) {

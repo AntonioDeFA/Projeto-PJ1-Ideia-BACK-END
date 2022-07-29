@@ -497,16 +497,16 @@ public class CompeticaoService {
 		return usuario;
 	}
 
-	public List<CompeticaoPitchImersaoDto> listarCompeticaoPitchImersao(Integer etapaSelecionada,
+	public List<CompeticaoPitchImersaoDto> listarCompeticaoPitchImersao(String etapaSelecionada,
 			String nomeCompeticaoInformado) throws Exception {
 		List<Competicao> competicoes = competicaoRepositorio.findAll();
 		List<CompeticaoPitchImersaoDto> competicoesDto = new ArrayList<CompeticaoPitchImersaoDto>();
 
-		TipoPapelUsuario papel = TipoPapelUsuario.CONSULTOR;
-		TipoEtapa etapa = TipoEtapa.IMERSAO;
-
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
+		
+		TipoPapelUsuario papel = TipoPapelUsuario.CONSULTOR;
+		TipoEtapa etapa = TipoEtapa.IMERSAO;
 
 		if (etapaSelecionada.equals("PITCH")) {
 			papel = TipoPapelUsuario.AVALIADOR;
@@ -514,14 +514,16 @@ public class CompeticaoService {
 		}
 		for (Competicao competicao : competicoes) {
 			boolean continuar = true;
-			if (!nomeCompeticaoInformado.equals("ALL")
-					&& !competicao.getNomeCompeticao().contains(nomeCompeticaoInformado)) {
+			if (!nomeCompeticaoInformado.equals("ALL") && !competicao.getNomeCompeticao().contains(nomeCompeticaoInformado)) {
 				continuar = false;
 			}
+			
 			if (continuar) {
-				for (PapelUsuarioCompeticao papelUsuario : papelUsuarioCompeticaoRepositorio
-						.findByCompeticaoCadastrada(competicao)) {
-					if (papelUsuario.getTipoPapelUsuario().equals(papel) && papelUsuario.getId() == usuario.getId()) {
+				List<PapelUsuarioCompeticao> papelUsuarioCompeticaoList = papelUsuarioCompeticaoRepositorio.findByCompeticaoCadastrada(competicao);
+				
+				for (PapelUsuarioCompeticao papelUsuario : papelUsuarioCompeticaoList) {
+					if (papelUsuario.getTipoPapelUsuario().equals(papel) && papelUsuario.getUsuario().getId() == usuario.getId()) {
+						
 						for (Etapa etapaRecuperada : etapaRepositorio.findByCompeticao(competicao)) {
 							if (etapaRecuperada.getTipoEtapa().equals(etapa)) {
 								if (etapaRecuperada.isVigente()) {
