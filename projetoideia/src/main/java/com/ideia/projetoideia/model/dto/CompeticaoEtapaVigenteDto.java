@@ -108,7 +108,6 @@ public class CompeticaoEtapaVigenteDto {
 //			}
 		}
 		
-		etapaVigenteStr = "PITCH";
 		this.isElaboracao = competicao.getIsElaboracao();
 
 	}
