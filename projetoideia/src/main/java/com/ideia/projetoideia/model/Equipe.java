@@ -31,7 +31,7 @@ public class Equipe {
 	private Integer id;
 
 	@Column(nullable = false, name = "nome_equipe")
-	@Size(min = 3, max = 16, message = "O nome do equipe deve ter entre 3 e 50 caracteres.")
+	@Size(min = 3, max = 25, message = "O nome do equipe deve ter entre 3 e 25 caracteres.")
 	private String nomeEquipe;
 
 	@Column(nullable = false)
