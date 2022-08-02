@@ -1,5 +1,6 @@
 package com.ideia.projetoideia.controller;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -267,7 +268,7 @@ public class ControllerCompeticao {
 	}
 
 	@GetMapping("/competicoes/usuario-logado/{nomeCompeticaoInformado}/{etapaSelecionada}")
-	public List<CompeticaoPitchImersaoDto> listarCompeticaoPitchImersao(
+	public LinkedHashSet<CompeticaoPitchImersaoDto> listarCompeticaoPitchImersao(
 			@PathVariable("etapaSelecionada") String etapaSelecionada,@PathVariable("nomeCompeticaoInformado") String nomeCompeticaoInformado){
 		try {
 			return competicaoService.listarCompeticaoPitchImersao(etapaSelecionada, nomeCompeticaoInformado);

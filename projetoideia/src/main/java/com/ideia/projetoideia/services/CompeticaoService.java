@@ -1,6 +1,7 @@
 package com.ideia.projetoideia.services;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +22,7 @@ import com.ideia.projetoideia.model.Etapa;
 import com.ideia.projetoideia.model.LeanCanvas;
 import com.ideia.projetoideia.model.MaterialEstudo;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
+import com.ideia.projetoideia.model.Pitch;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.CompeticaoDadosGeraisDto;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
@@ -502,10 +504,10 @@ public class CompeticaoService {
 		return usuario;
 	}
 
-	public List<CompeticaoPitchImersaoDto> listarCompeticaoPitchImersao(String etapaSelecionada,
+	public LinkedHashSet<CompeticaoPitchImersaoDto> listarCompeticaoPitchImersao(String etapaSelecionada,
 			String nomeCompeticaoInformado) throws Exception {
 		List<Competicao> competicoes = competicaoRepositorio.findAll();
-		List<CompeticaoPitchImersaoDto> competicoesDto = new ArrayList<CompeticaoPitchImersaoDto>();
+		LinkedHashSet<CompeticaoPitchImersaoDto> competicoesDto = new LinkedHashSet<CompeticaoPitchImersaoDto>();
 
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
@@ -537,8 +539,9 @@ public class CompeticaoService {
 								if (etapaRecuperada.isVigente()) {
 									if (etapa.equals(TipoEtapa.IMERSAO)) {
 										for (Equipe equipe : equipeRepositorio.findByCompeticaoCadastrada(competicao)) {
-											List<LeanCanvas> equipes = leanCanvasRepositorio.findByEquipeLeanCanvasConsultoria(equipe.getId());
-											if (equipes.size() != 0) {
+											List<LeanCanvas> leanCanvasList = leanCanvasRepositorio.findByEquipeLeanCanvasConsultoria(equipe.getId());
+											List<Pitch> pitchList = pitchRepositorio.findByEquipePitchDeckConsultoria(equipe.getId());
+											if (leanCanvasList.size() != 0 || pitchList.size() != 0) {
 												competicoesDto.add(new CompeticaoPitchImersaoDto(competicao));
 											}
 										}
