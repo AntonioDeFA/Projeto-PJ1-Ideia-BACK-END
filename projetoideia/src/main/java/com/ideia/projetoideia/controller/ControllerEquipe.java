@@ -440,10 +440,10 @@ public class ControllerEquipe {
 
 	@PostMapping("/criar-avaliacao/{idEquipe}")
 	public void registarNota(@PathVariable("idEquipe") Integer idEquipe,
-			@Valid @RequestBody AvaliacaoDto avaliacaoDto) {
+			@Valid @RequestBody List<AvaliacaoDto> avaliacoesDto) {
 
 		try {
-			equipeService.registarNota(idEquipe, avaliacaoDto);
+			equipeService.registarNota(idEquipe, avaliacoesDto);
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}

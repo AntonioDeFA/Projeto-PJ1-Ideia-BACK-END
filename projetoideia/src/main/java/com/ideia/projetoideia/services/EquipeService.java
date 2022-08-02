@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -922,35 +924,38 @@ public class EquipeService {
 
 	}
 
-	public void registarNota(Integer idEquipe, AvaliacaoDto avaliacaoDto) throws Exception {
+	public void registarNota(Integer idEquipe, @Valid List<AvaliacaoDto> avaliacoesDto) throws Exception {
 
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 
 		Usuario avaliador = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
-
-		QuestaoAvaliativa questaoAvaliativa = questaoAvaliativaRepositorio.findById(avaliacaoDto.getIdQuestao()).get();
-
-		if (questaoAvaliativa == null) {
-			throw new Exception("A questão avaliativa não existe!");
+		
+		for (AvaliacaoDto avaliacaoDto : avaliacoesDto) {
+			QuestaoAvaliativa questaoAvaliativa = questaoAvaliativaRepositorio.findById(avaliacaoDto.getIdQuestao()).get();
+			
+			if (questaoAvaliativa == null) {
+				throw new Exception("A questão avaliativa não existe!");
+			}
+			if (questaoAvaliativa.getNotaMax() < avaliacaoDto.getNotaAtribuida()) {
+				throw new Exception("A não pode ser maior que a nota máxima!");
+			}
+			
+			LeanCanvas leanCanvasEmAvaliacao = leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe,
+					EtapaArtefatoPitch.EM_AVALIACAO.getValue());
+			
+			Pitch pitchEmAvaliacao = pitchRepositorio.findByIdEquipeEEtapaList(idEquipe,
+					EtapaArtefatoPitch.EM_AVALIACAO.getValue());
+			
+			if (leanCanvasEmAvaliacao == null || pitchEmAvaliacao == null) {
+				throw new Exception("A equipe não possui pitch ou lean canvas ja avaliada ");
+			}
+			
+			AvaliacaoPitch avaliacaoPitch = new AvaliacaoPitch(LocalDate.now(), avaliacaoDto.getNotaAtribuida(),
+					avaliacaoDto.getObservacao(), pitchEmAvaliacao, questaoAvaliativa, avaliador);
+			
+			avaliacaoPitchRpositorio.save(avaliacaoPitch);		
 		}
-		if (questaoAvaliativa.getNotaMax() < avaliacaoDto.getNotaAtribuida()) {
-			throw new Exception("A não pode ser maior que a nota máxima!");
-		}
 
-		LeanCanvas leanCanvasEmAvaliacao = leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe,
-				EtapaArtefatoPitch.EM_AVALIACAO.getValue());
-
-		Pitch pitchEmAvaliacao = pitchRepositorio.findByIdEquipeEEtapaList(idEquipe,
-				EtapaArtefatoPitch.EM_AVALIACAO.getValue());
-
-		if (leanCanvasEmAvaliacao == null || pitchEmAvaliacao == null) {
-			throw new Exception("A equipe não possui pitch ou lean canvas ja avaliada ");
-		}
-
-		AvaliacaoPitch avaliacaoPitch = new AvaliacaoPitch(LocalDate.now(), avaliacaoDto.getNotaAtribuida(),
-				avaliacaoDto.getObservacao(), pitchEmAvaliacao, questaoAvaliativa, avaliador);
-
-		avaliacaoPitchRpositorio.save(avaliacaoPitch);
 
 	}
 
