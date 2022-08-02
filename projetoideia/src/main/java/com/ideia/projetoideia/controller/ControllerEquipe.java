@@ -291,8 +291,8 @@ public class ControllerEquipe {
 	}
 
 	@GetMapping("/lean-canvas/{idLeanCanvas}/{statusLeanCanvas}/feedbacks-consultoria")
-	public FeedbacksAvaliativosDto listarFeedbacksLeanCanvas(@PathVariable("idLeanCanvas") Integer idLeanCanvas,@PathVariable("statusLeanCanvas") String status)
-			throws Exception {
+	public FeedbacksAvaliativosDto listarFeedbacksLeanCanvas(@PathVariable("idLeanCanvas") Integer idLeanCanvas,
+			@PathVariable("statusLeanCanvas") String status) throws Exception {
 		try {
 			return equipeService.listarFeedbacksLeanCanvas(idLeanCanvas, status);
 		} catch (NotFoundException e) {
@@ -393,9 +393,9 @@ public class ControllerEquipe {
 					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
 		}
 	}
-	
+
 	@PostMapping("/criar-feedback/{idEquipe}")
-	public  ResponseEntity<?> criarFeedbackPitch(@PathVariable Integer idEquipe,@RequestBody FeedBackDto feedBackDto ){
+	public ResponseEntity<?> criarFeedbackPitch(@PathVariable Integer idEquipe, @RequestBody FeedBackDto feedBackDto) {
 		try {
 			equipeService.registrarFeedbackConsultor(idEquipe, feedBackDto);
 			return ResponseEntity.status(HttpStatus.CREATED)
@@ -484,4 +484,5 @@ public class ControllerEquipe {
 		}
 		
 	}
+
 }

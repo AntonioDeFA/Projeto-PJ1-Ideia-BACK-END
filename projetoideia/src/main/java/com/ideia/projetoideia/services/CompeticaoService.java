@@ -20,6 +20,7 @@ import com.ideia.projetoideia.model.Convite;
 import com.ideia.projetoideia.model.Etapa;
 import com.ideia.projetoideia.model.MaterialEstudo;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
+import com.ideia.projetoideia.model.Pitch;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.CompeticaoDadosGeraisDto;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
@@ -504,7 +505,7 @@ public class CompeticaoService {
 
 		Authentication autenticado = SecurityContextHolder.getContext().getAuthentication();
 		Usuario usuario = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
-		
+
 		TipoPapelUsuario papel = TipoPapelUsuario.CONSULTOR;
 		TipoEtapa etapa = TipoEtapa.IMERSAO;
 
@@ -514,20 +515,33 @@ public class CompeticaoService {
 		}
 		for (Competicao competicao : competicoes) {
 			boolean continuar = true;
-			if (!nomeCompeticaoInformado.equals("ALL") && !competicao.getNomeCompeticao().contains(nomeCompeticaoInformado)) {
+			if (!nomeCompeticaoInformado.equals("ALL")
+					&& !competicao.getNomeCompeticao().contains(nomeCompeticaoInformado)) {
 				continuar = false;
 			}
-			
+
 			if (continuar) {
-				List<PapelUsuarioCompeticao> papelUsuarioCompeticaoList = papelUsuarioCompeticaoRepositorio.findByCompeticaoCadastrada(competicao);
-				
+				List<PapelUsuarioCompeticao> papelUsuarioCompeticaoList = papelUsuarioCompeticaoRepositorio
+						.findByCompeticaoCadastrada(competicao);
+
 				for (PapelUsuarioCompeticao papelUsuario : papelUsuarioCompeticaoList) {
-					if (papelUsuario.getTipoPapelUsuario().equals(papel) && papelUsuario.getUsuario().getId() == usuario.getId()) {
-						
+					if (papelUsuario.getTipoPapelUsuario().equals(papel)
+							&& papelUsuario.getUsuario().getId() == usuario.getId()) {
+
 						for (Etapa etapaRecuperada : etapaRepositorio.findByCompeticao(competicao)) {
 							if (etapaRecuperada.getTipoEtapa().equals(etapa)) {
 								if (etapaRecuperada.isVigente()) {
-									competicoesDto.add(new CompeticaoPitchImersaoDto(competicao));
+									if (etapa.equals(TipoEtapa.IMERSAO)) {
+										for (Equipe equipe : equipeRepositorio.findByCompeticaoCadastrada(competicao)) {
+											List<Pitch> equipes = pitchRepositorio
+													.findByEquipeArtefatoConsultoria(equipe.getId());
+											if (equipes.size() != 0) {
+												competicoesDto.add(new CompeticaoPitchImersaoDto(competicao));
+											}
+										}
+									} else {
+										competicoesDto.add(new CompeticaoPitchImersaoDto(competicao));
+									}
 								}
 							}
 						}
