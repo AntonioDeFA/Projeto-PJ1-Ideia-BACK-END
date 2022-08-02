@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.ideia.projetoideia.model.Equipe;
@@ -28,5 +29,6 @@ public interface LeanCanvasRepositorio extends JpaRepository<LeanCanvas, Integer
 	
 	public List<LeanCanvas> findByEquipe(Equipe equipe);
 	
-	
+	@Query(value = "select * from tb_lean_canvas where equipe_fk = :id and etapa_solucao_canvas = 'EM_CONSULTORIA';", nativeQuery = true)
+	public List<LeanCanvas> findByEquipeLeanCanvasConsultoria(@Param ("id") Integer id);
 }

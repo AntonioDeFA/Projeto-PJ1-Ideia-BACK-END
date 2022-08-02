@@ -18,9 +18,9 @@ import com.ideia.projetoideia.model.CategoriaMaterialEstudo;
 import com.ideia.projetoideia.model.Competicao;
 import com.ideia.projetoideia.model.Convite;
 import com.ideia.projetoideia.model.Etapa;
+import com.ideia.projetoideia.model.LeanCanvas;
 import com.ideia.projetoideia.model.MaterialEstudo;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
-import com.ideia.projetoideia.model.Pitch;
 import com.ideia.projetoideia.model.Usuario;
 import com.ideia.projetoideia.model.dto.CompeticaoDadosGeraisDto;
 import com.ideia.projetoideia.model.dto.CompeticaoEtapaVigenteDto;
@@ -43,6 +43,7 @@ import com.ideia.projetoideia.model.enums.TipoEtapa;
 import com.ideia.projetoideia.model.enums.TipoPapelUsuario;
 import com.ideia.projetoideia.repository.EquipeRepositorio;
 import com.ideia.projetoideia.repository.EtapaRepositorio;
+import com.ideia.projetoideia.repository.LeanCanvasRepositorio;
 import com.ideia.projetoideia.repository.MaterialEstudoRepositorio;
 import com.ideia.projetoideia.repository.PapelUsuarioCompeticaoRepositorio;
 import com.ideia.projetoideia.repository.PitchRepositorio;
@@ -94,6 +95,9 @@ public class CompeticaoService {
 
 	@Autowired
 	PitchRepositorio pitchRepositorio;
+	
+	@Autowired
+	LeanCanvasRepositorio leanCanvasRepositorio;
 
 	private final CompeticaoRepositorioCustom competicaoRepositorioCustom;
 
@@ -516,7 +520,7 @@ public class CompeticaoService {
 		for (Competicao competicao : competicoes) {
 			boolean continuar = true;
 			if (!nomeCompeticaoInformado.equals("ALL")
-					&& !competicao.getNomeCompeticao().contains(nomeCompeticaoInformado)) {
+					&& !competicao.getNomeCompeticao().toLowerCase().contains(nomeCompeticaoInformado.toLowerCase())) {
 				continuar = false;
 			}
 
@@ -533,8 +537,7 @@ public class CompeticaoService {
 								if (etapaRecuperada.isVigente()) {
 									if (etapa.equals(TipoEtapa.IMERSAO)) {
 										for (Equipe equipe : equipeRepositorio.findByCompeticaoCadastrada(competicao)) {
-											List<Pitch> equipes = pitchRepositorio
-													.findByEquipeArtefatoConsultoria(equipe.getId());
+											List<LeanCanvas> equipes = leanCanvasRepositorio.findByEquipeLeanCanvasConsultoria(equipe.getId());
 											if (equipes.size() != 0) {
 												competicoesDto.add(new CompeticaoPitchImersaoDto(competicao));
 											}

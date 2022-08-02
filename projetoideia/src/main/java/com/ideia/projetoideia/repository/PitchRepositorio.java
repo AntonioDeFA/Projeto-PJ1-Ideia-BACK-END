@@ -23,7 +23,4 @@ public interface PitchRepositorio  extends JpaRepository<Pitch, Integer> {
 	
 	@Query(value = "select * from tb_pitch where equipe_fk = :id and etapa_avaliacao_video = 'AVALIADO_CONSULTOR' order by data desc;", nativeQuery = true)
 	public List<Pitch> findByIdEquipeFeedbacksPitch(@Param ("id") Integer id);
-	
-	@Query(value = "select * from tb_pitch where equipe_fk = :id and etapa_avaliacao_video = 'EM_CONSULTORIA' order by data desc;", nativeQuery = true)
-	public List<Pitch> findByEquipeArtefatoConsultoria(@Param ("id") Integer id);
 }
