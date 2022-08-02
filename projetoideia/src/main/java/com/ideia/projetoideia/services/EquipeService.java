@@ -31,6 +31,7 @@ import com.ideia.projetoideia.model.UsuarioMembroComum;
 import com.ideia.projetoideia.model.PapelUsuarioCompeticao;
 import com.ideia.projetoideia.model.Pitch;
 import com.ideia.projetoideia.model.QuestaoAvaliativa;
+import com.ideia.projetoideia.model.dto.AtualizarArtefatoDto;
 import com.ideia.projetoideia.model.dto.AvaliacaoDto;
 import com.ideia.projetoideia.model.dto.DadosEquipeAvaliacaoDto;
 import com.ideia.projetoideia.model.dto.EquipeAvaliacaoDto;
@@ -998,5 +999,34 @@ public class EquipeService {
 		feedbackAvaliativoRepositorio.save(feedbackAvaliativo);	
 		
 	}
+	
+	public void atualizarArtefato(AtualizarArtefatoDto atualizarArtefatoDto) throws Exception {
+		Pitch pitch = null;
+		LeanCanvas leanCanvas = null;
+		if (atualizarArtefatoDto.getTipoArtefato().equals("LEAN_CANVAS")) {
+			leanCanvas = leanCanvasRepositorio.getById(atualizarArtefatoDto.getIdArtefato());
 
+			if (leanCanvas == null) {
+				throw new NotFoundException(
+						"Não foi encontrado " + atualizarArtefatoDto.getTipoArtefato() + " com esse id");
+			}
+
+			leanCanvas.setEtapaSolucaoCanvas(atualizarArtefatoDto.getNovaEtapa());
+
+			leanCanvasRepositorio.save(leanCanvas);
+		} else if (atualizarArtefatoDto.getTipoArtefato().equals("PITCH_DECK")) {
+			pitch = pitchRepositorio.getById(atualizarArtefatoDto.getIdArtefato());
+			if (pitch == null) {
+				throw new NotFoundException(
+						"Não foi encontrado " + atualizarArtefatoDto.getTipoArtefato() + " com esse id");
+			}
+
+			pitch.setEtapaAvaliacaoVideo(atualizarArtefatoDto.getNovaEtapa());
+
+			pitchRepositorio.save(pitch);
+		} else {
+			throw new NotFoundException("Não foi possível decifrar esse tipo de artefato");
+		}
+
+	}
 }

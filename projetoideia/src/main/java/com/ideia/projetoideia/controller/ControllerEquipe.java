@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.ideia.projetoideia.model.Equipe;
+import com.ideia.projetoideia.model.dto.AtualizarArtefatoDto;
 import com.ideia.projetoideia.model.dto.AvaliacaoDto;
 import com.ideia.projetoideia.model.dto.DadosEquipeAvaliacaoDto;
 import com.ideia.projetoideia.model.dto.EmailDto;
@@ -439,19 +440,48 @@ public class ControllerEquipe {
 	}
 
 	@PostMapping("/criar-avaliacao/{idEquipe}")
-	public void registarNota(@PathVariable("idEquipe") Integer idEquipe,
+	public ResponseEntity<?> registarNota(@PathVariable("idEquipe") Integer idEquipe,
 			@Valid @RequestBody List<AvaliacaoDto> avaliacoesDto) {
-
 		try {
 			equipeService.registarNota(idEquipe, avaliacoesDto);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("Nota registrada com sucesso", HttpStatus.OK));
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new IdeiaResponseFile("ERRO ", e.getMessage(), HttpStatus.NOT_FOUND));
 		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
 		}
 
 	}
 
 	@DeleteMapping("/deletar-feedback-avaliativo/{idFeedbackAvaliativo}")
-	public void removerFeedback(@PathVariable("idFeedbackAvaliativo") Integer idFeedbackAvaliativo) {
-		equipeService.removerFeedback(idFeedbackAvaliativo);
+	public  ResponseEntity<?> removerFeedback(@PathVariable("idFeedbackAvaliativo") Integer idFeedbackAvaliativo) {
+		try {
+			equipeService.removerFeedback(idFeedbackAvaliativo);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("Feedback deletado com sucesso", HttpStatus.OK));
+		}catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
+		}
+		
+	}
+	
+	@PutMapping("/atualizar-etapa-artefato-pitch")
+	public  ResponseEntity<?> atualizarArtefato(@RequestBody AtualizarArtefatoDto atualizarArtefatoDto){
+		try {
+			equipeService.atualizarArtefato(atualizarArtefatoDto);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new IdeiaResponseFile("Artefato atualizado com sucesso !!", HttpStatus.OK));
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new IdeiaResponseFile("ERRO ", e.getMessage(), HttpStatus.NOT_FOUND));
+		}catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new IdeiaResponseFile("ERRO", e.getMessage(), HttpStatus.BAD_REQUEST));
+		}
+		
 	}
 }
