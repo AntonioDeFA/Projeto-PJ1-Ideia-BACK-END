@@ -352,7 +352,6 @@ public class EquipeService {
 			etapaVigenteStr = "ELABORACAO";
 		}
 
-		etapaVigenteStr = "IMERSAO";
 		return new EquipeComEtapaDTO(equipe, etapaVigenteStr, usuarioMembroComumRepositorio.findByEquipe(equipe),
 				nomeConsultor);
 	}
