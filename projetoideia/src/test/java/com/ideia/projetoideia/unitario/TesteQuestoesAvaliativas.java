@@ -28,25 +28,23 @@ import com.ideia.projetoideia.repository.QuestaoAvaliativaRepositorio;
 
 import utils.CompeticaoUtils;
 
-
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration
 @SpringBootTest(classes = ProjetoideiaApplication.class)
 @TestInstance(Lifecycle.PER_CLASS)
 public class TesteQuestoesAvaliativas {
-	
+
 	@Autowired
 	private QuestaoAvaliativaRepositorio questaoAvaliativaRepositorio;
-	
+
 	@Autowired
 	private CompeticaoRepositorio competicaoRepositorio;
-	
+
 	private QuestaoAvaliativa questaoAvaliativa = new QuestaoAvaliativa();
-	
-	
-	private Competicao competicao ;
-	
+
+	private Competicao competicao;
+
 	@BeforeEach
 	public void inicializar() {
 		questaoAvaliativa.setNotaMax(10);
@@ -55,7 +53,7 @@ public class TesteQuestoesAvaliativas {
 		questaoAvaliativa.setCompeticaoCadastrada(competicao);
 		questaoAvaliativa.setEnumeracao(1);
 	}
-	
+
 	@BeforeAll
 	public void setUp() {
 		competicaoRepositorio.save(CompeticaoUtils.criarCompeticao());
@@ -66,27 +64,23 @@ public class TesteQuestoesAvaliativas {
 	public void tearDown() {
 		competicaoRepositorio.delete(competicao);
 	}
-	
-	
-	
+
 //-------------------------Caminho feliz --------------------------------------
 	@Test
-	public void criarQuestaoAvaliativa()throws Exception {
-		
+	public void criarQuestaoAvaliativa() throws Exception {
+
 		questaoAvaliativaRepositorio.save(questaoAvaliativa);
-		
-		
-		
-		Optional<QuestaoAvaliativa> questoes =  questaoAvaliativaRepositorio.findByQuestao(questaoAvaliativa.getQuestao());
-		
+
+		Optional<QuestaoAvaliativa> questoes = questaoAvaliativaRepositorio
+				.findByQuestao(questaoAvaliativa.getQuestao());
+
 		assertTrue(questoes.isPresent());
-		
+
 		QuestaoAvaliativa questao = questoes.get();
-		
+
 		questaoAvaliativaRepositorio.delete(questao);
 	}
-	
-	
+
 	@Test
 	public void atualizarQuestaoAvaliativa() {
 		questaoAvaliativaRepositorio.save(questaoAvaliativa);
@@ -95,35 +89,33 @@ public class TesteQuestoesAvaliativas {
 				.findByQuestao(questaoAvaliativa.getQuestao());
 
 		assertTrue(questoes.isPresent());
-		
+
 		questaoAvaliativa.setEnumeracao(2);
 		questaoAvaliativa.setQuestao("QuestaoAtualização");
 		questaoAvaliativa.setNotaMax(20);
-	
+
 		questaoAvaliativaRepositorio.save(questaoAvaliativa);
-		
-		questoes = questaoAvaliativaRepositorio
-				.findByQuestao(questaoAvaliativa.getQuestao());
-		
-		
+
+		questoes = questaoAvaliativaRepositorio.findByQuestao(questaoAvaliativa.getQuestao());
+
 		assertTrue(questoes.isPresent());
 
 		QuestaoAvaliativa questao = questoes.get();
 
 		questaoAvaliativaRepositorio.delete(questao);
-		
+
 	}
-	
-	
+
 //----------------------------	Exceptions ----------------------------------------------------------------
 	@Test
 	public void notaNullException() {
 		questaoAvaliativa.setNotaMax(null);
-		
+
 		assertThrows(Exception.class, () -> {
 			questaoAvaliativaRepositorio.save(questaoAvaliativa);
 		});
 	}
+
 	@Test
 	public void questaoNullException() {
 		questaoAvaliativa.setQuestao(null);
@@ -131,6 +123,7 @@ public class TesteQuestoesAvaliativas {
 			questaoAvaliativaRepositorio.save(questaoAvaliativa);
 		});
 	}
+
 	@Test
 	public void enumeracaoNullException() {
 		questaoAvaliativa.setEnumeracao(null);
@@ -138,6 +131,7 @@ public class TesteQuestoesAvaliativas {
 			questaoAvaliativaRepositorio.save(questaoAvaliativa);
 		});
 	}
+
 	@Test
 	public void tipoQuestaoAvaliativaNullException() {
 		questaoAvaliativa.setTipoQuestaoAvaliativa(null);
@@ -145,15 +139,14 @@ public class TesteQuestoesAvaliativas {
 			questaoAvaliativaRepositorio.save(questaoAvaliativa);
 		});
 	}
-	
+
 	@Test
 	public void valorInferiorNotaMaximaException() {
-		questaoAvaliativa.setNotaMax(4);;
+		questaoAvaliativa.setNotaMax(4);
+		;
 		assertThrows(Exception.class, () -> {
 			questaoAvaliativaRepositorio.save(questaoAvaliativa);
 		});
 	}
-	
-	
-	
+
 }

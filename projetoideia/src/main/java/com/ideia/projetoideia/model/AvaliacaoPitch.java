@@ -47,6 +47,9 @@ public class AvaliacaoPitch {
 	@JoinColumn(name = "avaliador_fk")
 	private Usuario avaliador;
 
+	public AvaliacaoPitch() {
+	}
+
 	public AvaliacaoPitch(LocalDate dataAvaliacao, Integer notaAtribuida, String observacao, Pitch pitch,
 			QuestaoAvaliativa questaoAvaliativa, Usuario avaliador) {
 		super();
