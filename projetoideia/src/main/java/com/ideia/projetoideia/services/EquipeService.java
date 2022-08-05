@@ -51,6 +51,7 @@ import com.ideia.projetoideia.model.dto.NotaQuestaoDto;
 import com.ideia.projetoideia.model.dto.NotasEquipeDto;
 
 import com.ideia.projetoideia.model.dto.UsuarioDto;
+import com.ideia.projetoideia.model.dto.VersaoPitchDeckDto;
 import com.ideia.projetoideia.model.enums.EtapaArtefatoPitch;
 import com.ideia.projetoideia.model.enums.TipoEtapa;
 import com.ideia.projetoideia.model.enums.TipoPapelUsuario;
@@ -759,6 +760,17 @@ public class EquipeService {
 		}
 
 		return new FeedbacksAvaliativosPitchDto(feedbacksPitch);
+	}
+	
+	public VersaoPitchDeckDto listarFeedbacksPitch(Integer idPitch) throws Exception {
+
+		Pitch pitch = pitchRepositorio.findById(idPitch).orElse(null);
+
+		if (pitch == null) {
+			throw new Exception("Pitch não encontrado");
+		}
+
+		return new VersaoPitchDeckDto(pitch, pitch.getFeedbackAvaliativos());
 	}
 
 	public void enviarParaAvaliacao(Integer idEquipe) throws Exception {
