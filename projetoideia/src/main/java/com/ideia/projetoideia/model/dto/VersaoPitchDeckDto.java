@@ -15,6 +15,7 @@ public class VersaoPitchDeckDto {
 	private LocalDateTime data;
 	private String arquivoPitchDeck;
 	private String tipo;
+	private String nome;
 	private List<FeedbackSugestaoDto> feedbacksAvaliativos;
 	
 	public VersaoPitchDeckDto(Pitch pitch, List<FeedbackAvaliativo> feedbacksAvaliativos) {
@@ -32,9 +33,10 @@ public class VersaoPitchDeckDto {
 		
 		this.arquivoPitchDeck = arquivo;
 		this.tipo = tipo;
+		this.nome = pitch.getDescricao();
 		
 		for(FeedbackAvaliativo feedback: feedbacksAvaliativos) {
-			this.feedbacksAvaliativos.add(new FeedbackSugestaoDto(feedback.getTipoFeedback(), feedback.getSugestao()));
+			this.feedbacksAvaliativos.add(new FeedbackSugestaoDto(feedback.getTipoFeedback(), feedback.getSugestao(), feedback.getDataCriacao(), feedback.getId()));
 		}
 	}
 
