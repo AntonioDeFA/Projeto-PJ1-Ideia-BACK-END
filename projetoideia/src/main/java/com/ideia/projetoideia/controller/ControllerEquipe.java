@@ -41,7 +41,7 @@ import com.ideia.projetoideia.model.dto.MaterialEstudoEnvioDto;
 import com.ideia.projetoideia.model.dto.NomeEquipeDto;
 
 import com.ideia.projetoideia.model.dto.PitchDto;
-
+import com.ideia.projetoideia.model.dto.VersaoPitchDeckDto;
 import com.ideia.projetoideia.model.dto.NotasEquipeDto;
 
 import com.ideia.projetoideia.response.IdeiaResponseFile;
@@ -372,6 +372,18 @@ public class ControllerEquipe {
 			throws Exception {
 		try {
 			return equipeService.listarFeedbacksPitchDecks(idEquipe);
+		} catch (NotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+	
+	@GetMapping("/pitch-deck/{idPitch}/feedbacks-pitch-consultoria")
+	public VersaoPitchDeckDto listarFeedbacksPitch(@PathVariable("idPitch") Integer idPitch)
+			throws Exception {
+		try {
+			return equipeService.listarFeedbacksPitch(idPitch);
 		} catch (NotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		} catch (Exception e) {
