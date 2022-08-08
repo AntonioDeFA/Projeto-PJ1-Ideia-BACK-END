@@ -962,9 +962,14 @@ public class EquipeService {
 				throw new Exception("A equipe não possui pitch ou lean canvas ja avaliada ");
 			}
 			
+			leanCanvasEmAvaliacao.setEtapaSolucaoCanvas(EtapaArtefatoPitch.AVALIADO_AVALIADOR);
+			pitchEmAvaliacao.setEtapaAvaliacaoVideo(EtapaArtefatoPitch.AVALIADO_AVALIADOR);
+			
 			AvaliacaoPitch avaliacaoPitch = new AvaliacaoPitch(LocalDate.now(), avaliacaoDto.getNotaAtribuida(),
 					avaliacaoDto.getObservacao(), pitchEmAvaliacao, questaoAvaliativa, avaliador);
 			
+			leanCanvasRepositorio.save(leanCanvasEmAvaliacao);
+			pitchRepositorio.save(pitchEmAvaliacao);
 			avaliacaoPitchRpositorio.save(avaliacaoPitch);		
 		}
 
