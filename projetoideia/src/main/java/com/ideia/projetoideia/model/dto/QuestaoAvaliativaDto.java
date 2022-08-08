@@ -15,6 +15,10 @@ public class QuestaoAvaliativaDto {
 	
 	private Integer pontuacaoMaxima;
 	
+	private String sugestao;
+	
+	private Integer nota;
+	
 	
 	public QuestaoAvaliativaDto (QuestaoAvaliativa questaoAvaliativa ) {
 		this.id = questaoAvaliativa.getId();
