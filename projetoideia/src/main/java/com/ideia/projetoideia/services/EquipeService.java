@@ -942,6 +942,19 @@ public class EquipeService {
 
 		Usuario avaliador = usuarioService.consultarUsuarioPorEmail(autenticado.getName());
 		
+		LeanCanvas leanCanvasEmAvaliacao = leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe,
+				EtapaArtefatoPitch.EM_AVALIACAO.getValue());
+		
+		Pitch pitchEmAvaliacao = pitchRepositorio.findByIdEquipeEEtapaList(idEquipe,
+				EtapaArtefatoPitch.EM_AVALIACAO.getValue());
+		
+		if (leanCanvasEmAvaliacao == null || pitchEmAvaliacao == null) {
+			throw new Exception("A equipe não possui pitch ou lean canvas ja avaliada ");
+		}
+		
+		leanCanvasEmAvaliacao.setEtapaSolucaoCanvas(EtapaArtefatoPitch.AVALIADO_AVALIADOR);
+		pitchEmAvaliacao.setEtapaAvaliacaoVideo(EtapaArtefatoPitch.AVALIADO_AVALIADOR);
+		
 		for (AvaliacaoDto avaliacaoDto : avaliacoesDto) {
 			QuestaoAvaliativa questaoAvaliativa = questaoAvaliativaRepositorio.findById(avaliacaoDto.getIdQuestao()).get();
 			
@@ -952,26 +965,14 @@ public class EquipeService {
 				throw new Exception("A não pode ser maior que a nota máxima!");
 			}
 			
-			LeanCanvas leanCanvasEmAvaliacao = leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe,
-					EtapaArtefatoPitch.EM_AVALIACAO.getValue());
-			
-			Pitch pitchEmAvaliacao = pitchRepositorio.findByIdEquipeEEtapaList(idEquipe,
-					EtapaArtefatoPitch.EM_AVALIACAO.getValue());
-			
-			if (leanCanvasEmAvaliacao == null || pitchEmAvaliacao == null) {
-				throw new Exception("A equipe não possui pitch ou lean canvas ja avaliada ");
-			}
-			
-			leanCanvasEmAvaliacao.setEtapaSolucaoCanvas(EtapaArtefatoPitch.AVALIADO_AVALIADOR);
-			pitchEmAvaliacao.setEtapaAvaliacaoVideo(EtapaArtefatoPitch.AVALIADO_AVALIADOR);
-			
 			AvaliacaoPitch avaliacaoPitch = new AvaliacaoPitch(LocalDate.now(), avaliacaoDto.getNotaAtribuida(),
 					avaliacaoDto.getObservacao(), pitchEmAvaliacao, questaoAvaliativa, avaliador);
 			
-			leanCanvasRepositorio.save(leanCanvasEmAvaliacao);
-			pitchRepositorio.save(pitchEmAvaliacao);
 			avaliacaoPitchRpositorio.save(avaliacaoPitch);		
 		}
+		
+		leanCanvasRepositorio.save(leanCanvasEmAvaliacao);
+		pitchRepositorio.save(pitchEmAvaliacao);
 
 
 	}
