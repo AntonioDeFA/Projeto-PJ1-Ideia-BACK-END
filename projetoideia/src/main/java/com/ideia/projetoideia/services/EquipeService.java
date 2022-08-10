@@ -324,7 +324,11 @@ public class EquipeService {
 	public EquipeComEtapaDTO dadosGeraisEquipe(Integer idEquipe) {
 		Equipe equipe = equipeRepositorio.findById(idEquipe).get();
 
-		String nomeConsultor = equipe.getConsultor().getNomeUsuario();
+		String nomeConsultor = "";
+		if (equipe.getConsultor() != null) {			
+			nomeConsultor = equipe.getConsultor().getNomeUsuario();
+		}
+		
 		LocalDate hoje = LocalDate.now();
 		Competicao competicao = equipe.getCompeticaoCadastrada();
 		String etapaVigenteStr = "";
