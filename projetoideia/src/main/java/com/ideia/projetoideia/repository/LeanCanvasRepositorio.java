@@ -31,4 +31,7 @@ public interface LeanCanvasRepositorio extends JpaRepository<LeanCanvas, Integer
 	
 	@Query(value = "select * from tb_lean_canvas where equipe_fk = :id and etapa_solucao_canvas = 'EM_CONSULTORIA';", nativeQuery = true)
 	public List<LeanCanvas> findByEquipeLeanCanvasConsultoria(@Param ("id") Integer id);
+	
+	@Query(value = "select * from tb_lean_canvas where equipe_fk = :id and etapa_solucao_canvas = 'EM_AVALIACAO';", nativeQuery = true)
+	public List<LeanCanvas> findByEquipeLeanCanvasEmAvaliacao(@Param ("id") Integer id);
 }

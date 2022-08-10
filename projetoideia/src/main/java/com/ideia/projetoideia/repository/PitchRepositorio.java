@@ -26,4 +26,7 @@ public interface PitchRepositorio  extends JpaRepository<Pitch, Integer> {
 	
 	@Query(value = "select * from tb_pitch where equipe_fk = :id and etapa_avaliacao_video = 'EM_CONSULTORIA';", nativeQuery = true)
 	public List<Pitch> findByEquipePitchDeckConsultoria(@Param ("id") Integer id);
+	
+	@Query(value = "select * from tb_pitch where equipe_fk = :id and etapa_avaliacao_video = 'EM_AVALIACAO';", nativeQuery = true)
+	public List<Pitch> findByEquipePitchDeckEavaliacao(@Param ("id") Integer id);
 }

@@ -559,9 +559,9 @@ public class CompeticaoService {
 									} else {
 										for (Equipe equipe : equipesByCompeticao) {
 											List<LeanCanvas> leanCanvasList = leanCanvasRepositorio
-													.findByEquipeLeanCanvasConsultoria(equipe.getId());
+													.findByEquipeLeanCanvasEmAvaliacao(equipe.getId());
 											List<Pitch> pitchList = pitchRepositorio
-													.findByEquipePitchDeckConsultoria(equipe.getId());
+													.findByEquipePitchDeckEavaliacao(equipe.getId());
 
 											if (leanCanvasList.size() != 0 && pitchList.size() != 0) {
 												competicoesDto.add(new CompeticaoPitchImersaoDto(competicao));
