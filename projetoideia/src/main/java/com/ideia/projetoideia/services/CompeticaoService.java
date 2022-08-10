@@ -97,7 +97,7 @@ public class CompeticaoService {
 
 	@Autowired
 	PitchRepositorio pitchRepositorio;
-	
+
 	@Autowired
 	LeanCanvasRepositorio leanCanvasRepositorio;
 
@@ -537,22 +537,36 @@ public class CompeticaoService {
 						for (Etapa etapaRecuperada : etapaRepositorio.findByCompeticao(competicao)) {
 							if (etapaRecuperada.getTipoEtapa().equals(etapa)) {
 								if (etapaRecuperada.isVigente()) {
+									List<Equipe> equipesByCompeticao = equipeRepositorio
+											.findByCompeticaoCadastrada(competicao);
 									if (etapa.equals(TipoEtapa.IMERSAO)) {
-										
-										List<Equipe> equipesByCompeticao = equipeRepositorio.findByCompeticaoCadastrada(competicao);
+
 										for (Equipe equipe : equipesByCompeticao) {
-											
-											if (equipe.getConsultor() != null && equipe.getConsultor().getId() == usuario.getId()) {
-												List<LeanCanvas> leanCanvasList = leanCanvasRepositorio.findByEquipeLeanCanvasConsultoria(equipe.getId());
-												List<Pitch> pitchList = pitchRepositorio.findByEquipePitchDeckConsultoria(equipe.getId());
-												
+
+											if (equipe.getConsultor() != null
+													&& equipe.getConsultor().getId() == usuario.getId()) {
+												List<LeanCanvas> leanCanvasList = leanCanvasRepositorio
+														.findByEquipeLeanCanvasConsultoria(equipe.getId());
+												List<Pitch> pitchList = pitchRepositorio
+														.findByEquipePitchDeckConsultoria(equipe.getId());
+
 												if (leanCanvasList.size() != 0 || pitchList.size() != 0) {
+
 													competicoesDto.add(new CompeticaoPitchImersaoDto(competicao));
 												}
 											}
 										}
 									} else {
-										competicoesDto.add(new CompeticaoPitchImersaoDto(competicao));
+										for (Equipe equipe : equipesByCompeticao) {
+											List<LeanCanvas> leanCanvasList = leanCanvasRepositorio
+													.findByEquipeLeanCanvasConsultoria(equipe.getId());
+											List<Pitch> pitchList = pitchRepositorio
+													.findByEquipePitchDeckConsultoria(equipe.getId());
+
+											if (leanCanvasList.size() != 0 && pitchList.size() != 0) {
+												competicoesDto.add(new CompeticaoPitchImersaoDto(competicao));
+											}
+										}
 									}
 								}
 							}
