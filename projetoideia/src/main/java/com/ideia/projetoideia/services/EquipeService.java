@@ -417,7 +417,7 @@ public class EquipeService {
 
 		if (leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe,
 				EtapaArtefatoPitch.EM_CONSULTORIA.getValue()) != null) {
-			throw new Exception("Essa equipe já possuí um Lean Canvas que está em consultoria.");
+			throw new Exception("Essa equipe já possui um Lean Canvas que está em consultoria.");
 		}
 		if (equipe.getConsultor() == null) {
 
@@ -471,7 +471,7 @@ public class EquipeService {
 		LeanCanvas leanCanvas = canvas.get();
 
 		if (leanCanvas.getEquipe().getId() != idEquipe) {
-			throw new Exception("Essa equipe não possuí esse lean canvas ");
+			throw new Exception("Essa equipe não possui esse Lean Canvas ");
 		}
 
 		if (!leanCanvas.getEtapaSolucaoCanvas().equals(EtapaArtefatoPitch.EM_ELABORACAO)) {
@@ -604,7 +604,7 @@ public class EquipeService {
 		Equipe equipe = recuperarEquipe(idEquipe);
 
 		if (pitchRepositorio.findByIdEquipeEEtapaList(idEquipe, EtapaArtefatoPitch.EM_CONSULTORIA.getValue()) != null) {
-			throw new Exception("Essa equipe já possuí um pitch que está em consultoria.");
+			throw new Exception("Essa equipe já possui um pitch que está em consultoria.");
 		}
 		if (equipe.getConsultor() == null) {
 
@@ -784,7 +784,7 @@ public class EquipeService {
 		if (pitchRepositorio.findByIdEquipeEEtapaList(idEquipe, EtapaArtefatoPitch.EM_AVALIACAO.getValue()) != null
 				|| leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe,
 						EtapaArtefatoPitch.EM_AVALIACAO.getValue()) != null) {
-			throw new Exception("Essa equipe já possuí um lean canvas e um pitch em avaliação.");
+			throw new Exception("Essa equipe já possui um Lean Canvas e um pitch em avaliação.");
 		}
 
 		LeanCanvas canvas = leanCanvasRepositorio.findByIdEquipeEEtapa(idEquipe,
@@ -892,25 +892,23 @@ public class EquipeService {
 
 			Etapa etapaVigente = competicao.getEtapaVigente();
 
-			if (etapaVigente == null || !etapaVigente.getTipoEtapa().equals(TipoEtapa.PITCH)) {
-				throw new Exception("A Competição não está na etapa de Pitch");
-			}
-
-			for (Equipe equipe : competicao.getEquipesCadastradas()) {
-
-				Integer idPapel = papelUsuarioCompeticaoRepositorio
-						.findByCompeticaoCadastradaAndUsuario(avaliador.getId(), competicao.getId());
-				if (papelUsuarioCompeticaoRepositorio.findById(idPapel).get().getTipoPapelUsuario()
-						.equals(TipoPapelUsuario.AVALIADOR)) {
-					LeanCanvas leanCanvasEmAvaliacao = leanCanvasRepositorio.findByIdEquipeEEtapa(equipe.getId(),
-							EtapaArtefatoPitch.EM_AVALIACAO.getValue());
-
-					Pitch pitchEmAvaliacao = pitchRepositorio.findByIdEquipeEEtapaList(equipe.getId(),
-							EtapaArtefatoPitch.EM_AVALIACAO.getValue());
-
-					if (pitchEmAvaliacao != null || leanCanvasEmAvaliacao != null) {
-						EquipeAvaliacaoDto equipeConsultoriaDto = new EquipeAvaliacaoDto(equipe);
-						equipes.add(equipeConsultoriaDto);
+			if (etapaVigente != null && etapaVigente.getTipoEtapa().equals(TipoEtapa.PITCH)) {
+				for (Equipe equipe : competicao.getEquipesCadastradas()) {
+					
+					Integer idPapel = papelUsuarioCompeticaoRepositorio
+							.findByCompeticaoCadastradaAndUsuario(avaliador.getId(), competicao.getId());
+					if (papelUsuarioCompeticaoRepositorio.findById(idPapel).get().getTipoPapelUsuario()
+							.equals(TipoPapelUsuario.AVALIADOR)) {
+						LeanCanvas leanCanvasEmAvaliacao = leanCanvasRepositorio.findByIdEquipeEEtapa(equipe.getId(),
+								EtapaArtefatoPitch.EM_AVALIACAO.getValue());
+						
+						Pitch pitchEmAvaliacao = pitchRepositorio.findByIdEquipeEEtapaList(equipe.getId(),
+								EtapaArtefatoPitch.EM_AVALIACAO.getValue());
+						
+						if (pitchEmAvaliacao != null || leanCanvasEmAvaliacao != null) {
+							EquipeAvaliacaoDto equipeConsultoriaDto = new EquipeAvaliacaoDto(equipe);
+							equipes.add(equipeConsultoriaDto);
+						}
 					}
 				}
 			}
