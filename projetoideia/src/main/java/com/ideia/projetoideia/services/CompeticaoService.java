@@ -521,12 +521,14 @@ public class CompeticaoService {
 		}
 		for (Competicao competicao : competicoes) {
 			boolean continuar = true;
+
 			if (!nomeCompeticaoInformado.equals("ALL")
 					&& !competicao.getNomeCompeticao().toLowerCase().contains(nomeCompeticaoInformado.toLowerCase())) {
 				continuar = false;
 			}
 
 			if (continuar) {
+
 				List<PapelUsuarioCompeticao> papelUsuarioCompeticaoList = papelUsuarioCompeticaoRepositorio
 						.findByCompeticaoCadastrada(competicao);
 
@@ -535,8 +537,10 @@ public class CompeticaoService {
 							&& papelUsuario.getUsuario().getId() == usuario.getId()) {
 
 						for (Etapa etapaRecuperada : etapaRepositorio.findByCompeticao(competicao)) {
+
 							if (etapaRecuperada.getTipoEtapa().equals(etapa)) {
 								if (etapaRecuperada.isVigente()) {
+
 									List<Equipe> equipesByCompeticao = equipeRepositorio
 											.findByCompeticaoCadastrada(competicao);
 									if (etapa.equals(TipoEtapa.IMERSAO)) {
@@ -555,7 +559,7 @@ public class CompeticaoService {
 													competicoesDto.add(new CompeticaoPitchImersaoDto(competicao));
 												}
 											}
-										}
+										}	
 									} else {
 										for (Equipe equipe : equipesByCompeticao) {
 											List<LeanCanvas> leanCanvasList = leanCanvasRepositorio

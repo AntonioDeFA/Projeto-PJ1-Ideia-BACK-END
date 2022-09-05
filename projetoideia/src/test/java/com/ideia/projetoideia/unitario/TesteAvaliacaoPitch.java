@@ -181,6 +181,9 @@ public class TesteAvaliacaoPitch {
 
 	}
 
+//										Exception	
+//---------------------------------------------------------------------------------------------------------------------------
+
 	@Test
 	public void notaAtribuidaNullException() {
 		avaliacaoPitch.setNotaAtribuida(null);
